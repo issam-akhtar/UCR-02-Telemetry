@@ -7,3 +7,6 @@
 
 # Mac system files
 .DS_Store
+
+#logs
+.csv
