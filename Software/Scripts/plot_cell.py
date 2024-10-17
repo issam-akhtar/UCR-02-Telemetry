@@ -36,7 +36,7 @@ df = pd.DataFrame(data)
 # Initialize the plot
 fig, ax = plt.subplots()
 
-# Plot all cells initially
+# Plot all c initially
 lines = {}
 for cell in df.columns:
     lines[cell], = ax.plot(df.index, df[cell], label=cell)
