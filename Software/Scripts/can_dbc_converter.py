@@ -1,7 +1,10 @@
 import cantools
 import csv
 import os
+import shutil
 
+col = -2
+cells = True
 class CanFrame:
     def __init__(self, timestamp, channel, can_id, flags, dlc, data) -> None:
         self.timestamp = timestamp 
@@ -21,97 +24,114 @@ class CanFrame:
             Data: {self.data}
         ''' 
 
-# Define the folder containing CSV files and the DBC file path
-csv_folder = "./09-30"
-dbc_path = "./UCR-01-1.dbc"
+def sort_key(header):
+    if header.startswith("Cell") and header[4:].isdigit():
+        return (0, int(header[4:]))  # Sort numerically for Cell#
+    else:
+        return (1, header)  # Sort alphabetically for others
+# csv_folder = "./09-30"
+if cells:
+    csv_folder = './Long_Run'
+    dir_name = 'cell_data'
+    dbc_path = "./UCR-01.dbc"
+else:
+    csv_folder = input("Enter Directory Path with Kvaser Logs: ")
+    dir_name = input("Enter Directory Name you would like to store logs at: ")
+    dbc_path = "./UCR-01.dbc"
 
-# Load the DBC file
+cell_ids = range(50,58)
+
 db = cantools.database.load_file(dbc_path)
 
-# Iterate through all files in the specified folder
 for filename in os.listdir(csv_folder):
     if filename.endswith('.csv'):
-        csv_path = os.path.join(csv_folder, filename)  # Create full path for the CSV file
-        print(f'Processing file: {csv_path}')  # Print the name of the file being processed
+        csv_path = os.path.join(csv_folder, filename) 
+        print(f'Processing file: {csv_path}') 
         
-        # Define output CSV path for the current input file
-        if not os.path.exists("./Decoded_Logs"):
-            os.makedirs("./Decoded_Logs")
-        output_csv_path = os.path.join("./Decoded_Logs", f'decoded_{filename}')  # New output file name
+    
+        if not os.path.exists(f"./Decoded_Logs/{dir_name}"):
+            os.makedirs(f"./Decoded_Logs/{dir_name}")
+        output_csv_path = os.path.join(f"./Decoded_Logs/{dir_name}", f'decoded_{filename}') 
 
-        # Prepare to write to the output CSV file
+    
         with open(output_csv_path, mode='w', newline='') as output_csv_file:
             csv_writer = csv.writer(output_csv_file)
             
-            # Initialize a set to hold all unique keys for the header
+        
             header_set = set()
 
-            # First pass: Read the input CSV to collect headers
+        
             with open(csv_path, newline='') as csv_file:
                 can_data = csv.reader(csv_file)
                 for i, row in enumerate(can_data):
-                    if i >= 8:  # Skip the first 8 rows
-                        row = [item for item in row if item != '']  # Remove empty items
+                    if i >= 8: 
+                        row = [item for item in row if item != ''] 
                         try:
-                            data = bytes([(int(i, 16)) for i in row[5:-2]])  # Extract data bytes
+                            data = bytes([(int(i, 16)) for i in row[5:col]]) 
                         except Exception as e:
                             print(f'Error converting data: {e}')
                             continue
-                        can_id = int(row[2])  # Get the CAN ID
+                        can_id = int(row[2]) 
                         
                         if can_id:
                             try:
-                                frame = CanFrame(row[0], row[1], can_id, row[3], row[4], data)  # Create a CanFrame instance
-                                msg = db.decode_message(can_id, data)  # Decode the message
+                                frame = CanFrame(row[0], row[1], can_id, row[3], row[4], data) 
+                                msg = db.decode_message(can_id, data) 
+                                if cells and can_id in cell_ids:
+                                        # Start with the timestamp
+                                    output = f'{frame.timestamp},'
+                                    
+                                    output += ''.join(f'{cell} {{{value}}},' for cell, value in msg.items())
 
-                                # Add keys to the header set
-                                header_set.update(msg.keys())
+                                    
+                                    # Print the final output, removing the trailing comma
+                                    print(output.rstrip(','))
+                                else:
+                                    header_set.update(msg.keys())
 
                             except Exception as e:
                                 continue
                             except IndexError as e:
                                 continue
-
+            
             # Custom sort headers: Cell# sorted numerically, others alphabetically
-            def sort_key(header):
-                if header.startswith("Cell") and header[4:].isdigit():
-                    return (0, int(header[4:]))  # Sort numerically for Cell#
-                else:
-                    return (1, header)  # Sort alphabetically for others
+            if not cells:
 
-            sorted_headers = sorted(header_set, key=sort_key)
+                sorted_headers = sorted(header_set, key=sort_key)
 
-            # Write the header row to the output CSV
-            header_row = ['Timestamp', 'Channel', 'CAN ID', 'Flags', 'DLC'] + sorted_headers
-            csv_writer.writerow(header_row)
+                # Write the header row to the output CSV
+                header_row = ['Timestamp', 'Channel', 'CAN ID', 'Flags', 'DLC'] + sorted_headers
+                csv_writer.writerow(header_row)
 
-            # Second pass: Read the input CSV again to write data rows
-            with open(csv_path, newline='') as csv_file:
-                can_data = csv.reader(csv_file)
-                for i, row in enumerate(can_data):
-                    if i >= 8:  # Skip the first 8 rows
-                        row = [item for item in row if item != '']  # Remove empty items
-                        try:
-                            data = bytes([(int(i, 16)) for i in row[5:-2]])  # Extract data bytes
-                        except Exception as e:
-                            print(f'Error converting data: {e}')
-                            continue
-                        can_id = int(row[2])  # Get the CAN ID
-                        
-                        if can_id:
+                # Second pass: Read the input CSV again to write data rows
+                with open(csv_path, newline='') as csv_file:
+                    can_data = csv.reader(csv_file)
+                    for i, row in enumerate(can_data):
+                        if i >= 8:  # Skip the first 8 rows
+                            row = [item for item in row if item != '']  # Remove empty items
                             try:
-                                frame = CanFrame(row[0], row[1], can_id, row[3], row[4], data)  # Create a CanFrame instance
-                                msg = db.decode_message(can_id, data)  # Decode the message
-
-                                # Create a row for the CSV
-                                row_data = [frame.timestamp, frame.channel, frame.can_id, frame.flags, frame.dlc]
-                                # Add values from the decoded message in sorted order
-                                row_data += [msg.get(key, '') for key in sorted_headers]  # Fill missing keys with empty strings
-                                csv_writer.writerow(row_data)  # Write to CSV
-
+                                data = bytes([(int(i, 16)) for i in row[5:col]])  # Extract data bytes
                             except Exception as e:
+                                print(f'Error converting data: {e}')
                                 continue
-                            except IndexError as e:
-                                continue
+                            can_id = int(row[2])  # Get the CAN ID
+                            
+                            if can_id:
+                                try:
+                                    frame = CanFrame(row[0], row[1], can_id, row[3], row[4], data)  # Create a CanFrame instance
+                                    msg = db.decode_message(can_id, data)  # Decode the message
 
+                                    # Create a row for the CSV
+                                    row_data = [frame.timestamp, frame.channel, frame.can_id, frame.flags, frame.dlc]
+                                    # Add values from the decoded message in sorted order
+                                    row_data += [msg.get(key, '') for key in sorted_headers]  # Fill missing keys with empty strings
+                                    csv_writer.writerow(row_data)  # Write to CSV
+
+                                except Exception as e:
+                                    continue
+                                except IndexError as e:
+                                    continue
+    if not cells:
         print(f'Decoded data has been exported to {output_csv_path}')  # Confirmation message for each file
+    else:
+        shutil.rmtree(f"./Decoded_Logs/{dir_name}")
