@@ -1,0 +1,6 @@
+[submodule "UCR-01-Test-Data"]
+	path = UCR-01-Test-Data
+	url = git@github.com:UCalgaryRacing/UCR-01-Test-Data.git
+[submodule "UCR1_CANDBC"]
+	path = UCR1_CANDBC
+	url = https://github.com/UCalgaryRacing/UCR1_CANDBC

@@ -1,1 +1,1 @@
-Logs/* filter=lfs diff=lfs merge=lfs -text
+UCR-01-Test-Data/* filter=lfs diff=lfs merge=lfs -text
