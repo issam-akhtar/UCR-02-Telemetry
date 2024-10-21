@@ -2,37 +2,77 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 17vmin;
+}
+
+.UCRLogo {
+  height: 15vmin;
+  pointer-events: auto;
+  position: absolute;
+  left: 0;
+  top: 15px;
+}
+
+.LineChart1 {
+  background-color: #f8f8f8;
+  width: 600px; /* Set a fixed width or adjust as needed */
+  height: 375px;
+  text-align: center; /* Center text */
+  margin-top: 50px;
+  position: absolute;
+  left: 100px;
+}
+
+.LineChart1 h2 {
+  margin-bottom: 10px; /* Add some space between the title and the chart */
+}
+
+.LineChart2 {
+  background-color: #f8f8f8;
+  width: 600px; /* Set a fixed width or adjust as needed */
+  height: 375px;
+  text-align: center; /* Center text */
+  margin-top: 50px;
+  position: absolute;
+  left: 800px;
+}
+
+.LineChart h2 {
+  margin-bottom: 10px; /* Add some space between the title and the chart */
+}
+
+.LineChart3 {
+  background-color: #f8f8f8;
+  width: 600px; /* Set a fixed width or adjust as needed */
+  height: 375px;
+  text-align: center; /* Center text */
+  position: absolute;
+  top: 610px;
+  left: 100px;
+}
+
+.LineChart h3 {
+  margin-bottom: 10px; /* Add some space between the title and the chart */
+}
+
+.LineChart4 {
+  background-color: #f8f8f8;
+  width: 600px; /* Set a fixed width or adjust as needed */
+  height: 375px;
+  text-align: center; /* Center text */
+  position: absolute;
+  top: 610px;
+  left: 800px;
+}
+
+.LineChart h4 {
+  margin-bottom: 10px; /* Add some space between the title and the chart */
+}
+
+.Charts {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  background-color: aliceblue;
+  height: 900px;
 }
