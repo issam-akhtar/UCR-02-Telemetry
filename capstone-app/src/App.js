@@ -31,7 +31,7 @@ function App() {
       </div> {/* LineChart3 Div */}
 
       <div className="LineChart4">
-      <h2>Throttle</h2>
+      <h2>Throttle </h2>
           <LineChart4 />
       </div> {/* LineChart4 Div */}
     </div> {/* Charts Div */}
