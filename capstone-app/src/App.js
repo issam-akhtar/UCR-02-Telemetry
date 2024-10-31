@@ -4,8 +4,9 @@ import LineChart from './components/LineChart.js';
 import LineChart2 from './components/LineChart2.js';
 import LineChart3 from './components/LineChart3.js';
 import LineChart4 from './components/LineChart4.js';
+import Graph from './components/BarGraph.js';
 
-function App() {
+function App() {  
   return (
     <div className="App">
 
@@ -16,12 +17,12 @@ function App() {
     <div className = "Charts">
 
     <div className="LineChart1">
-      <h2>Temperature</h2>
+      <h2>Chart.js Import</h2>
           <LineChart /> 
       </div> {/* LineChart1 Div */}
     
       <div className="LineChart2">
-      <h2>Voltage</h2>
+      <h2>d3.js</h2>
           <LineChart2 />
       </div> {/* LineChart2 Div */}
 
@@ -34,9 +35,14 @@ function App() {
       <h2>Throttle </h2>
           <LineChart4 />
       </div> {/* LineChart4 Div */}
+      
     </div> {/* Charts Div */}
 
+      <Graph/>
+
     </div> // App Div
+
+
   );
 }
 

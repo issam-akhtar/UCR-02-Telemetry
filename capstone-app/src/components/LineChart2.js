@@ -1,91 +1,113 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import React, { useEffect, useRef, useState } from 'react';
+import * as d3 from 'd3';
+import Data from '../testdata/faketest.csv';
 
 const LineChart2 = () => {
-  const data = {
-    labels: ['1', '2', '3', '4', '4', '5'],
-    datasets: [
-      {
-        label: 'Data Set 1',
-        data: [65, 59, 80, 81, 56, 55],
-        fill: false,
-        borderColor: 'rgba(75,192,192,1)', // Line color
-        tension: 0.1, // Curved line
-      },
+  const [data, setData] = useState([]);
+  const [showLine, setShowLine] = useState(true); // State to control line visibility
+  const chartRef = useRef(null);
 
-      {
-        label: 'Data Set 2',
-        data: [30, 40, 50, 60, 70, 90],
-        fill: false,
-        borderColor: 'rgba(192, 75, 75, 1)', // Red color for the second line
-        tension: 0.1,
-      },
+  useEffect(() => {
+    // Load the CSV file
+    d3.csv(Data).then((csvData) => {
+      // Format the data
+      const formattedData = csvData.map((row) => ({
+        Index: +row.Index,
+        Time: +row.Time,
+        Channel: +row.Channel,
+        Voltage: +row.Voltage,
+        LeftPot: +row["Left Pot"],
+        RightPot: +row["Right Pot"],
+      }));
+      setData(formattedData);
+    });
+  }, []);
 
-      {
-        label: 'Data Set 3',
-        data: [90, 100, 105, 110, 115, 120],
-        fill: false,
-        borderColor: 'rgba(75, 75, 192, 1)', // Blue color for the third line
-        tension: 0.1,
-      },
-      
-      {
-        label: 'Data Set 4',
-        data: [40, 45, 55, 65, 60, 75],
-        fill: false,
-        borderColor: 'rgba(75, 192, 75, 1)', // Green color for the fourth line
-        tension: 0.1,
-      },
-    ],
-  };
+  useEffect(() => {
+    if (data.length === 0) return;
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Time (seconds)',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Volts (V)',
-        },
-      },
-    },
-  };
+    // Set up smaller chart dimensions and margins
+    const margin = { top: 10, right: 20, bottom: 30, left: 40 };
+    const width = 400 - margin.left - margin.right; // Smaller width
+    const height = 200 - margin.top - margin.bottom; // Smaller height
+
+    // Clear previous chart
+    d3.select(chartRef.current).select('svg').remove();
+
+    // Append SVG element
+    const svg = d3.select(chartRef.current)
+      .append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Set up scales
+    const x = d3.scaleLinear()
+      .domain(d3.extent(data, (d) => d.Time))
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, (d) => d.Voltage)])
+      .range([height, 0]);
+
+    // Define line
+    const line = d3.line()
+      .x((d) => x(d.Time))
+      .y((d) => y(d.Voltage));
+
+    // Add X axis
+    svg.append('g')
+      .attr('transform', `translate(0, ${height})`)
+      .call(d3.axisBottom(x).ticks(5));
+
+    // Add Y axis
+    svg.append('g')
+      .call(d3.axisLeft(y).ticks(5));
+
+    // Conditionally add line path
+    if (showLine) {
+      svg.append('path')
+        .datum(data)
+        .attr('fill', 'none')
+        .attr('stroke', 'steelblue')
+        .attr('stroke-width', 1.5)
+        .attr('d', line);
+    }
+
+    // Add labels
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', height + margin.bottom - 5)
+      .style('text-anchor', 'middle')
+      .style('font-size', '12px')
+      .text('Time');
+
+    svg.append('text')
+      .attr('x', -height / 2)
+      .attr('y', -margin.left + 10)
+      .attr('transform', 'rotate(-90)')
+      .style('text-anchor', 'middle')
+      .style('font-size', '12px')
+      .text('Voltage');
+  }, [data, showLine]); // Depend on showLine to re-render when toggled
 
   return (
-    <div style={{ width: '600px', margin: '0 auto' }}>
-      <Line data={data} options={options} />
+    <div>
+      <h2>CSV Data Visualization</h2>
+      <div ref={chartRef}></div>
+      <div
+        onClick={() => setShowLine(!showLine)}
+        style={{
+          cursor: 'pointer',
+          marginTop: '10px',
+          color: showLine ? 'steelblue' : 'gray',
+          textDecoration: showLine ? 'none' : 'line-through',
+        }}
+      >
+        <span style={{ display: 'inline-block', width: '15px', height: '15px', backgroundColor: showLine ? 'steelblue' : 'gray', marginRight: '5px' }}></span>
+        Voltage Line
+      </div>
     </div>
   );
 };

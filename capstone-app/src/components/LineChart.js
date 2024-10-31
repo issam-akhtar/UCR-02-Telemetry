@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Papa from 'papaparse';
 import { Line } from 'react-chartjs-2';
+import Data from '../testdata/faketest.csv';
 import {
   Chart as ChartJS,
   LineElement,
@@ -12,80 +14,95 @@ import {
 } from 'chart.js';
 
 ChartJS.register(
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Title,
-  Tooltip,
+  LineElement, 
+  CategoryScale, 
+  LinearScale, 
+  PointElement, 
+  Title, 
+  Tooltip, 
   Legend
 );
 
-const LineChart = () => {
-  const data = {
-    labels: ['1', '2', '3', '4', '5', '6'],
-    datasets: [
-      {
-        label: 'Data Set 1',
-        data: [65, 59, 80, 81, 56, 55],
-        fill: false,
-        borderColor: 'rgba(75,192,192,1)', // Line color
-        tension: 0.1, // Curved line
-      },
+function LineChart() {
+  const [chartData, setChartData] = useState({
+      datasets: []
+  });
+  const [chartOptions, setChartOptions] = useState({})
+  
+  useEffect(() => {
+    Papa.parse(Data, {
+      download: true,
+      header: true,
+      dynamicTyping: true,
+      delimiter: "",
+      complete: ((result) => {
+        console.log(result); // Log parsed data to verify
+        setChartData({
 
-      {
-        label: 'Data Set 2',
-        data: [30, 40, 50, 60, 70, 90],
-        fill: false,
-        borderColor: 'rgba(192, 75, 75, 1)', // Red color for the second line
-        tension: 0.1,
-      },
+          labels: result.data.map((item, index) => [item[' "Time"']]).filter( String ),
+          
+          datasets: [
+            {
+              label: "test",
+              data: result.data.map((item, index) => [item[' "Channel"']]).filter( Number ),
+              fill: false,
+              borderColor: 'red',
+              tension: 0.1,
+            },
+            
+          ],
+        });
 
-      {
-        label: 'Data Set 3',
-        data: [90, 100, 105, 110, 115, 120],
-        fill: false,
-        borderColor: 'rgba(75, 75, 192, 1)', // Blue color for the third line
-        tension: 0.1,
-      },
-      
-      {
-        label: 'Data Set 4',
-        data: [40, 45, 55, 65, 60, 75],
-        fill: false,
-        borderColor: 'rgba(75, 192, 75, 1)', // Green color for the fourth line
-        tension: 0.1,
-      },
-    ],
-  };
+        setChartOptions({
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+              display: true,
+            },
+            title: {
+              display: true,
+              text: "Channel Data"
+            }
+          },
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Time (seconds)',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Celcius (°C)',
-        },
-      },
-    },
-  };
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Time (seconds)',
+              },
+            },
+
+            y: {
+              title: {
+                display: true,
+                text: 'Channel',
+              },
+            },
+          },
+
+        })
+      })
+    })
+  }, [])
+
+  console.log("Chart Data in Render:", chartData);
+
 
   return (
-    <div style={{ width: '600px', margin: '0 auto' }}>
-      <Line data={data} options={options} />
+    <div>
+    {
+        chartData.datasets.length > 0 ? (
+          <div style={{ width: '600px', margin: '0 auto' }}>
+            <Line options={chartOptions} data={chartData}/>
+          </div>
+        ) : (
+            <div>
+                Loading...
+                </div>
+        )
+    }
     </div>
   );
 };
