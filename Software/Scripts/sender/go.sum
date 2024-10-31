@@ -1,0 +1,9 @@
+github.com/angelodlfrtr/go-can v0.0.4/go.mod h1:e9NV8485R6+MwVHY1424SxwpCzsIRYd6I8noHvgHzQQ=
+github.com/angelodlfrtr/serial v0.0.0-20190912094943-d028474db63c/go.mod h1:kGJNzwu4M6uVHZPXuE7m6+f3BvYrhFH76a90n69CxEk=
+github.com/brutella/can v0.0.1/go.mod h1:NYDxbQito3w4+4DcjWs/fpQ3xyaFdpXw/KYqtZFU98k=
+github.com/brutella/can v0.0.2 h1:8TyjZrBZSwQwSr5x3U9KtKzGW8HNE/NpUgsNcYDAVIM=
+github.com/brutella/can v0.0.2/go.mod h1:NYDxbQito3w4+4DcjWs/fpQ3xyaFdpXw/KYqtZFU98k=
+golang.org/x/sys v0.0.0-20181213200352-4d1cda033e06 h1:0oC8rFnE+74kEmuHZ46F6KHsMr5Gx2gUQPuNz28iQZM=
+golang.org/x/sys v0.0.0-20181213200352-4d1cda033e06/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+golang.org/x/sys v0.26.0 h1:KHjCJyddX0LoSTb3J+vWpupP9p0oznkqVk/IfjymZbo=
+golang.org/x/sys v0.26.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
