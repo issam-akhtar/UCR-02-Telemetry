@@ -1,0 +1,152 @@
+15:09:40.259 -> End of CAN data snapshot. Restarting...
+15:09:40.291 -> Sending CAN packet: {"Time":0.34959, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":1, "AbsTime":"2024-10-16 0:16"}
+15:09:40.451 -> Packet send duration: 156 ms
+15:09:40.492 -> Expected Delay: 0.00 ms, Actual Delay: 280 ms
+15:09:40.516 -> Sending CAN packet: {"Time":0.35339, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["00", "03", "00", "c8", "43", "04", "41", "f7", "17", "1b", "70", "06"], "Counter":2, "AbsTime":"2024-10-16 0:16"}
+15:09:40.740 -> Packet send duration: 223 ms
+15:09:40.772 -> Expected Delay: 3.80 ms, Actual Delay: 236 ms
+15:09:40.836 -> Sending CAN packet: {"Time":0.35352, "Channel":2, "ID":1553, "Flags":"196610", "DLC":11, "Data":["c9", "f9", "09", "2f", "d5", "03", "62", "ca", "08", "e0", "11", "08"], "Counter":3, "AbsTime":"2024-10-16 0:16"}
+15:09:41.060 -> Packet send duration: 223 ms
+15:09:41.092 -> Expected Delay: 0.13 ms, Actual Delay: 302 ms
+15:09:41.124 -> Sending CAN packet: {"Time":0.35435, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["dc", "08", "c0", "08", "57", "0b", "a6", "09", "07", "0d", "a0", "0d", "b7", "01", "ff", "0f"], "Counter":4, "AbsTime":"2024-10-16 0:16"}
+15:09:41.381 -> Packet send duration: 247 ms
+15:09:41.413 -> Expected Delay: 0.83 ms, Actual Delay: 302 ms
+15:09:41.445 -> Sending CAN packet: {"Time":0.35552, "Channel":2, "ID":6, "Flags":"196610", "DLC":10, "Data":["47", "f3", "4d", "3f", "5b", "9c", "45", "3f", "36", "85", "86", "3f"], "Counter":5, "AbsTime":"2024-10-16 0:16"}
+15:09:41.670 -> Packet send duration: 220 ms
+15:09:41.702 -> Expected Delay: 1.17 ms, Actual Delay: 326 ms
+15:09:41.766 -> Sending CAN packet: {"Time":0.35634, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45"], "Counter":6, "AbsTime":"2024-10-16 0:16"}
+15:09:41.990 -> Packet send duration: 221 ms
+15:09:42.022 -> Expected Delay: 0.82 ms, Actual Delay: 300 ms
+15:09:42.054 -> Sending CAN packet: {"Time":0.35835, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["de", "08", "c1", "08", "57", "0b", "a6", "09", "08", "0d", "a0", "0d", "b8", "01", "ff", "0f"], "Counter":7, "AbsTime":"2024-10-16 0:16"}
+15:09:42.311 -> Packet send duration: 247 ms
+15:09:42.344 -> Expected Delay: 2.01 ms, Actual Delay: 300 ms
+15:09:42.375 -> Sending CAN packet: {"Time":0.36158, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":8, "AbsTime":"2024-10-16 0:16"}
+15:09:42.535 -> Packet send duration: 157 ms
+15:09:42.567 -> Expected Delay: 3.23 ms, Actual Delay: 326 ms
+15:09:42.632 -> Sending CAN packet: {"Time":0.36235, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["df", "08", "c1", "08", "57", "0b", "a7", "09", "06", "0d", "a1", "0d", "b7", "01", "ff", "0f"], "Counter":9, "AbsTime":"2024-10-16 0:16"}
+15:09:42.856 -> Packet send duration: 246 ms
+15:09:42.888 -> Expected Delay: 0.77 ms, Actual Delay: 237 ms
+15:09:42.952 -> Sending CAN packet: {"Time":0.36439, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["f3", "03", "00", "64", "42", "04", "41", "1c", "18", "45", "6f", "06", "02", "ad", "05", "c4"], "Counter":10, "AbsTime":"2024-10-16 0:16"}
+15:09:43.208 -> Packet send duration: 248 ms
+15:09:43.240 -> Expected Delay: 2.04 ms, Actual Delay: 326 ms
+15:09:43.273 -> Sending CAN packet: {"Time":0.36452, "Channel":2, "ID":1553, "Flags":"196610", "DLC":11, "Data":["47", "f7", "09", "28", "d8", "03", "6e", "d0", "08", "b9", "15", "08", "b1", "43", "07", "f2"], "Counter":11, "AbsTime":"2024-10-16 0:16"}
+15:09:43.529 -> Packet send duration: 248 ms
+15:09:43.561 -> Expected Delay: 0.13 ms, Actual Delay: 328 ms
+15:09:43.593 -> Sending CAN packet: {"Time":0.36635, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["de", "08", "c1", "08", "57", "0b", "a7", "09", "07", "0d", "9e", "0d", "b7", "01", "ff", "0f"], "Counter":12, "AbsTime":"2024-10-16 0:16"}
+15:09:43.851 -> Packet send duration: 247 ms
+15:09:43.881 -> Expected Delay: 1.83 ms, Actual Delay: 328 ms
+15:09:43.913 -> Sending CAN packet: {"Time":0.36646, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45"], "Counter":13, "AbsTime":"2024-10-16 0:16"}
+15:09:44.137 -> Packet send duration: 221 ms
+15:09:44.171 -> Expected Delay: 0.11 ms, Actual Delay: 328 ms
+15:09:44.235 -> Sending CAN packet: {"Time":0.36751, "Channel":2, "ID":6, "Flags":"196610", "DLC":10, "Data":["19", "50", "4e", "3f", "c4", "ca", "45", "3f", "36", "85", "86", "3f"], "Counter":14, "AbsTime":"2024-10-16 0:16"}
+15:09:44.459 -> Packet send duration: 220 ms
+15:09:44.491 -> Expected Delay: 1.05 ms, Actual Delay: 301 ms
+15:09:44.523 -> Sending CAN packet: {"Time":0.37035, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["de", "08", "c2", "08", "58", "0b", "a8", "09", "06", "0d", "a1", "0d", "b7", "01", "ff", "0f"], "Counter":15, "AbsTime":"2024-10-16 0:16"}
+15:09:44.779 -> Packet send duration: 247 ms
+15:09:44.811 -> Expected Delay: 2.84 ms, Actual Delay: 300 ms
+15:09:44.843 -> Sending CAN packet: {"Time":0.37358, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":16, "AbsTime":"2024-10-16 0:16"}
+15:09:45.004 -> Packet send duration: 158 ms
+15:09:45.036 -> Expected Delay: 3.23 ms, Actual Delay: 327 ms
+15:09:45.100 -> Sending CAN packet: {"Time":0.37435, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e0", "08", "c1", "08", "57", "0b", "a7", "09", "07", "0d", "a1", "0d", "b7", "01", "ff", "0f"], "Counter":17, "AbsTime":"2024-10-16 0:16"}
+15:09:45.357 -> Packet send duration: 247 ms
+15:09:45.389 -> Expected Delay: 0.77 ms, Actual Delay: 238 ms
+15:09:45.421 -> Sending CAN packet: {"Time":0.37539, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["5d", "05", "00", "3b", "47", "04", "97", "45", "18", "bb", "6e", "06", "ed", "a2", "05", "3c"], "Counter":18, "AbsTime":"2024-10-16 0:16"}
+15:09:45.676 -> Packet send duration: 248 ms
+15:09:45.709 -> Expected Delay: 1.04 ms, Actual Delay: 327 ms
+15:09:45.741 -> Sending CAN packet: {"Time":0.37552, "Channel":2, "ID":1553, "Flags":"196610", "DLC":11, "Data":["51", "f7", "09", "ed", "d3", "03", "5c", "cf", "08", "97", "17", "8", "7a", "43", "07", "7a", "5d", "8", "0", "0"], "Counter":19, "AbsTime":"2024-10-16 0:16"}
+15:09:46.030 -> Packet send duration: 269 ms
+15:09:46.062 -> Expected Delay: 0.13 ms, Actual Delay: 328 ms
+15:09:46.094 -> Sending CAN packet: {"Time":0.37634, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45", "0", "0", "0", "0"], "Counter":20, "AbsTime":"2024-10-16 0:16"}
+15:09:46.351 -> Packet send duration: 243 ms
+15:09:46.383 -> Expected Delay: 0.82 ms, Actual Delay: 349 ms
+15:09:46.415 -> Sending CAN packet: {"Time":0.37834, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e0", "08", "c1", "08", "57", "0b", "a6", "09", "08", "0d", "a1", "0d", "b7", "01", "ff", "0f"], "Counter":21, "AbsTime":"2024-10-16 0:16"}
+15:09:46.672 -> Packet send duration: 247 ms
+15:09:46.704 -> Expected Delay: 2.00 ms, Actual Delay: 323 ms
+15:09:46.735 -> Sending CAN packet: {"Time":0.37951, "Channel":2, "ID":6, "Flags":"196610", "DLC":10, "Data":["b0", "21", "4e", "3f", "5b", "9c", "45", "3f", "9f", "b3", "86", "3f", "0", "0", "0", "0"], "Counter":22, "AbsTime":"2024-10-16 0:16"}
+15:09:46.992 -> Packet send duration: 241 ms
+15:09:47.024 -> Expected Delay: 1.17 ms, Actual Delay: 327 ms
+15:09:47.056 -> Sending CAN packet: {"Time":0.38235, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["df", "08", "c3", "08", "58", "0b", "a6", "09", "07", "0d", "a0", "0d", "b7", "01", "ff", "0f"], "Counter":23, "AbsTime":"2024-10-16 0:16"}
+15:09:47.312 -> Packet send duration: 247 ms
+15:09:47.344 -> Expected Delay: 2.84 ms, Actual Delay: 321 ms
+15:09:47.408 -> Sending CAN packet: {"Time":0.38556, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":24, "AbsTime":"2024-10-16 0:16"}
+15:09:47.569 -> Packet send duration: 158 ms
+15:09:47.601 -> Expected Delay: 3.21 ms, Actual Delay: 327 ms
+15:09:47.633 -> Sending CAN packet: {"Time":0.38635, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["df", "08", "c2", "08", "57", "0b", "a8", "09", "08", "0d", "a0", "0d", "b7", "01", "ff", "0f"], "Counter":25, "AbsTime":"2024-10-16 0:16"}
+15:09:47.889 -> Packet send duration: 248 ms
+15:09:47.921 -> Expected Delay: 0.79 ms, Actual Delay: 237 ms
+15:09:47.953 -> Sending CAN packet: {"Time":0.38646, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45", "0", "0", "0", "0"], "Counter":26, "AbsTime":"2024-10-16 0:16"}
+15:09:48.209 -> Packet send duration: 244 ms
+15:09:48.241 -> Expected Delay: 0.11 ms, Actual Delay: 327 ms
+15:09:48.274 -> Sending CAN packet: {"Time":0.3866, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["60", "05", "00", "e0", "42", "04", "d4", "6e", "18", "90", "72", "06", "38", "a5", "05", "04", "b1", "0c", "0", "0"], "Counter":27, "AbsTime":"2024-10-16 0:16"}
+15:09:48.563 -> Packet send duration: 269 ms
+15:09:48.595 -> Expected Delay: 0.14 ms, Actual Delay: 324 ms
+15:09:48.627 -> Sending CAN packet: {"Time":0.39035, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e0", "08", "c2", "08", "57", "0b", "a6", "09", "07", "0d", "a0", "0d", "b8", "01", "ff", "0f"], "Counter":28, "AbsTime":"2024-10-16 0:16"}
+15:09:48.884 -> Packet send duration: 248 ms
+15:09:48.916 -> Expected Delay: 3.75 ms, Actual Delay: 349 ms
+15:09:48.948 -> Sending CAN packet: {"Time":0.39149, "Channel":2, "ID":6, "Flags":"196610", "DLC":10, "Data":["19", "50", "4e", "3f", "5b", "9c", "45", "3f", "36", "85", "86", "3f", "0", "0", "0", "0"], "Counter":29, "AbsTime":"2024-10-16 0:16"}
+15:09:49.206 -> Packet send duration: 241 ms
+15:09:49.237 -> Expected Delay: 1.14 ms, Actual Delay: 327 ms
+15:09:49.270 -> Sending CAN packet: {"Time":0.39435, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e0", "08", "c2", "08", "56", "0b", "a6", "09", "07", "0d", "a0", "0d", "b7", "01", "ff", "0f"], "Counter":30, "AbsTime":"2024-10-16 0:16"}
+15:09:49.526 -> Packet send duration: 247 ms
+15:09:49.558 -> Expected Delay: 2.86 ms, Actual Delay: 321 ms
+15:09:49.623 -> Sending CAN packet: {"Time":0.39634, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45", "0", "0", "0", "0"], "Counter":31, "AbsTime":"2024-10-16 0:16"}
+15:09:49.847 -> Packet send duration: 243 ms
+15:09:49.880 -> Expected Delay: 1.99 ms, Actual Delay: 327 ms
+15:09:49.944 -> Sending CAN packet: {"Time":0.39739, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["37", "07", "00", "aa", "48", "04", "bc", "8d", "18", "55", "71", "06", "7d", "ab", "05", "04", "b1", "0c", "0", "0"], "Counter":32, "AbsTime":"2024-10-16 0:16"}
+15:09:50.200 -> Packet send duration: 271 ms
+15:09:50.233 -> Expected Delay: 1.05 ms, Actual Delay: 323 ms
+15:09:50.297 -> Sending CAN packet: {"Time":0.39752, "Channel":2, "ID":1553, "Flags":"196610", "DLC":11, "Data":["54", "f9", "09", "95", "d6", "03", "8e", "d1", "08", "08", "24", "08", "c6", "42", "07", "7a", "5d", "08", "0", "0"], "Counter":33, "AbsTime":"2024-10-16 0:16"}
+15:09:50.554 -> Packet send duration: 271 ms
+15:09:50.588 -> Expected Delay: 0.13 ms, Actual Delay: 351 ms
+15:09:50.620 -> Sending CAN packet: {"Time":0.39755, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":34, "AbsTime":"2024-10-16 0:16"}
+15:09:50.780 -> Packet send duration: 158 ms
+15:09:50.812 -> Expected Delay: 0.03 ms, Actual Delay: 351 ms
+15:09:50.876 -> Sending CAN packet: {"Time":0.39834, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e0", "08", "c2", "08", "57", "0b", "a7", "09", "08", "0d", "a0", "0d", "b9", "01", "ff", "0f"], "Counter":35, "AbsTime":"2024-10-16 0:16"}
+15:09:51.134 -> Packet send duration: 247 ms
+15:09:51.134 -> Expected Delay: 0.79 ms, Actual Delay: 238 ms
+15:09:51.198 -> Sending CAN packet: {"Time":0.40234, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e1", "08", "c5", "08", "57", "0b", "a8", "09", "09", "0d", "a1", "0d", "b7", "01", "ff", "0f"], "Counter":36, "AbsTime":"2024-10-16 0:16"}
+15:09:51.455 -> Packet send duration: 247 ms
+15:09:51.487 -> Expected Delay: 4.00 ms, Actual Delay: 327 ms
+15:09:51.519 -> Sending CAN packet: {"Time":0.40348, "Channel":2, "ID":6, "Flags":"196610", "DLC":10, "Data":["b0", "21", "4e", "3f", "c4", "ca", "45", "3f", "9f", "b3", "86", "3f", "00", "00", "00", "00"], "Counter":37, "AbsTime":"2024-10-16 0:16"}
+15:09:52.085 -> Packet send duration: 695 ms
+15:09:52.107 -> Expected Delay: 1.14 ms, Actual Delay: 327 ms
+15:09:52.180 -> Sending CAN packet: {"Time":0.40635, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e0", "08", "c3", "08", "58", "0b", "a6", "09", "06", "0d", "a1", "0d", "b9", "01", "ff", "0f"], "Counter":38, "AbsTime":"2024-10-16 0:16"}
+15:09:52.466 -> Packet send duration: 194 ms
+15:09:52.466 -> Expected Delay: 2.87 ms, Actual Delay: 696 ms
+15:09:52.498 -> Sending CAN packet: {"Time":0.40646, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45", "00", "00", "00", "00"], "Counter":39, "AbsTime":"2024-10-16 0:16"}
+15:09:52.754 -> Packet send duration: 247 ms
+15:09:52.794 -> Expected Delay: 0.11 ms, Actual Delay: 274 ms
+15:09:52.818 -> Sending CAN packet: {"Time":0.40839, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["5d", "05", "00", "63", "47", "04", "3c", "b7", "18", "69", "70", "06", "4f", "a5", "05", "3b", "b4", "0c", "00", "00"], "Counter":40, "AbsTime":"2024-10-16 0:16"}
+15:09:53.105 -> Packet send duration: 273 ms
+15:09:53.138 -> Expected Delay: 1.93 ms, Actual Delay: 327 ms
+15:09:53.170 -> Sending CAN packet: {"Time":0.40852, "Channel":2, "ID":1553, "Flags":"196610", "DLC":11, "Data":["6f", "fd", "09", "87", "d3", "03", "bb", "d1", "08", "cf", "1f", "08", "75", "43", "07", "86", "63", "08", "00", "00"], "Counter":41, "AbsTime":"2024-10-16 0:16"}
+15:09:53.457 -> Packet send duration: 273 ms
+15:09:53.490 -> Expected Delay: 0.13 ms, Actual Delay: 353 ms
+15:09:53.523 -> Sending CAN packet: {"Time":0.40955, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":42, "AbsTime":"2024-10-16 0:16"}
+15:09:53.683 -> Packet send duration: 157 ms
+15:09:53.715 -> Expected Delay: 1.03 ms, Actual Delay: 353 ms
+15:09:53.779 -> Sending CAN packet: {"Time":0.41035, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e2", "08", "c4", "08", "59", "0b", "a6", "09", "09", "0d", "a1", "0d", "b8", "01", "ff", "0f"], "Counter":43, "AbsTime":"2024-10-16 0:16"}
+15:09:54.003 -> Packet send duration: 247 ms
+15:09:54.035 -> Expected Delay: 0.80 ms, Actual Delay: 237 ms
+15:09:54.099 -> Sending CAN packet: {"Time":0.41435, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e1", "08", "c4", "08", "57", "0b", "a7", "09", "07", "0d", "a0", "0d", "b8", "01", "ff", "0f"], "Counter":44, "AbsTime":"2024-10-16 0:16"}
+15:09:54.355 -> Packet send duration: 247 ms
+15:09:54.387 -> Expected Delay: 4.00 ms, Actual Delay: 327 ms
+15:09:54.419 -> Sending CAN packet: {"Time":0.41548, "Channel":2, "ID":6, "Flags":"196610", "DLC":10, "Data":["b0", "21", "4e", "3f", "5b", "9c", "45", "3f", "36", "85", "86", "3f", "00", "00", "00", "00"], "Counter":45, "AbsTime":"2024-10-16 0:16"}
+15:09:54.675 -> Packet send duration: 245 ms
+15:09:54.708 -> Expected Delay: 1.13 ms, Actual Delay: 327 ms
+15:09:54.740 -> Sending CAN packet: {"Time":0.41634, "Channel":2, "ID":101, "Flags":"196610", "DLC":10, "Data":["06", "69", "8d", "46", "31", "45", "1e", "46", "6e", "a8", "87", "45", "00", "00", "00", "00"], "Counter":46, "AbsTime":"2024-10-16 0:16"}
+15:09:55.006 -> Packet send duration: 247 ms
+15:09:55.038 -> Expected Delay: 0.86 ms, Actual Delay: 326 ms
+15:09:55.070 -> Sending CAN packet: {"Time":0.41835, "Channel":2, "ID":259, "Flags":"196610", "DLC":10, "Data":["e1", "08", "c4", "08", "57", "0b", "a7", "09", "07", "0d", "a1", "0d", "b8", "01", "ff", "0f"], "Counter":47, "AbsTime":"2024-10-16 0:16"}
+15:09:55.328 -> Packet send duration: 247 ms
+15:09:55.359 -> Expected Delay: 2.01 ms, Actual Delay: 327 ms
+15:09:55.392 -> Sending CAN packet: {"Time":0.41939, "Channel":2, "ID":1552, "Flags":"196610", "DLC":11, "Data":["42", "02", "00", "05", "47", "04", "90", "dc", "18", "0d", "70", "06", "21", "a7", "05", "22", "b3", "0c", "00", "00"], "Counter":48, "AbsTime":"2024-10-16 0:16"}
+15:09:55.680 -> Packet send duration: 273 ms
+15:09:55.712 -> Expected Delay: 1.04 ms, Actual Delay: 327 ms
+15:09:55.744 -> Sending CAN packet: {"Time":0.41952, "Channel":2, "ID":1553, "Flags":"196610", "DLC":11, "Data":["95", "fe", "09", "e9", "d4", "03", "e6", "d1", "08", "6c", "2a", "08", "fc", "44", "07", "ce", "64", "08", "00", "00"], "Counter":49, "AbsTime":"2024-10-16 0:16"}
+15:09:56.032 -> Packet send duration: 273 ms
+15:09:56.064 -> Expected Delay: 0.13 ms, Actual Delay: 353 ms
+15:09:56.096 -> Sending CAN packet: {"Time":0.42154, "Channel":1, "ID":513, "Flags":2, "DLC":3, "Data":["90", "00", "00"], "Counter":50, "AbsTime":"2024-10-16 0:16"}
+15:09:56.257 -> Packet send duration: 158 ms
+15:09:56.289 -> Expected Delay: 2.02 ms, Actual Delay: 353 ms
+15:09:56.354 -> End of CAN data snapshot. Restarting...
