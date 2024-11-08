@@ -1,0 +1,1026 @@
+C:\Users\pc\AppData\Local\Programs\Python\Python312\python.exe C:/Users/pc/Downloads/can_receive.py
+Connected to MQTT Broker!
+C:\Users\pc\Downloads\can_receive.py:66: DeprecationWarning: Callback API version 1 is deprecated, update to latest version
+  client = mqtt.Client()
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:15.820105 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+First packet received, no previous delay to compare.
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:16.054306 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 234.20 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:16.327040 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 272.73 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:16.656322 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 329.28 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:17.034646 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 378.32 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:17.212299 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 177.65 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:17.557094 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 344.80 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:18.235176 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 678.08 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:18.561455 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 326.28 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:20.266417 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 1704.96 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:20.337979 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 71.56 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:20.337979 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:20.537650 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 199.67 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:20.779357 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 241.71 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:21.125153 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 345.80 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:21.429915 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 304.76 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:21.768205 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 338.29 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:22.723023 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 954.82 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:23.046801 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 323.78 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:23.430630 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 383.83 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:23.710870 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 280.24 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:24.063173 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 352.30 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:24.358426 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 295.25 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:25.287722 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 929.30 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:25.577471 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 289.75 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:25.887736 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 310.26 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:26.199504 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 311.77 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:26.508769 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 309.26 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:26.820036 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 311.27 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:27.133305 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 313.27 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:28.848275 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 1714.97 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:28.848275 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:28.848275 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:28.848275 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:28.925341 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 77.07 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:29.052950 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 127.61 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:29.358713 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 305.76 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:29.711015 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 352.30 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:29.990254 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 279.24 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:30.288009 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 297.75 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:30.546231 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 258.22 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:30.900034 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 353.80 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:31.565605 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 665.57 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:31.949434 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 383.83 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:32.216663 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 267.23 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:32.542943 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 326.28 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:32.798161 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 255.22 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:33.109929 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 311.77 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:33.428202 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 318.27 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:34.085765 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 657.56 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:34.437067 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 351.30 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:34.765348 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 328.28 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:35.068608 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 303.26 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:35.995403 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 926.80 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:36.331691 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 336.29 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:36.647962 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 316.27 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:36.975243 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 327.28 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:37.299521 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 324.28 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:37.649821 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 350.30 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:38.590127 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 940.31 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:38.958943 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 368.82 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:39.300236 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 341.29 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:39.569467 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 269.23 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:39.930777 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 361.31 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:40.214020 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 283.24 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:41.163333 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 949.31 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:41.442573 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 279.24 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:41.744332 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 301.76 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:42.102639 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 358.31 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:42.393888 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 291.25 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:42.665121 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 271.23 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:42.976388 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 311.27 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:43.287155 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 310.77 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:43.527360 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 240.21 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:43.884166 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 356.81 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:44.184924 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 300.76 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:44.538227 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 353.30 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:44.840986 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 302.76 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:45.145247 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 304.26 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:45.467524 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 322.28 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:45.768782 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 301.26 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:46.058530 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 289.75 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:46.345276 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 286.75 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:46.664050 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 318.77 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:47.354642 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 690.59 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:47.658402 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 303.76 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:48.002197 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 343.80 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:48.322472 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 320.27 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:48.549666 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 227.19 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:48.919984 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 370.32 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:49.246764 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 326.78 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:49.882809 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 636.04 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:50.213593 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 330.78 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:50.574902 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 361.31 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:50.939215 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 364.31 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:51.793948 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 854.73 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:52.102713 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 308.76 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:52.438501 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 335.79 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:52.773287 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 334.79 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:53.088558 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 315.27 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:53.424846 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 336.29 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:54.365152 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 940.31 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:56.190217 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 1825.06 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:56.190217 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:56.190217 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:56.190217 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:56.193219 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 3.00 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:57.013923 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 820.70 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:57.308175 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 294.25 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:58.766926 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 1458.75 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:58.767427 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 0.50 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:58.767427 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:58.772431 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 5.00 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:58.838487 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 66.06 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:59.154759 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 316.27 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:26:59.377950 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 223.19 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:00.821688 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 1443.74 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:00.821688 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:00.821688 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:00.831696 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 10.01 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:00.998339 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 166.64 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:01.302600 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 304.26 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:01.631382 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 328.78 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:01.900112 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 268.73 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:02.217885 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 317.77 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:02.518142 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 300.26 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:03.253273 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 735.13 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:03.514997 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 261.72 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:03.847782 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 332.79 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:04.173061 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 325.28 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:04.411766 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 238.71 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:04.772575 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 360.81 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:05.105861 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 333.29 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:05.732398 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 626.54 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:06.081698 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 349.30 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:06.404975 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 323.28 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:06.711738 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 306.76 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:07.656548 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 944.81 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:07.983828 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 327.28 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:08.306605 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 322.78 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:08.615870 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 309.26 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:08.970174 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 354.30 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:09.274935 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 304.76 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:10.238261 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 963.33 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:10.554032 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 315.77 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:10.884816 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 330.78 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:11.214098 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 329.28 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:11.524864 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 310.77 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:11.853646 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 328.78 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:12.803961 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 950.32 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:13.077696 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 273.74 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:13.379454 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 301.76 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:13.708737 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 329.28 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:14.067044 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 358.31 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:14.307750 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 240.71 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:14.615013 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 307.26 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:14.936790 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 321.78 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:15.216529 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 279.74 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:15.504276 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 287.75 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:15.823550 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 319.27 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:16.166344 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 342.79 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:16.495126 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 328.78 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:16.808894 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 313.77 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:17.086633 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 277.74 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:17.408909 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 322.28 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:17.665629 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 256.72 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:17.977396 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 311.77 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:18.301174 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 323.78 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:18.976753 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 675.58 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:19.306536 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 329.78 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:19.637320 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 330.78 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:19.950588 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 313.27 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:20.192295 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 241.71 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:21.974824 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 1782.53 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:22.162985 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 188.16 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:22.163485 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 0.50 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:22.215530 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 52.05 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:22.215530 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:22.499774 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 284.24 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:23.420063 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 920.29 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:23.768862 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 348.80 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:24.079628 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 310.77 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:24.412414 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 332.79 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:24.738693 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 326.28 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:25.069977 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 331.28 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:26.005780 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 935.80 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:26.329057 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 323.28 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:26.680358 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 351.30 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:27.052177 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 371.82 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:27.313901 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 261.72 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:27.644685 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 330.78 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:28.629029 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 984.34 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:28.888751 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 259.72 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:29.161485 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 272.73 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:29.463244 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 301.76 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:29.787021 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 323.78 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:30.085778 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 298.76 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:30.473610 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 387.83 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:30.714317 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 240.71 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:30.980545 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 266.23 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:31.267291 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 286.75 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:31.601577 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 334.29 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:31.930860 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 329.28 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:32.254637 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 323.78 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:32.566905 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 312.27 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:32.856653 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 289.75 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:33.191941 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 335.29 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:33.436651 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 244.71 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:33.768435 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 331.78 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:34.079702 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 311.27 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:34.764289 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 684.59 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:35.742628 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 978.34 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:35.742628 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:35.805182 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 62.55 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:35.961315 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 156.13 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:36.297603 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 336.29 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:36.633891 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 336.29 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:37.289954 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 656.06 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:37.697804 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 407.85 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:37.963031 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 265.23 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:38.269794 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 306.76 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:39.304682 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 1034.89 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:39.566406 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 261.72 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:39.887181 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 320.77 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:40.205954 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 318.77 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:40.546246 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 340.29 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:40.835994 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 289.75 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:41.783807 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 947.81 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:42.132106 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 348.30 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:42.504925 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 372.82 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:42.768651 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 263.73 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:43.088926 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 320.27 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:43.401194 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 312.27 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:44.421569 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 1020.38 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:44.625744 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 204.17 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:44.958029 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 332.29 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:45.243774 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 285.75 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:45.569553 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 325.78 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:45.862804 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 293.25 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:46.161060 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 298.26 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:46.536882 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 375.82 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:46.762576 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 225.69 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:47.080849 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 318.27 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:47.421140 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 340.29 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:47.700380 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 279.24 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:48.038670 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 338.29 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:48.345433 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 306.76 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:48.638184 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 292.75 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:49.089571 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 451.39 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:49.261718 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 172.15 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:49.569482 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 307.76 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:49.879748 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 310.27 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:50.560332 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 680.58 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:51.509646 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 949.31 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:51.509646 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:51.593217 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 83.57 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:51.754356 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 161.14 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:52.075631 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 321.27 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:52.411419 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 335.79 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:53.082995 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 671.58 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:53.384753 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 301.76 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:53.758574 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 373.82 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:54.155414 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 396.84 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:54.974116 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 818.70 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:55.327919 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 353.80 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:55.677219 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 349.30 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:55.965466 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 288.25 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:56.277233 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 311.77 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:56.615023 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 337.79 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:57.556330 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 941.31 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:57.901126 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 344.80 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:59.582567 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 1681.44 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:59.582567 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:59.582567 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:27:59.655630 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 73.06 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:00.146551 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 490.92 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:00.464323 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 317.77 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:01.402628 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 938.30 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:01.402628 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:01.471186 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 68.56 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:01.648338 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 177.15 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:02.056188 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 407.85 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:02.371458 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 315.27 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:02.526091 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 154.63 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:02.927436 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 401.35 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:03.161636 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 234.20 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:03.481410 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 319.77 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:03.853729 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 372.32 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:04.146980 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 293.25 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:04.405702 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 258.72 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:04.813552 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 407.85 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:04.982697 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 169.14 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:05.303972 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 321.27 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:05.670286 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 366.31 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:06.314839 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 644.55 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:06.635614 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 320.77 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:06.943879 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 308.26 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:07.275162 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 331.28 ms
+Received packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:07.538388 - Packet: {'Time': 0.38556, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 24, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.21 ms, Actual delay: 263.23 ms
+Received packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:07.852157 - Packet: {'Time': 0.38635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c2', '08', '57', '0b', 'a8', '09', '08', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 25, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 313.77 ms
+Received packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:08.178437 - Packet: {'Time': 0.38646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 26, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 326.28 ms
+Received packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:08.872032 - Packet: {'Time': 0.39035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 28, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.89 ms, Actual delay: 693.59 ms
+Received packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:09.190805 - Packet: {'Time': 0.39149, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '0', '0', '0', '0'], 'Counter': 29, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 318.77 ms
+Received packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:09.504073 - Packet: {'Time': 0.39435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '56', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 30, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.86 ms, Actual delay: 313.27 ms
+Received packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:09.885400 - Packet: {'Time': 0.39634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 31, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.99 ms, Actual delay: 381.33 ms
+Received packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:10.793679 - Packet: {'Time': 0.39755, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 34, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.21 ms, Actual delay: 908.28 ms
+Received packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:16.399485 - Packet: {'Time': 0.39834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c2', '08', '57', '0b', 'a7', '09', '08', '0d', 'a0', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 35, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.79 ms, Actual delay: 5605.81 ms
+Received packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:17.166143 - Packet: {'Time': 0.40234, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c5', '08', '57', '0b', 'a8', '09', '09', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 36, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 766.66 ms
+Received packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:17.166643 - Packet: {'Time': 0.40348, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', 'c4', 'ca', '45', '3f', '9f', 'b3', '86', '3f', '00', '00', '00', '00'], 'Counter': 37, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.14 ms, Actual delay: 0.50 ms
+Received packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:17.166643 - Packet: {'Time': 0.40635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c3', '08', '58', '0b', 'a6', '09', '06', '0d', 'a1', '0d', 'b9', '01', 'ff', '0f'], 'Counter': 38, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.87 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:18.047398 - Packet: {'Time': 0.40646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 39, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 880.75 ms
+Received packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:18.809552 - Packet: {'Time': 0.40955, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 42, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.09 ms, Actual delay: 762.15 ms
+Received packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:18.809552 - Packet: {'Time': 0.41035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e2', '08', 'c4', '08', '59', '0b', 'a6', '09', '09', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 43, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.80 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:19.450601 - Packet: {'Time': 0.41435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 44, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 4.00 ms, Actual delay: 641.05 ms
+Received packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:19.450601 - Packet: {'Time': 0.41548, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f', '00', '00', '00', '00'], 'Counter': 45, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.13 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:20.292323 - Packet: {'Time': 0.41634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '00', '00', '00', '00'], 'Counter': 46, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.86 ms, Actual delay: 841.72 ms
+Received packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:20.292323 - Packet: {'Time': 0.41835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e1', '08', 'c4', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 47, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.001288 - Packet: {'Time': 0.42154, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 50, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.19 ms, Actual delay: 1708.97 ms
+Received packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.001288 - Packet: {'Time': 0.34959, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 1, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: -71.95 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.001288 - Packet: {'Time': 0.35339, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['00', '03', '00', 'c8', '43', '04', '41', 'f7', '17', '1b', '70', '06'], 'Counter': 2, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.80 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.298042 - Packet: {'Time': 0.35352, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['c9', 'f9', '09', '2f', 'd5', '03', '62', 'ca', '08', 'e0', '11', '08'], 'Counter': 3, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 296.75 ms
+Received packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.517230 - Packet: {'Time': 0.35435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['dc', '08', 'c0', '08', '57', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 4, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.83 ms, Actual delay: 219.19 ms
+Received packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.517230 - Packet: {'Time': 0.35552, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['47', 'f3', '4d', '3f', '5b', '9c', '45', '3f', '36', '85', '86', '3f'], 'Counter': 5, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:22.598194 - Packet: {'Time': 0.35634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 6, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.82 ms, Actual delay: 80.96 ms
+Received packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:23.545612 - Packet: {'Time': 0.35835, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a0', '0d', 'b8', '01', 'ff', '0f'], 'Counter': 7, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.01 ms, Actual delay: 947.42 ms
+Received packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:24.542467 - Packet: {'Time': 0.36158, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 8, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 996.86 ms
+Received packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:24.542467 - Packet: {'Time': 0.36235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c1', '08', '57', '0b', 'a7', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 9, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:25.065916 - Packet: {'Time': 0.36439, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['f3', '03', '00', '64', '42', '04', '41', '1c', '18', '45', '6f', '06', '02', 'ad', '05', 'c4'], 'Counter': 10, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.04 ms, Actual delay: 523.45 ms
+Received packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:25.065916 - Packet: {'Time': 0.36452, 'Channel': 2, 'ID': 1553, 'Flags': '196610', 'DLC': 11, 'Data': ['47', 'f7', '09', '28', 'd8', '03', '6e', 'd0', '08', 'b9', '15', '08', 'b1', '43', '07', 'f2'], 'Counter': 11, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.13 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:25.919648 - Packet: {'Time': 0.36635, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', '9e', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 12, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.83 ms, Actual delay: 853.73 ms
+Received packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:25.919648 - Packet: {'Time': 0.36646, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45'], 'Counter': 13, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.11 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:26.741352 - Packet: {'Time': 0.36751, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['19', '50', '4e', '3f', 'c4', 'ca', '45', '3f', '36', '85', '86', '3f'], 'Counter': 14, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.05 ms, Actual delay: 821.70 ms
+Received packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:26.741352 - Packet: {'Time': 0.37035, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['de', '08', 'c2', '08', '58', '0b', 'a8', '09', '06', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 15, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:26.741352 - Packet: {'Time': 0.37358, 'Channel': 1, 'ID': 513, 'Flags': 2, 'DLC': 3, 'Data': ['90', '00', '00'], 'Counter': 16, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 3.23 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:27.528027 - Packet: {'Time': 0.37435, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a7', '09', '07', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 17, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.77 ms, Actual delay: 786.68 ms
+Received packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:27.528027 - Packet: {'Time': 0.37539, 'Channel': 2, 'ID': 1552, 'Flags': '196610', 'DLC': 11, 'Data': ['5d', '05', '00', '3b', '47', '04', '97', '45', '18', 'bb', '6e', '06', 'ed', 'a2', '05', '3c'], 'Counter': 18, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.04 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:34.580573 - Packet: {'Time': 0.37634, 'Channel': 2, 'ID': 101, 'Flags': '196610', 'DLC': 10, 'Data': ['06', '69', '8d', '46', '31', '45', '1e', '46', '6e', 'a8', '87', '45', '0', '0', '0', '0'], 'Counter': 20, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 0.95 ms, Actual delay: 7052.55 ms
+Received packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:34.580573 - Packet: {'Time': 0.37834, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['e0', '08', 'c1', '08', '57', '0b', 'a6', '09', '08', '0d', 'a1', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 21, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.00 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:34.580573 - Packet: {'Time': 0.37951, 'Channel': 2, 'ID': 6, 'Flags': '196610', 'DLC': 10, 'Data': ['b0', '21', '4e', '3f', '5b', '9c', '45', '3f', '9f', 'b3', '86', '3f', '0', '0', '0', '0'], 'Counter': 22, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 1.17 ms, Actual delay: 0.00 ms
+Received packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Timestamp: 2024-11-05 15:28:34.581074 - Packet: {'Time': 0.38235, 'Channel': 2, 'ID': 259, 'Flags': '196610', 'DLC': 10, 'Data': ['df', '08', 'c3', '08', '58', '0b', 'a6', '09', '07', '0d', 'a0', '0d', 'b7', '01', 'ff', '0f'], 'Counter': 23, 'AbsTime': '2024-10-16 0:16'}
+Expected delay: 2.84 ms, Actual delay: 0.50 ms
+
+Process finished with exit code 1
