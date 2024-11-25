@@ -1,110 +1,114 @@
-import React, { useEffect, useState } from 'react';
-import Papa from 'papaparse';
-import { Line } from 'react-chartjs-2';
-import Data from '../testdata/faketest.csv';
+import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import Papa from "papaparse";
 import {
   Chart as ChartJS,
-  LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 
 ChartJS.register(
-  LineElement, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  Title, 
-  Tooltip, 
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
   Legend
 );
 
-function LineChart() {
-  const [chartData, setChartData] = useState({
-      datasets: []
-  });
-  const [chartOptions, setChartOptions] = useState({})
-  
+const LineGraph = () => {
+  const [chartData, setChartData] = useState(null);
+
   useEffect(() => {
-    Papa.parse(Data, {
-      download: true,
-      header: true,
-      dynamicTyping: true,
-      delimiter: "",
-      complete: ((result) => {
-        console.log(result); // Log parsed data to verify
-        setChartData({
+    const fetchData = async () => {
+      const response = await fetch("/data.csv");
+      const csvData = await response.text();
 
-          labels: result.data.map((item, index) => [item[' "Time"']]).filter( String ),
-          
-          datasets: [
-            {
-              label: "test",
-              data: result.data.map((item, index) => [item[' "Channel"']]).filter( Number ),
-              fill: false,
-              borderColor: 'red',
-              tension: 0.1,
-            },
-            
-          ],
-        });
+      Papa.parse(csvData, {
+        header: true,
+        skipEmptyLines: true,
+        dynamicTyping: true,
+        complete: (results) => {
+          console.log("Parsed Data:", results.data); // Debug parsed data
+          const labels = [];
+          const leftPotData = [];
+          const rightPotData = [];
 
-        setChartOptions({
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-              display: true,
-            },
-            title: {
-              display: true,
-              text: "Channel Data"
-            }
-          },
+          results.data.forEach((row) => {
+            labels.push(row.Time);
+            leftPotData.push(row["Left Pot"]);
+            rightPotData.push(row["Right Pot"]);
+          });
 
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: 'Time (seconds)',
+          setChartData({
+            labels,
+            datasets: [
+              {
+                label: "Left Pot",
+                data: leftPotData,
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 2,
+                fill: false,
               },
-            },
-
-            y: {
-              title: {
-                display: true,
-                text: 'Channel',
+              {
+                label: "Right Pot",
+                data: rightPotData,
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 2,
+                fill: false,
               },
-            },
-          },
+            ],
+          });
+        },
+      });
+    };
 
-        })
-      })
-    })
-  }, [])
-
-  console.log("Chart Data in Render:", chartData);
-
+    fetchData();
+  }, []);
 
   return (
     <div>
-    {
-        chartData.datasets.length > 0 ? (
-          <div style={{ width: '600px', margin: '0 auto' }}>
-            <Line options={chartOptions} data={chartData}/>
-          </div>
-        ) : (
-            <div>
-                Loading...
-                </div>
-        )
-    }
+      {chartData ? (
+        <Line
+          data={chartData}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Voltage Data Over Time",
+              },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Time (s)",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Voltage (V)",
+                },
+              },
+            },
+          }}
+        />
+      ) : (
+        <p>Loading chart...</p>
+      )}
     </div>
   );
 };
 
-export default LineChart;
+export default LineGraph;
