@@ -1,0 +1,8 @@
+setup:
+sudo tc qdisc add dev lo root handle 1: prio
+sudo tc qdisc add dev lo parent 1:1 handle 10: netem delay 200ms loss 95%
+sudo tc filter add dev lo protocol ip parent 1:0 prio 1 u32 match ip dport 9090 0xffff flowid 1:1
+
+clear rule:
+sudo tc qdisc del dev lo root
+
