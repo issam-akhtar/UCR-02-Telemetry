@@ -93,8 +93,7 @@ func promptYesNo(prompt string) bool {
 		}
 	}
 }
-
-// sendCSVFile reads the CSV file and sends its data row by row.
+// sendCSVFile reads the CSV file and sends its data in 8-byte chunks.
 func sendCSVFile(conn *websocket.Conn, fileName string) error {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -108,22 +107,32 @@ func sendCSVFile(conn *websocket.Conn, fileName string) error {
 
 	for scanner.Scan() {
 		row := scanner.Text()
-		fmt.Printf("Sending row %d: %s\n", rowIndex, row)
 
-		err = sendChunkWithAck(conn, row)
-		if err != nil {
-			log.Printf("Failed to send row %d: %s. Error: %v\n", rowIndex, row, err)
-			failedChunks++
-			if failedChunks >= ReconnectThreshold {
-				conn.Close()
-				conn, err = reconnect("ws://127.0.0.1:9090/ws")
-				if err != nil {
-					return fmt.Errorf("reconnection failed: %w", err)
-				}
-				failedChunks = 0 // Reset failure counter
+		// Split the row into 8-byte chunks
+		for i := 0; i < len(row); i += 8 {
+			end := i + 8
+			if end > len(row) {
+				end = len(row) // Handle the last chunk if it's smaller than 8 bytes
 			}
-		} else {
-			failedChunks = 0 // Reset failure counter on success
+
+			chunk := row[i:end]
+			fmt.Printf("Sending chunk from row %d: %s\n", rowIndex, chunk)
+
+			err = sendChunkWithAck(conn, chunk)
+			if err != nil {
+				log.Printf("Failed to send chunk from row %d: %s. Error: %v\n", rowIndex, chunk, err)
+				failedChunks++
+				if failedChunks >= ReconnectThreshold {
+					conn.Close()
+					conn, err = reconnect("ws://127.0.0.1:9090/ws")
+					if err != nil {
+						return fmt.Errorf("reconnection failed: %w", err)
+					}
+					failedChunks = 0 // Reset failure counter
+				}
+			} else {
+				failedChunks = 0 // Reset failure counter on success
+			}
 		}
 		rowIndex++
 	}
@@ -133,6 +142,7 @@ func sendCSVFile(conn *websocket.Conn, fileName string) error {
 	}
 	return nil
 }
+
 
 func main() {
 	serverAddr := "ws://127.0.0.1:9090/ws"
