@@ -1,0 +1,1 @@
+The backend-processing contains all the code that translates the hex data to human readable format based on the UCR-01 JSON in the configs/UCR-01.json file. The JSON file is generated using the DBC file in the same directory using a python script located in the scripts folder. Once the data is translated, it is then inserted into a PostgreSQL database.
