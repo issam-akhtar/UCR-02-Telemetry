@@ -52,7 +52,7 @@ function Footer() {
       </div>
 
         <div className="Footer-info">
-            <p className="Footer-text">&copy; 2024 UCalgary Racing Telemetry System. All rights reserved.</p>
+            <p className="Footer-text"> Developed by: Issam Akhtar, Gibran Akmal, Hamza Niaz, Awab Khurram, Mohamed El Naggar, and Bill Thai</p>
             <img src={UofCLogo} alt="University of Calgary Logo" className="UniLogo" />
         </div>
 

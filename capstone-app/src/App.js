@@ -6,7 +6,7 @@ import LandingPage from './pages/LandingPage';
 import ChartsPage from './pages/ChartsPage';
 import './App.css';
 import HeatMapPage from './pages/HeatMapPage';
-
+import TestPage from './pages/TestPage';
 function App() {
   return (
     <Router>
@@ -17,6 +17,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/charts" element={<ChartsPage />} />
             <Route path="/heatmaps" element={<HeatMapPage />} />
+            <Route path ="test"  element ={<TestPage />} />
           </Routes>
         </main>
         <Footer />

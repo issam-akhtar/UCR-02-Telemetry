@@ -151,3 +151,8 @@ html, body {
   flex-wrap: wrap; /* Allows wrapping if there are too many cards for one row */
   padding: 20px; /* Optional padding around the container */
 }
+
+.Car{
+  margin-top: 200px;
+  height: 25rem;
+}

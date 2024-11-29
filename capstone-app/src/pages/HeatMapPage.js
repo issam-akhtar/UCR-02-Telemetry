@@ -7,7 +7,6 @@ function HeatMapPage(){
         <div>
             <BatteryViewer/>
         </div>
-    
     );
 }
 

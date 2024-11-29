@@ -1,0 +1,11 @@
+Model Information:
+* title:	BMW M5™️
+* source:	https://sketchfab.com/3d-models/bmw-m5tm-44932284dd1949b9b681222a44b4927d
+* author:	DreamCar (https://sketchfab.com/user2142)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "BMW M5™️" (https://sketchfab.com/3d-models/bmw-m5tm-44932284dd1949b9b681222a44b4927d) by DreamCar (https://sketchfab.com/user2142) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
