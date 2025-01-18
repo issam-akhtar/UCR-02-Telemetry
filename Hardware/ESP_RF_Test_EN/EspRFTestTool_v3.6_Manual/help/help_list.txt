@@ -1,0 +1,8 @@
+[help]
+rf tool = ESP_RF_Test_Guide_EN.pdf
+download tool = DownloadTool_Instructions_EN.pdf
+powerlimit tool = ESP32-Series_PowerLimitTool_Instructions_EN.pdf
+rf test = ESP_RF_Test_Guide_EN.pdf
+fcc cer = FCC_Certification_Guide_EN.pdf
+ce cer = CE_Certification_Guide_EN.pdf
+srrc cer = SRRC_Certification_Guide_EN.pdf

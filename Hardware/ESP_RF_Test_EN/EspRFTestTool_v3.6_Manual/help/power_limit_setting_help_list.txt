@@ -1,0 +1,2 @@
+[help]
+powerlimit tool = ESP32-Series_PowerLimitTool_Instructions_EN.pdf
