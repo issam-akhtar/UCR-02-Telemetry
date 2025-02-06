@@ -10,3 +10,47 @@
 
 #logs
 .csv
+
+# Build directories
+**/build/
+**/build*
+**/managed_components/
+# CMake generated files
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Project specific
+# sdkconfig
+# sdkconfig.old
+
+# Compiled source files
+*.o
+*.obj
+*.elf
+*.bin
+*.hex
+*.map
+*.d
+
+# Backup and temporary files
+*~
+*.bak
+*.swp
+*.swo
+*.tmp
+
+# Logs
+*.log
+
+# IDE specific
+.vscode/
+.idea/
+*.code-workspace
+*.iml
+
+# Python virtual environment
+venv/
+__pycache__/
+*.py[cod]
