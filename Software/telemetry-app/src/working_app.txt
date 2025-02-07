@@ -1,0 +1,113 @@
+import React, { useState, useMemo } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Navbar from "./components/layout/Navbar";
+import Sidebar from "./components/layout/Sidebar";
+import Dashboard from "./pages/Dashboard";
+import DataExplorer from "./pages/DataExplorer";
+import Footer from "./components/layout/Footer";
+import Box from "@mui/material/Box";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+const drawerWidth = 240;
+
+export default function App() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+  };
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: darkMode
+          ? {
+              mode: "dark",
+              text: { primary: "#ecf3e8" },
+              background: { default: "#161A1D", paper: "#1a1a1d" },
+              primary: { main: "#F5F3F4" },
+              secondary: { main: "#B1A7A6" },
+              error: { main: "#BA181B" },
+            }
+          : {
+              mode: "light",
+              text: { primary: "#161A1D" },
+              background: { default: "#F5F3F4", paper: "#ffffff" },
+              primary: { main: "#BA181B" },
+              secondary: { main: "#B1A7A6" },
+              error: { main: "#BA181B" },
+            },
+        components: {
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                borderRadius: "8px",
+                transition: "transform 0.2s",
+                "&:hover": { transform: "translateY(-2px)" },
+              },
+            },
+          },
+          MuiButton: {
+            styleOverrides: {
+              root: {
+                textTransform: "none",
+                fontWeight: 500,
+              },
+            },
+          },
+        },
+      }),
+    [darkMode]
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <div
+            style={{
+              display: "flex",
+              minHeight: "100vh",
+              flexDirection: "column",
+            }}
+          >
+            <Navbar
+              onMenuClick={handleDrawerToggle}
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+            />
+            <Box sx={{ display: "flex", flexGrow: 1 }}>
+              <Sidebar
+                mobileOpen={mobileOpen}
+                handleDrawerToggle={handleDrawerToggle}
+              />
+              <Box
+                component="main"
+                sx={{
+                  flexGrow: 1,
+                  p: 3,
+                  width: { sm: `calc(100% - ${drawerWidth}px)` },
+                }}
+              >
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/explorer" element={<DataExplorer />} />
+                </Routes>
+              </Box>
+            </Box>
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}

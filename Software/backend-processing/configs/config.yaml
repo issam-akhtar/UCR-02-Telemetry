@@ -1,12 +1,8 @@
-# project-root/configs/config.yaml
 database:
   connection_string: "postgres://postgres:H1a2m3z4a5%402003@localhost:5432/telem_db?sslmode=disable"
 
 websocket:
   url: "ws://localhost:8081/sendCSV"
 
-directories:
-  output: "Output"
-
-dbc_file: "../../configs/UCR-01.dbc" # Relative to cmd/telem-server/
-json_file: "../../configs/UCR-01.json" # Relative to cmd/telem-server/
+dbc_file: "../../configs/UCR-01.dbc"
+json_file: "../../configs/UCR-01.json"

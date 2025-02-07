@@ -1,1 +1,17 @@
-The backend-processing contains all the code that translates the hex data to human readable format based on the UCR-01 JSON in the configs/UCR-01.json file. The JSON file is generated using the DBC file in the same directory using a python script located in the scripts folder. Once the data is translated, it is then inserted into a PostgreSQL database.
+This is the refactored Telemetry System code.
+
+1. Build the CSV WebSocket server:
+   cd cmd/csvserver
+   go build
+   ./csvserver --addr=localhost:8081
+
+2. Build and run the main Telemetry Server:
+   cd cmd/telemetryserver
+   go build
+   ./telemetryserver
+
+3. Access front-end websockets at http://localhost:9000/ws
+4. Historical endpoints:
+   - /api/tcuData
+   - /api/cellData
+   etc...
