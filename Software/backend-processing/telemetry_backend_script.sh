@@ -1,17 +1,32 @@
 #!/bin/bash
-# Script to set up the backend processing environment.
-# It checks for required tools, verifies DB connectivity, manages port usage,
-# downloads dependencies, optionally runs tests, and builds the backend binary.
+# Enhanced interactive script to set up the backend processing environment.
+# It checks for required tools, verifies DB connectivity, manages port 9090,
+# downloads Go dependencies, optionally runs tests, and builds the backend binary.
+# Run this script as root.
 
 set -euo pipefail
 
-# Function to print error messages and exit.
+# Color codes for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Logging functions
+log_info() {
+    echo -e "${GREEN}[INFO] $1${NC}"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN] $1${NC}"
+}
+
 error_exit() {
-    echo "Error: $1"
+    echo -e "${RED}[ERROR] $1${NC}"
     exit 1
 }
 
-# Function for yes/no prompts (default yes).
+# Prompt for yes/no with default Yes.
 ask_yes_no() {
     local prompt_msg="$1"
     read -rp "$prompt_msg (Y/n): " answer
@@ -22,43 +37,43 @@ ask_yes_no() {
     fi
 }
 
-echo "=== Setting up Backend Processing Environment ==="
+log_info "=== Setting up Backend Processing Environment ==="
 
 ####################################
 # Step 1: Check & Install Required Tools
 ####################################
-# Check for Go.
 if ! command -v go &>/dev/null; then
-    if ask_yes_no "Go not found. Would you like to install Go?"; then
+    if ask_yes_no "Go not found. Do you want to install Go?"; then
+        log_info "Installing Go..."
         apt-get update && apt-get install -y golang-go || error_exit "Failed to install Go."
     else
         error_exit "Go is required. Exiting."
     fi
 else
-    echo "Go is already installed."
+    log_info "Go is already installed."
 fi
 
-# Check for yq.
 if ! command -v yq &>/dev/null; then
-    if ask_yes_no "yq not found. Would you like to install yq?"; then
+    if ask_yes_no "yq not found. Do you want to install yq?"; then
+        log_info "Installing yq..."
         wget -q "https://github.com/mikefarah/yq/releases/download/v4.30.5/yq_linux_amd64" -O /usr/local/bin/yq || error_exit "Failed to download yq."
         chmod +x /usr/local/bin/yq || error_exit "Failed to set execute permission on yq."
     else
         error_exit "yq is required. Exiting."
     fi
 else
-    echo "yq is already installed."
+    log_info "yq is already installed."
 fi
 
-# Check for pg_isready.
 if ! command -v pg_isready &>/dev/null; then
-    if ask_yes_no "pg_isready not found. Would you like to install PostgreSQL client utilities?"; then
+    if ask_yes_no "pg_isready not found. Do you want to install PostgreSQL client utilities?"; then
+        log_info "Installing PostgreSQL client utilities..."
         apt-get update && apt-get install -y postgresql-client || error_exit "Failed to install PostgreSQL client utilities."
     else
         error_exit "pg_isready is required. Exiting."
     fi
 else
-    echo "pg_isready is installed."
+    log_info "pg_isready is installed."
 fi
 
 ####################################
@@ -73,12 +88,10 @@ DB_CONN=$(yq e '.database.connection_string' "$CONFIG_FILE")
 if [ -z "$DB_CONN" ]; then
     error_exit "Database connection string not found in '$CONFIG_FILE'."
 fi
-echo "Extracted DB connection string: $DB_CONN"
+log_info "Extracted DB connection string: $DB_CONN"
 
-# Remove protocol (e.g., "postgres://")
+# Remove protocol and extract host/port.
 conn_no_proto="${DB_CONN#postgres://}"
-
-# If credentials are provided, remove them.
 if [[ "$conn_no_proto" == *"@"* ]]; then
     host_port="${conn_no_proto#*@}"
 else
@@ -91,11 +104,11 @@ PORT="${host_port#*:}"
 if [ -z "$HOST" ] || [ -z "$PORT" ]; then
     error_exit "Failed to parse host or port from the connection string."
 fi
-echo "Database host: $HOST, port: $PORT"
+log_info "Database host: $HOST, port: $PORT"
 
-echo "Checking if database server is accepting connections..."
+log_info "Checking if database server is accepting connections..."
 if pg_isready -h "$HOST" -p "$PORT" > /dev/null 2>&1; then
-    echo "Database server is ready."
+    log_info "Database server is ready."
 else
     error_exit "Database server is not accepting connections on $HOST:$PORT."
 fi
@@ -103,71 +116,62 @@ fi
 ####################################
 # Step 3: Close Port 9090 if In Use
 ####################################
-echo "Checking if port 9090 is in use..."
-if command -v lsof &>/dev/null; then
-    if lsof -i :9090 &>/dev/null; then
-        if ask_yes_no "Port 9090 is in use. Kill processes using port 9090?"; then
-            lsof -t -i:9090 | xargs kill -9 || error_exit "Failed to close port 9090."
-            echo "Port 9090 has been closed."
-        else
-            echo "Continuing despite port 9090 being in use."
-        fi
+log_info "Checking if port 9090 is in use..."
+if command -v lsof &>/dev/null && lsof -i :9090 &>/dev/null; then
+    if ask_yes_no "Port 9090 is in use. Do you want to kill processes using port 9090?"; then
+        log_info "Killing processes on port 9090..."
+        lsof -t -i:9090 | xargs kill -9 || error_exit "Failed to close port 9090."
+        log_info "Port 9090 has been closed."
     else
-        echo "Port 9090 is free."
+        log_info "Continuing despite port 9090 being in use."
     fi
 else
-    echo "Warning: lsof command not found. Skipping port check."
+    log_info "Port 9090 is free."
 fi
 
 ####################################
-# Step 4: Install Go Dependencies & Optionally Run Tests
+# Step 4: Install Go Dependencies & Run Tests
 ####################################
-echo "Downloading Go module dependencies..."
+log_info "Downloading Go module dependencies..."
 go mod download || error_exit "Failed to download Go dependencies."
 
 if ask_yes_no "Do you want to run tests (simulate_sender and telemetry server)?"; then
-    echo "Running tests..."
-    # Launch simulated sender.
+    log_info "Running tests..."
     if [ -d "./cmd/csvserver" ]; then
-        echo "Starting simulated sender..."
-        (cd ./cmd/csvserver && go run simulate_sender.go &) || error_exit "Failed to start simulated sender."
-        SENDER_PID=$!
-        sleep 5
+        log_info "Starting simulated sender..."
+        (cd ./cmd/csvserver && go run simulate_sender.go) &
     else
-        echo "Directory ./cmd/csvserver not found. Skipping simulated sender."
+        log_warn "Directory ./cmd/csvserver not found. Skipping simulated sender."
     fi
 
-    # Launch telemetry server.
     if [ -d "./cmd/telemetryserver" ]; then
-        echo "Starting telemetry server..."
-        (cd ./cmd/telemetryserver && go run main.go &) || error_exit "Failed to start telemetry server."
-        MAIN_PID=$!
+        log_info "Starting telemetry server..."
+        (cd ./cmd/telemetryserver && go run main.go) &
     else
-        echo "Directory ./cmd/telemetryserver not found. Skipping telemetry server."
+        log_warn "Directory ./cmd/telemetryserver not found. Skipping telemetry server."
     fi
 
     TEST_DURATION=120
-    echo "Allowing test processes to run for $TEST_DURATION seconds..."
+    log_info "Allowing test processes to run for $TEST_DURATION seconds..."
     sleep "$TEST_DURATION"
-
-    echo "Killing test processes..."
-    if [ -n "${SENDER_PID:-}" ]; then
-        kill "$SENDER_PID" || echo "Warning: Unable to kill simulated sender."
-    fi
-    if [ -n "${MAIN_PID:-}" ]; then
-        kill "$MAIN_PID" || echo "Warning: Unable to kill telemetry server."
-    fi
-    echo "Tests completed."
+    log_info "Killing test processes..."
+    pkill -f simulate_sender.go || log_warn "Unable to kill simulated sender."
+    pkill -f main.go || log_warn "Unable to kill telemetry server."
+    log_info "Tests completed."
 else
-    echo "Skipping tests."
+    log_info "Skipping tests."
 fi
 
 ####################################
 # Step 5: Build the Backend Binary
 ####################################
-echo "Building backend binary..."
-go build -o backend ./cmd/telemetryserver || error_exit "Build failed."
-echo "Backend binary 'backend' built successfully."
+if ask_yes_no "Do you want to build the backend binary?"; then
+    log_info "Building backend binary..."
+    go build -o backend ./cmd/telemetryserver || error_exit "Build failed."
+    log_info "Backend binary 'backend' built successfully."
+else
+    log_info "Skipping backend build."
+fi
 
-echo "=== Setup complete. You can now run the backend with './backend' ==="
+log_info "=== Setup complete. You can now run the backend with './backend' ==="
 
