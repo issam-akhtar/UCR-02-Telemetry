@@ -39,6 +39,11 @@ func writeToFile(fileName string, message []byte) error {
 
 func handleWebSocket(conn *websocket.Conn) {
 	fmt.Println("Client connected")
+
+	// Map to track unique chunks and duplicates
+	seenChunks := make(map[string]bool)   // Tracks all unique chunks
+	duplicateBuffer := make(map[string]bool) // Tracks only duplicate chunks
+
 	for {
 		// Read message from client
 		_, message, err := conn.ReadMessage()
@@ -48,7 +53,34 @@ func handleWebSocket(conn *websocket.Conn) {
 			break
 		}
 
-		fmt.Printf("Received: %s\n", string(message))
+		// Convert message to a string
+		messageStr := string(message)
+
+		// Check if the message is a duplicate
+		if seenChunks[messageStr] {
+			// Add duplicate to the duplicate buffer
+			duplicateBuffer[messageStr] = true
+
+			// Log and print the duplicate buffer
+			fmt.Printf("Duplicate chunk detected: %s. Dropping but sending ACK.\n", messageStr)
+			fmt.Println("Current duplicate buffer contents:")
+			for duplicate := range duplicateBuffer {
+				fmt.Println(duplicate)
+			}
+
+			// Send acknowledgment back to the client
+			err = conn.WriteMessage(websocket.TextMessage, []byte("ACK"))
+			if err != nil {
+				log.Printf("Error writing acknowledgment for duplicate chunk: %v\n", err)
+			}
+
+			continue // Skip writing duplicate chunk to the file
+		}
+
+		// Mark the message as seen
+		seenChunks[messageStr] = true
+
+		fmt.Printf("Received: %s\n", messageStr)
 
 		// Write the received message into a file
 		err = writeToFile("received.csv", message)
@@ -63,9 +95,11 @@ func handleWebSocket(conn *websocket.Conn) {
 		if err != nil {
 			log.Printf("Error writing acknowledgment: %v\n", err)
 		} else {
-			fmt.Printf("Sent acknowledgment for chunk: %s\n", string(message))
+			fmt.Printf("Sent acknowledgment for chunk: %s\n", messageStr)
 		}
 	}
+
+	fmt.Println("Connection closed.")
 }
 
 func main() {
@@ -81,5 +115,5 @@ func main() {
 
 	port := "9090"
 	fmt.Printf("Server listening on :%s\n", port)
-	log.Fatal(http.ListenAndServe("127.0.0.1:"+port, nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+port, nil))
 }
