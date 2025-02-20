@@ -1,0 +1,39 @@
+"Create a sleek, modern, and responsive website for the UCalgary Racing Telemetry System. The site should have 5 main pages with sub-menus for functionality, real-time data visualization, and project details. Use a clean, intuitive layout with a focus on real-time telemetry data and interactive charts. Ensure the design is mobile-friendly and optimized for fast loading. Here's the structure:**
+
+Home Page:
+
+Title: "UCalgary Racing Telemetry System"
+Sections: Project overview, mission statement, and a dynamic banner displaying real-time car stats (e.g., speed, battery voltage).
+Call-to-action buttons for "View Telemetry" and "Contact Us."
+Telemetry Dashboard:
+
+Real-time data visualization using responsive, interactive charts (line charts, bar graphs, scatter plots, and heat maps).
+Sub-menus:
+Live Data: Displays live streaming telemetry stats (e.g., CAN Bus messages, sensor readings).
+Historical Data: Select a date/time range to view historical telemetry logs with time-series plots.
+Filters for specific sensors and customizable thresholds for alerts.
+Performance Insights:
+
+Dynamic comparisons of telemetry metrics over multiple runs (e.g., lap times, energy consumption).
+Tools for trend analysis with adjustable parameters (e.g., RPM, battery health).
+Exportable reports in PDF format.
+Team & Project:
+
+Sections: About the team, roles, and contributions.
+Sub-menus:
+Hardware/Firmware: Details about the ESP32, Raspberry Pi, and CAN Bus integration.
+Data Processing: Explanation of database setup (PostgreSQL/TimescaleDB) and backend architecture.
+Web Interface: Key features of the frontend, built with React.js.
+Contact Us:
+
+Interactive form for inquiries.
+Embedded map showing UCalgary Racing’s workshop location.
+Links to social media handles (optional).
+Additional Requirements:
+
+Use a dark theme with vibrant accent colors (e.g., orange, blue) to match a racing aesthetic.
+Integrate a secure login system for the dashboard, allowing restricted access for team members and sponsors.
+Enable chart interaction (zoom, pan, hover to display data points).
+Include a "System Status" widget on the dashboard page for high-level performance indicators.
+Ensure the site supports multiple users accessing real-time data simultaneously.
+Add a footer with links to pages, a copyright notice, and sponsor logos.

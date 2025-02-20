@@ -1,3 +1,0 @@
-#For CAN Processing
-python-can==4.4.2
-cantools==39.4.8

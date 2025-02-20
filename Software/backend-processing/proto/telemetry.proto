@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package telemetry;
+
+option go_package = "telem-system/proto";
+
+import "google/protobuf/struct.proto";
+
+// TelemetryMessage is a unified message that carries a type, payload and time.
+// The payload is represented using a google.protobuf.Struct.
+message TelemetryMessage {
+  string type = 1;
+  google.protobuf.Struct payload = 2;
+  string time = 3;
+}

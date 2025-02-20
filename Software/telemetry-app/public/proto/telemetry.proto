@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package telemetry;
+
+import "google/protobuf/struct.proto";
+
+message TelemetryMessage {
+  string type = 1;
+  google.protobuf.Struct payload = 2;
+  string time = 3;
+}
