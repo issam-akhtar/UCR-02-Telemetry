@@ -115,5 +115,5 @@ func main() {
 
 	port := "9090"
 	fmt.Printf("Server listening on :%s\n", port)
-	log.Fatal(http.ListenAndServe("127.0.0.1:"+port, nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+port, nil))
 }
