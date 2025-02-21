@@ -1,0 +1,58 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Makes sure the page takes up the full height of the viewport */
+}
+
+.App-Content {
+    flex: 1; /* Pushes the footer to the bottom by filling available space */
+  }
+  
+.UCRLogo {
+    max-width: 25%;
+    height: auto;
+    width: auto; /* Prevent distortion */
+    max-height: 100px; /* Optional max-height to control scaling */
+    margin-top: 10px;
+  }
+
+/* CSS Formatting for Footer */
+
+.App-Footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #161A1D; /* Light background to contrast black icons */
+    color: white;
+    padding: 20px;
+  }
+
+.Footer-Info{
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: -20px;
+  }
+.Footer-Text{
+    font-size: 12px;  /* Adjust size as needed */
+    text-align: center;
+}
+.UniLogo {
+    max-height: 50px;
+    width: auto;
+    position: absolute;
+    right: 2rem;
+    margin-bottom: 20px;
+  }
+
+.Social-Icons {
+    display: flex;
+    gap: 15px; /* Space between icons */
+    justify-content: center;
+    margin-bottom: -10px; 
+  }
+
+
+.SpeedText {
+  transform: translateY(-25px);
+}
