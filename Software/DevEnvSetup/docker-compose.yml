@@ -1,0 +1,35 @@
+version: '3.8'
+env_file:
+  - .env
+services:
+  frontend:
+    network_mode: "host"
+    build:
+      context: ../telemetry-app  # Path to the frontend directory where Dockerfile is located
+    volumes:
+      - ../telemetry-app:/src
+    ports:
+      - "${VITE_PORT}:${VITE_PORT}"  # The vite dev server port
+    restart: always
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+    depends_on:
+      - backend
+
+  backend:
+    network_mode: "host"
+    build:
+      context: ../backend-processing  # Path to the frontend directory where Dockerfile is located
+    volumes:
+      - ../backend-processing:/go/src
+    ports:
+      - "${PORT}:${PORT}" # The backend host port
+    restart: always
+    environment:
+      - PORT=${PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+
