@@ -6,9 +6,9 @@
 // YAML file using Viper. The configuration includes database connection
 // settings, WebSocket parameters, file paths for DBC/JSON definitions,
 // the operating mode, and a throttler interval for real-time processing.
-//
 // ----------------------------------------------------------------------
 
+// config.go
 package config
 
 import (
@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config holds the application configuration loaded from a YAML file.
+// Config holds the application configuration.
 type Config struct {
 	Database struct {
 		ConnectionString string `mapstructure:"connection_string"`
@@ -25,22 +25,18 @@ type Config struct {
 
 	WebSocket struct {
 		URL  string `mapstructure:"url"`
-		Port int    `mapstructure:"port"`
+		IP   string `mapstructure:"ip"`   // Used by the sender for connection.
+		Port int    `mapstructure:"port"` // Telemetry port; receiver listens here.
 	} `mapstructure:"websocket"`
 
 	DBCFile           string `mapstructure:"dbc_file"`
 	JSONFile          string `mapstructure:"json_file"`
-	Mode              string `mapstructure:"mode"`               // Allowed values: "csv", "live"
+	Mode              string `mapstructure:"mode"`               // "csv" or "live"
 	ThrottlerInterval int    `mapstructure:"throttler_interval"` // in milliseconds
+	APIPort           string `mapstructure:"apiport"`
 }
 
 // LoadConfig reads and unmarshals the configuration file.
-// Parameters:
-//   - path: the directory where the config file is located.
-//   - name: the config file name (without extension).
-//   - fileType: the type/extension of the config file (e.g., "yaml").
-//
-// Returns a pointer to a Config struct or an error.
 func LoadConfig(path, name, fileType string) (*Config, error) {
 	viper.SetConfigName(name)
 	viper.SetConfigType(fileType)

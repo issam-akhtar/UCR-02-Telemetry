@@ -1,49 +1,108 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import ChartSettingsModal from './components/ChartSettingsModal';
-import ErrorBoundary from './components/ErrorBoundary';
-import { ChartSettingsProvider, ChartSettingsContext } from './contexts/ChartSettingsContext';
-import { ChartConfigProvider } from './contexts/ChartConfigContext';
-import './index.css';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import RealTimeCharts from './pages/RealTimeCharts';
+import HistoricalCharts from './pages/HistoricalCharts';
+import WebSocketDataDisplay from './components/WebSocketDataDisplay';
+import ChartSettingsModal from './modals/ChartSettingsModal';
+import { ChartSettingsProvider } from './contexts/ChartSettingsContext';
 
-function AppContent() {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { settings, toggleTheme } = useContext(ChartSettingsContext);
+import {
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+} from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', settings.global.theme);
-  }, [settings.global.theme]);
+// NEW: Network Status
+import { NetworkStatusProvider } from './contexts/NetworkStatusContext';
+import NetworkStatusBar from './components/NetworkStatusBar';
+
+// COLOR PALETTE
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#F5F3F4' },
+    secondary: { main: '#B1A7A6' },
+    error: { main: '#BA181B' },
+    background: {
+      default: '#161A1D',
+      paper: '#161A1D',
+    },
+    text: {
+      primary: '#ecf3e8',
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, sans-serif',
+  },
+});
+
+const App = () => {
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <nav>
-        <NavLink to="/" style={{ marginRight: '1rem' }}>Dashboard</NavLink>
-        <button onClick={() => setIsSettingsOpen(true)}>Settings</button>
-        <button onClick={toggleTheme} style={{ marginLeft: '1rem' }}>
-          Toggle Theme
-        </button>
-      </nav>
-      <ErrorBoundary>
-        <Routes>
-          <Route path="/*" element={<Dashboard />} />
-        </Routes>
-      </ErrorBoundary>
-      <ChartSettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
-    </div>
-  );
-}
+    <ThemeProvider theme={theme}>
+      <ChartSettingsProvider>
+        <NetworkStatusProvider>
+          <CssBaseline />
+          <BrowserRouter>
+            <AppBar position="fixed" color="primary">
+              <Toolbar>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  Telemetry Dashboard
+                </Typography>
+                <Button color="inherit" component={Link} to="/dashboard">
+                  Dashboard
+                </Button>
+                <Button color="inherit" component={Link} to="/realtime">
+                  Real-Time Graphs
+                </Button>
+                <Button color="inherit" component={Link} to="/historical">
+                  Historical Graphs
+                </Button>
+                <Button color="inherit" component={Link} to="/wsdata">
+                  WS Data
+                </Button>
+                <IconButton
+                  color="inherit"
+                  onClick={() => setSettingsModalOpen(true)}
+                  sx={{ ml: 2 }}
+                >
+                  <SettingsIcon />
+                </IconButton>
+              </Toolbar>
+            </AppBar>
 
-function App() {
-  return (
-    <ChartSettingsProvider>
-      <ChartConfigProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </ChartConfigProvider>
-    </ChartSettingsProvider>
+            {/* Space under AppBar */}
+            <Toolbar />
+
+            {/* Show network status bar */}
+            <NetworkStatusBar />
+
+            {/* Chart Settings Modal */}
+            <ChartSettingsModal
+              isOpen={settingsModalOpen}
+              onClose={() => setSettingsModalOpen(false)}
+            />
+
+            <Routes>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/realtime" element={<RealTimeCharts />} />
+              <Route path="/historical" element={<HistoricalCharts />} />
+              <Route path="/wsdata" element={<WebSocketDataDisplay />} />
+              <Route path="*" element={<Dashboard />} />
+            </Routes>
+          </BrowserRouter>
+        </NetworkStatusProvider>
+      </ChartSettingsProvider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

@@ -19,11 +19,12 @@ const useHistoricalData = (endpoint) => {
 
   const fetchData = () => {
     setLoading(true);
-    axiosInstance.get(`${endpoint}?limit=${pageSize}`)
-      .then(response => {
+    axiosInstance
+      .get(`${endpoint}?limit=${pageSize}`)
+      .then((response) => {
         let transformedData = response.data;
         if (Array.isArray(response.data)) {
-          transformedData = response.data.map(item => {
+          transformedData = response.data.map((item) => {
             if (item.timestamp) {
               const { timestamp, ...rest } = item;
               return { time: timestamp, ...rest };
@@ -39,7 +40,7 @@ const useHistoricalData = (endpoint) => {
           setError(parsed.error);
         }
       })
-      .catch(err => setError(err))
+      .catch((err) => setError(err))
       .finally(() => setLoading(false));
   };
 
@@ -54,10 +55,11 @@ const useHistoricalData = (endpoint) => {
     return () => {
       if (interval) clearInterval(interval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint, refreshRate, pageSize, refreshCounter]);
 
   const refresh = () => {
-    setRefreshCounter(prev => prev + 1);
+    setRefreshCounter((prev) => prev + 1);
   };
 
   return { data, loading, error, refresh };

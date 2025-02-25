@@ -17,7 +17,7 @@ export class WebSocketService {
     } catch (error) {
       if (retries > 0) {
         console.log(`Retrying proto load... ${retries} attempts left`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         return this.loadProto(retries - 1);
       }
       throw new Error("Failed to load proto after multiple attempts");
@@ -41,7 +41,7 @@ export class WebSocketService {
       try {
         const message = decodeTelemetryMessage(this.protoRoot, buffer);
         const handlers = this.subscribers.get(message.type) || [];
-        handlers.forEach(handler => handler(message));
+        handlers.forEach((handler) => handler(message));
       } catch (error) {
         console.error("Error processing queued message:", error);
       }
@@ -59,7 +59,7 @@ export class WebSocketService {
 
     this.socket.onmessage = (event) => {
       if (!this.protoRoot) {
-        console.warn("Proto not loaded yet – queuing message");
+        // If proto not loaded yet, queue the data
         this.messageQueue.push({ buffer: new Uint8Array(event.data) });
         return;
       }
@@ -67,7 +67,7 @@ export class WebSocketService {
         const buffer = new Uint8Array(event.data);
         const message = decodeTelemetryMessage(this.protoRoot, buffer);
         const handlers = this.subscribers.get(message.type) || [];
-        handlers.forEach(handler => handler(message));
+        handlers.forEach((handler) => handler(message));
       } catch (error) {
         console.error("Error decoding message:", error);
       }
@@ -91,9 +91,13 @@ export class WebSocketService {
 
   unsubscribe(messageType, callback) {
     const handlers = this.subscribers.get(messageType) || [];
-    this.subscribers.set(messageType, handlers.filter(h => h !== callback));
+    this.subscribers.set(
+      messageType,
+      handlers.filter((h) => h !== callback)
+    );
   }
 }
 
+// Create a single instance and initialize
 export const wsService = new WebSocketService("ws://localhost:9000/ws");
 wsService.initialize();

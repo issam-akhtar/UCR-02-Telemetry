@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { wsService } from '../services/websocket';
 
 const WebSocketDataDisplay = () => {
@@ -9,17 +9,17 @@ const WebSocketDataDisplay = () => {
 
   useEffect(() => {
     const unsubscribe = wsService.subscribe('cell', (message) => {
-      setMessages(prev => [message, ...prev]);
+      setMessages((prev) => [message, ...prev]);
     });
     return () => unsubscribe();
   }, []);
 
-  const filteredMessages = messages.filter(msg =>
+  const filtered = messages.filter((msg) =>
     JSON.stringify(msg).toLowerCase().includes(filter.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredMessages.length / itemsPerPage);
-  const currentMessages = filteredMessages.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const currentMessages = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   return (
     <div style={{ padding: '1rem' }}>
@@ -28,24 +28,44 @@ const WebSocketDataDisplay = () => {
         type="text"
         placeholder="Filter messages..."
         value={filter}
-        onChange={(e) => { setFilter(e.target.value); setPage(1); }}
+        onChange={(e) => {
+          setFilter(e.target.value);
+          setPage(1);
+        }}
         style={{ marginBottom: '1rem', padding: '0.5rem', width: '80%' }}
       />
-      {filteredMessages.length === 0 ? (
+      {filtered.length === 0 ? (
         <p>No messages received yet.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {currentMessages.map((msg, idx) => (
-            <li key={idx} style={{ marginBottom: '1rem', textAlign: 'left' }}>
-              <pre>{JSON.stringify(msg, null, 2)}</pre>
-            </li>
-          ))}
-        </ul>
+        <div
+          style={{
+            maxHeight: '400px',
+            overflowY: 'auto',
+            border: '1px solid #ccc',
+            padding: '0.5rem',
+          }}
+        >
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {currentMessages.map((msg, idx) => (
+              <li key={idx} style={{ marginBottom: '1rem', textAlign: 'left' }}>
+                <pre style={{ color: '#ecf3e8', backgroundColor: '#161A1D' }}>
+                  {JSON.stringify(msg, null, 2)}
+                </pre>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
-      <div>
-        <button onClick={() => setPage(prev => Math.max(prev - 1, 1))} disabled={page === 1}>Prev</button>
-        <span style={{ margin: '0 1rem' }}>Page {page} of {totalPages}</span>
-        <button onClick={() => setPage(prev => Math.min(prev + 1, totalPages))} disabled={page === totalPages}>Next</button>
+      <div style={{ marginTop: '1rem' }}>
+        <button onClick={() => setPage((p) => Math.max(p - 1, 1))} disabled={page === 1}>
+          Prev
+        </button>
+        <span style={{ margin: '0 1rem' }}>
+          Page {page} of {totalPages}
+        </span>
+        <button onClick={() => setPage((p) => Math.min(p + 1, totalPages))} disabled={page === totalPages}>
+          Next
+        </button>
       </div>
     </div>
   );

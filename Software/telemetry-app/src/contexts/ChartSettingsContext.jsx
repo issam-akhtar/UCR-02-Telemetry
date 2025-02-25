@@ -1,14 +1,12 @@
 import React, { createContext, useState } from 'react';
 
 const defaultSettings = {
-  global: {
-    theme: 'light',
-  },
+  global: { theme: 'dark' },
   realTime: {
-    window: 10000,
-    updateInterval: 50,
-    threshold: null,
-    lineWidth: 2,
+    window: 10000,      // ms of data to show in the rolling window
+    updateInterval: 50, // ms between chart updates
+    threshold: null,    // optional numeric threshold for annotation
+    lineWidth: 2,       // thickness of plot lines
   },
   historical: {
     downsampleThreshold: 2500,
@@ -31,12 +29,12 @@ export const ChartSettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(defaultSettings);
 
   const toggleTheme = () => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       global: {
         ...prev.global,
-        theme: prev.global.theme === 'light' ? 'dark' : 'light'
-      }
+        theme: prev.global.theme === 'light' ? 'dark' : 'light',
+      },
     }));
   };
 

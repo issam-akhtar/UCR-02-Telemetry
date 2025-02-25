@@ -1,9 +1,6 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+/* --------------------------------------------
+   LOGO ANIMATION & HOVER
+--------------------------------------------- */
 
 .logo {
   height: 6em;
@@ -11,13 +8,18 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
+/* Use Accent color for hover highlight */
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #BA181Baa); /* Accent color with alpha */
 }
 
+/* Use Primary color for the React logo hover */
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #F5F3F4aa); /* Primary color with alpha */
+}
+
+/* Spin animation */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -33,10 +35,16 @@
   }
 }
 
+/* --------------------------------------------
+   CARD & UTILITY CLASSES
+--------------------------------------------- */
+
 .card {
   padding: 2em;
+  background-color: transparent; /* or #161A1D, adjust as needed */
+  color: #ecf3e8;
 }
 
 .read-the-docs {
-  color: #888;
+  color: #B1A7A6; /* Secondary color */
 }

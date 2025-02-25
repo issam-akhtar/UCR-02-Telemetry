@@ -1,4 +1,3 @@
-// src/contexts/ChartConfigContext.jsx
 import React, { createContext, useContext, useMemo } from 'react';
 import defaultChartConfig from '../config/chart-config';
 

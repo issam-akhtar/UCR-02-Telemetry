@@ -1,13 +1,4 @@
-import { z } from 'zod';
 import protobuf from 'protobufjs';
-
-export const TelemetryMessageSchema = z.object({
-  type: z.string(),
-  payload: z.object({
-    fields: z.record(z.any())
-  }),
-  time: z.string()
-});
 
 export const loadTelemetryProto = async () => {
   try {

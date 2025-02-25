@@ -1,28 +1,15 @@
-# config.yaml
-# ---------------------------------------------------------------------
-# Telemetry System Configuration File
-#
-# This file contains all the configuration parameters for the Telemetry
-# System backend. It includes:
-#   - Database connection string for PostgreSQL.
-#   - WebSocket server settings (URL and port).
-#   - Operation mode for the system ("csv" or "live").
-#   - Paths to the DBC and JSON definition files.
-#   - Throttler interval (in milliseconds) for real-time message broadcasts.
-#
-# This configuration is optimized for production deployment.
-# ---------------------------------------------------------------------
-
 database:
   connection_string: "postgres://postgres:H1a2m3z4a5%402003@localhost:5432/telem_db?sslmode=disable"
 
 websocket:
-  url: "ws://localhost:9090/send"
-  port: 9090
+  # For the sender: IP and port are used to build the connection URL.
+  url: "ws://localhost:9090/telemetry"
+  ip: "localhost"
+  port: 9090  # Telemetry data port; receiver listens here (binding to all interfaces).
 
-mode: "csv" # Allowed values: "csv", "live"
-
+mode: "csv"             # Allowed values: "csv", "live"
+apiport: "9000"         # API server port for the receiver.
 dbc_file: "../../configs/UCR-01.dbc"
 json_file: "../../configs/UCR-01.json"
 
-throttler_interval: 0 # Throttler interval in milliseconds
+throttler_interval: 0   # Throttler interval in milliseconds.
