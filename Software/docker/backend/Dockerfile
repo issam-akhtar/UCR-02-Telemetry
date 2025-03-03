@@ -1,5 +1,5 @@
-# Golang version used for the the backend
-FROM golang:1.23
+# Golang version for the backend
+FROM golang:1.20
 
 # working directory inside the container
 WORKDIR /go/src
@@ -12,9 +12,6 @@ RUN go mod download
 
 # Copy the backend into the container
 COPY . .
-
-# Change working directory to the backend (server) folder
-WORKDIR /go/src/cmd/telemetryserver
 
 # Expose the port the backend will use (default port for now)
 EXPOSE 8080
