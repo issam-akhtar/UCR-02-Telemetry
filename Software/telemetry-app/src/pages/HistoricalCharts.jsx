@@ -76,12 +76,7 @@ const groupedChartOptions = [
   },
 ];
 
-const defaultSelected = [
-  'tcuData',
-  'packCurrentData',
-  'packVoltageData',
-  'cellData',
-];
+const defaultSelected = ['tcuData', 'packCurrentData', 'packVoltageData', 'cellData'];
 
 const HistoricalCharts = () => {
   const [selectedCharts, setSelectedCharts] = useState(defaultSelected);
@@ -99,12 +94,30 @@ const HistoricalCharts = () => {
       <Box
         sx={{
           width: 300,
-          borderRight: '1px solid',
+          borderRight: 1,
           borderColor: 'divider',
           p: 2,
           bgcolor: 'background.paper',
+
+          // Let the parent handle scrolling; stable gutter so it won't shift
           overflowY: 'auto',
           height: '100%',
+          scrollbarGutter: 'stable', // modern browsers
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'grey.700 background.default',
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'background.default',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'grey.700',
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: 'grey.600',
+          },
         }}
       >
         <Typography variant="h5" sx={{ mb: 2 }}>
@@ -123,12 +136,11 @@ const HistoricalCharts = () => {
           <Typography variant="h4" sx={{ mb: 2 }}>
             Historical Graphs
           </Typography>
-
           <Box
             sx={{
               p: 2,
               borderRadius: 2,
-              border: '1px solid',
+              border: 1,
               borderColor: 'divider',
               display: 'grid',
               gridTemplateColumns: 'repeat(2, minmax(600px, 1fr))',

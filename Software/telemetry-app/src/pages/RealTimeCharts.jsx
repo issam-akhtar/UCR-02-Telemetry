@@ -102,13 +102,31 @@ const RealTimeCharts = () => {
       {/* LEFT SIDEBAR */}
       <Box
         sx={{
-          width: 300,
-          borderRight: '1px solid',
+          width: 350,
+          borderRight: 1,
           borderColor: 'divider',
           p: 2,
           bgcolor: 'background.paper',
           overflowY: 'auto',
           maxHeight: 'calc(100vh - 64px)',
+
+          // Ensure stable scrollbar
+          scrollbarGutter: 'stable',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'grey.700 background.default',
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: 'background.default',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'grey.700',
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: 'grey.600',
+          },
         }}
       >
         <Typography variant="h5" sx={{ mb: 2 }}>
@@ -125,7 +143,7 @@ const RealTimeCharts = () => {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
         <Box
           sx={{
-            borderBottom: '1px solid',
+            borderBottom: 1,
             borderColor: 'divider',
             p: 1,
             display: 'flex',
@@ -136,12 +154,11 @@ const RealTimeCharts = () => {
             {isPaused ? 'Resume' : 'Pause'}
           </Button>
         </Box>
-
         <Box sx={{ p: 2 }}>
           <Typography variant="h4" sx={{ mb: 2 }}>
             Real-Time Graphs
           </Typography>
-          <Box sx={{ p: 2, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+          <Box sx={{ p: 2, borderRadius: 2, border: 1, borderColor: 'divider' }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
               {selectedCharts.map((type) => (
                 <RealTimeChartWrapper

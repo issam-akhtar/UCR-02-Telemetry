@@ -11,44 +11,35 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
+  ButtonGroup
 } from '@mui/material';
 import { Close, ExpandMore } from '@mui/icons-material';
-import { 
-  Cpu, Navigation, MapPin, Satellite, 
-  BatteryCharging, Battery, Thermometer, CircuitBoard,
-  Gauge, Settings, RotateCw, Zap,
-  Wind, Activity, BarChartHorizontal, GaugeCircle, 
-  Hash, Radio, RefreshCw, Fan, HelpCircle,
-  ThermometerSun, Milestone, Send, RefreshCcw, Flashlight, Repeat, LayoutDashboard, Vibrate, Download
+import {
+  Cpu, Navigation, MapPin, Satellite, BatteryCharging,
+  Battery, Thermometer, CircuitBoard, Gauge, Settings, RotateCw,
+  Zap, Wind, Activity, BarChartHorizontal, GaugeCircle, Hash, Radio,
+  RefreshCw, Fan, HelpCircle, ThermometerSun, Milestone, Send,
+  RefreshCcw, Flashlight, Repeat, LayoutDashboard, Vibrate, Download
 } from 'lucide-react';
 
 const iconMapping = {
   Cpu: <Cpu size={16} />,
   BatteryCharging: <BatteryCharging size={16} />,
   BarChart: <BarChartHorizontal size={16} />,
-  // For Thermostat, use ThermometerSun
   Thermostat: <ThermometerSun size={16} />,
-  // For DirectionsCar, use Navigation
   DirectionsCar: <Navigation size={16} />,
   Send: <Send size={16} />,
-  // For Autorenew, use RotateCw
   Autorenew: <RotateCw size={16} />,
-  // For FlashOn, use Flashlight
   FlashOn: <Flashlight size={16} />,
   Repeat: <Repeat size={16} />,
-  // For Dashboard, use LayoutDashboard
   Dashboard: <LayoutDashboard size={16} />,
-  // For LocationOn, use MapPin
   LocationOn: <MapPin size={16} />,
-  // For Vibration, use Vibrate
   Vibration: <Vibrate size={16} />,
-  // For Speed, use Zap
   Speed: <Zap size={16} />,
-  // For Air, use Wind (already defined)
   Air: <Wind size={16} />,
   Settings: <Settings size={16} />,
   Download: <Download size={16} />,
-  // Fallback and additional mappings
   Activity: <Activity size={16} />,
   HelpCircle: <HelpCircle size={16} />,
 };
@@ -58,10 +49,23 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
 
   const handleToggle = (value) => {
     onChange((prev) =>
-      prev.includes(value)
-        ? prev.filter((v) => v !== value)
-        : [...prev, value]
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
+  };
+
+  const handleSelectAll = (group) => {
+    const groupValues = group.options.map(opt => opt.value);
+    const newSelected = Array.from(new Set([...selected, ...groupValues]));
+    onChange(newSelected);
+  };
+
+  const handleUnselectAll = (group) => {
+    const groupValues = group.options.map(opt => opt.value);
+    onChange((prev) => prev.filter((val) => !groupValues.includes(val)));
+  };
+
+  const handleClearSelection = () => {
+    onChange([]);
   };
 
   const filteredOptions = searchQuery
@@ -75,12 +79,21 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
     : [];
 
   return (
-    <Box sx={{ borderRadius: 1, backgroundColor: 'background.paper' }}>
+    <Box
+      sx={{
+        // Make the width fill the parent container
+        width: '100%',
+        borderRadius: 1,
+        bgcolor: 'background.paper',
+        p: 1,
+      }}
+    >
+      {/* SEARCH BAR */}
       <Box sx={{ mb: 1 }}>
         <TextField
           label="Search Charts"
           size="small"
-          variant="filled"
+          variant="outlined"
           fullWidth
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -98,12 +111,15 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
               </InputAdornment>
             ),
           }}
-          sx={{
-            bgcolor: 'action.hover',
-            borderRadius: '6px',
-            input: { pr: 2 },
-          }}
+          sx={{ bgcolor: 'action.hover', borderRadius: '6px' }}
         />
+      </Box>
+
+      {/* CLEAR SELECTION BUTTON */}
+      <Box sx={{ mb: 1, display: 'flex', justifyContent: 'center' }}>
+        <Button variant="contained" size="small" onClick={handleClearSelection}>
+          Clear Selection
+        </Button>
       </Box>
 
       {searchQuery ? (
@@ -117,40 +133,41 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
             </Typography>
           ) : (
             <FormGroup sx={{ flexDirection: 'column', gap: 1 }}>
-              {filteredOptions.map((option) => (
-                <FormControlLabel
-                  key={option.value}
-                  labelPlacement="start"
-                  sx={{
-                    transition: 'background-color 0.2s',
-                    bgcolor: selected.includes(option.value)
-                      ? 'action.selected'
-                      : 'background.default',
-                    py: 0.5,
-                    px: 1,
-                    borderRadius: '4px',
-                    '&:hover': {
-                      bgcolor: 'action.hover',
-                    },
-                  }}
-                  control={
-                    <Checkbox
-                      checked={selected.includes(option.value)}
-                      onChange={() => handleToggle(option.value)}
-                      color="primary"
-                      size="small"
-                    />
-                  }
-                  label={
-                    <Box display="flex" alignItems="center">
-                      {iconMapping[option.icon] || iconMapping.HelpCircle}
-                      <Typography variant="body2" sx={{ ml: 0.5 }}>
-                        {option.label}
-                      </Typography>
-                    </Box>
-                  }
-                />
-              ))}
+              {filteredOptions.map((option) => {
+                const isChecked = selected.includes(option.value);
+                return (
+                  <FormControlLabel
+                    key={option.value}
+                    sx={{
+                      transition: 'background-color 0.2s',
+                      bgcolor: isChecked ? 'primary.dark' : 'background.default',
+                      color: isChecked ? 'primary.contrastText' : 'inherit',
+                      py: 0.5,
+                      px: 1,
+                      borderRadius: '4px',
+                      '&:hover': {
+                        bgcolor: isChecked ? 'primary.dark' : 'action.hover',
+                      },
+                    }}
+                    control={
+                      <Checkbox
+                        checked={isChecked}
+                        onChange={() => handleToggle(option.value)}
+                        color="primary"
+                        size="small"
+                      />
+                    }
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        {iconMapping[option.icon] || iconMapping.HelpCircle}
+                        <Typography variant="body2" sx={{ ml: 0.5 }}>
+                          {option.label}
+                        </Typography>
+                      </Box>
+                    }
+                  />
+                );
+              })}
             </FormGroup>
           )}
         </Box>
@@ -161,7 +178,7 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
               key={group.category}
               sx={{
                 mb: 1,
-                border: '1px solid',
+                border: 1,
                 borderColor: 'divider',
                 borderRadius: 1,
                 '&::before': { display: 'none' },
@@ -170,13 +187,19 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
             >
               <AccordionSummary
                 expandIcon={<ExpandMore />}
-                sx={{ backgroundColor: 'action.disabledBackground' }}
+                sx={{ bgcolor: 'action.disabledBackground' }}
               >
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
                   {group.category}
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: 'background.default' }}>
+              <AccordionDetails sx={{ bgcolor: 'background.default' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                  <ButtonGroup variant="contained" size="small">
+                    <Button onClick={() => handleSelectAll(group)}>Select All</Button>
+                    <Button onClick={() => handleUnselectAll(group)}>Unselect All</Button>
+                  </ButtonGroup>
+                </Box>
                 <FormGroup sx={{ flexDirection: 'column' }}>
                   {group.options.map((option) => {
                     const isChecked = selected.includes(option.value);
@@ -187,13 +210,13 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
                           m: 0,
                           mb: 0.5,
                           borderRadius: '4px',
-                          bgcolor: isChecked ? 'action.selected' : 'background.default',
+                          transition: 'background-color 0.2s',
+                          bgcolor: isChecked ? 'primary.dark' : 'background.default',
+                          color: isChecked ? 'primary.contrastText' : 'inherit',
                           '&:hover': {
-                            bgcolor: 'action.hover',
+                            bgcolor: isChecked ? 'primary.dark' : 'action.hover',
                           },
-                          '.MuiFormControlLabel-label': {
-                            fontSize: '0.85rem',
-                          },
+                          '.MuiFormControlLabel-label': { fontSize: '0.85rem' },
                         }}
                         control={
                           <Checkbox
@@ -206,10 +229,7 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
                         label={
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             {iconMapping[option.icon] || iconMapping.HelpCircle}
-                            <Typography
-                              variant="body2"
-                              sx={{ ml: 0.5, fontSize: '0.85rem' }}
-                            >
+                            <Typography variant="body2" sx={{ ml: 0.5 }}>
                               {option.label}
                             </Typography>
                           </Box>

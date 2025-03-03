@@ -153,7 +153,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
           <Button onClick={handleSave} variant="contained" color="primary">
             Save
           </Button>
-          <Button onClick={onClose} variant="outlined" color="secondary" sx={{ ml: 2 }}>
+          <Button onClick={onClose} variant="contained" color="red" sx={{ ml: 2 }}>
             Cancel
           </Button>
         </Stack>

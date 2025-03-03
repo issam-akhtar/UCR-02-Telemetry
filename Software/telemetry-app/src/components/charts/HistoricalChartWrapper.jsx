@@ -5,7 +5,7 @@ import HistoricalChart from './HistoricalChart';
 const HistoricalChartWrapper = ({
   endpoint,
   title = 'Historical Data',
-  width = '100%',  // fills parent column
+  width = '100%',
   height = 400,
   axisTitles = { x: 'Time', y: 'Value' },
   className = '',

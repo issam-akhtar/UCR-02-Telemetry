@@ -1,5 +1,5 @@
 #!/bin/bash
-# Automated Telemetry Backend Database Setup Script with TimescaleDB Tuning and Comprehensive Table Existence Check
+# Automated Telemetry Backend Database Setup Script with TimescaleDB Tuning and Database Reset Option
 # This script:
 #   1. Installs yq (if missing) to parse the YAML config.
 #   2. Reads the database connection string from configs/config.yaml.
@@ -8,9 +8,12 @@
 #   5. Configures TimescaleDB (ensuring it’s added to shared_preload_libraries) and restarts PostgreSQL.
 #   6. Runs timescaledb-tune to optimize PostgreSQL configuration.
 #   7. If the connection user is "postgres", automatically sets the postgres user's password.
-#   8. Checks if the target database exists; if not, creates it.
-#   9. Checks if all core tables exist; if any are missing, loads the TimescaleDB extension and applies the SQL schema from db/telem_data.sql.
-#   10. Automatically logs into the target database via psql.
+#   8. Checks if the target database exists.
+#         - If it does not exist, it is created and the SQL schema is applied.
+#         - If it exists, the user is prompted:
+#              Press Y to connect to the existing test database (with data), or
+#              Press N to drop and recreate the database with empty tables.
+#   9. Automatically logs into the target database via psql.
 #
 # Run as root.
 set -euo pipefail
@@ -181,51 +184,46 @@ if [ "$USERNAME" == "postgres" ]; then
 fi
 
 ###############################################
-# Step 10: Check and Create Database if Needed
+# Step 10: Check and/or (Re)Create Database Based on User Input
 ###############################################
 log_info "Checking if database '$DB_NAME' exists..."
 DB_EXISTS=$(PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';" | tr -d '[:space:]') || true
+
 if [ "$DB_EXISTS" != "1" ]; then
     log_info "Database '$DB_NAME' does not exist. Creating it..."
     PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d postgres -c "CREATE DATABASE \"$DB_NAME\";" || error_exit "Failed to create database '$DB_NAME'."
-    log_info "Database '$DB_NAME' created successfully."
+    RESET_DATABASE=1
 else
     log_info "Database '$DB_NAME' already exists."
+    read -p "The test database '$DB_NAME' already exists with data. Press Y to connect to it, or N to delete it and create a new empty database: " choice
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+         log_info "User chose to connect to the existing test database."
+         RESET_DATABASE=0
+    elif [[ "$choice" =~ ^[Nn]$ ]]; then
+         log_info "User chose to drop the existing test database and create a new one."
+         PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d postgres -c "DROP DATABASE \"$DB_NAME\";" || error_exit "Failed to drop database '$DB_NAME'."
+         PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d postgres -c "CREATE DATABASE \"$DB_NAME\";" || error_exit "Failed to create database '$DB_NAME'."
+         RESET_DATABASE=1
+    else
+         log_warn "Invalid choice. Defaulting to connecting to the existing test database."
+         RESET_DATABASE=0
+    fi
 fi
 
 ###############################################
-# Step 11: Check for All Core Tables and Import Schema if Needed
+# Step 11: Import SQL Schema if Needed
 ###############################################
-core_tables=(
-    "front_analog" "rear_analog" "front_aero" "rear_aero" "encoder_data"
-    "front_strain_gauges_1" "front_strain_gauges_2" "rear_strain_gauges_1" "rear_strain_gauges_2"
-    "gps_best_pos" "front_frequency" "rear_frequency" "bamocar_rx_data" "cell_data"
-    "therm_data" "pack_voltage" "pack_current" "tcu1" "tcu2" "aculv_fd_1" "aculv_fd_2"
-    "aculv1" "aculv2" "pdm1" "bamocar_tx_data" "ins_gps" "ins_imu"
-    "bamo_car_re_transmit" "pdm_current" "pdm_re_transmit"
-)
-
-missing_count=0
-for table in "${core_tables[@]}"; do
-    result=$(PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d "$DB_NAME" -tc "SELECT to_regclass('public.$table');" | tr -d '[:space:]')
-    if [ "$result" != "$table" ]; then
-        log_warn "Table '$table' is missing."
-        missing_count=$((missing_count + 1))
-    fi
-done
-
-if [ $missing_count -gt 0 ]; then
-    log_info "One or more core tables are missing. Importing SQL schema from 'db/telem_data.sql'..."
+if [ "$RESET_DATABASE" -eq 1 ]; then
+    log_info "Importing SQL schema from 'db/telem_data.sql' to create empty tables..."
     SQL_FILE="db/telem_data.sql"
     if [ ! -f "$SQL_FILE" ]; then
         error_exit "SQL file '$SQL_FILE' not found."
     fi
-    # Load the TimescaleDB extension first.
     log_info "Loading TimescaleDB extension into database '$DB_NAME'..."
     PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d "$DB_NAME" -c "CREATE EXTENSION IF NOT EXISTS timescaledb;" || error_exit "Failed to load TimescaleDB extension."
     PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d "$DB_NAME" -f "$SQL_FILE" || error_exit "Failed to load SQL schema."
 else
-    log_info "All core tables exist. Skipping SQL schema import."
+    log_info "Skipping SQL schema import. Connecting to the existing test database with data."
 fi
 
 ###############################################
@@ -233,4 +231,3 @@ fi
 ###############################################
 log_info "Setup complete. Automatically connecting to the database '$DB_NAME'..."
 PGPASSWORD="$PASSWORD" psql -U "$USERNAME" -h "$HOST" -p "$PORT" -d "$DB_NAME"
-

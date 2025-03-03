@@ -1,14 +1,3 @@
-// config.go
-// ----------------------------------------------------------------------
-// Telemetry System Configuration Package
-//
-// This package loads and unmarshals the system configuration from a
-// YAML file using Viper. The configuration includes database connection
-// settings, WebSocket parameters, file paths for DBC/JSON definitions,
-// the operating mode, and a throttler interval for real-time processing.
-// ----------------------------------------------------------------------
-
-// config.go
 package config
 
 import (
@@ -26,7 +15,7 @@ type Config struct {
 	WebSocket struct {
 		URL  string `mapstructure:"url"`
 		IP   string `mapstructure:"ip"`   // Used by the sender for connection.
-		Port int    `mapstructure:"port"` // Telemetry port; receiver listens here.
+		Port int    `mapstructure:"port"` // Raw telemetry WS port; receiver listens here.
 	} `mapstructure:"websocket"`
 
 	DBCFile           string `mapstructure:"dbc_file"`
@@ -34,6 +23,8 @@ type Config struct {
 	Mode              string `mapstructure:"mode"`               // "csv" or "live"
 	ThrottlerInterval int    `mapstructure:"throttler_interval"` // in milliseconds
 	APIPort           string `mapstructure:"apiport"`
+
+	LiveWSPort int `mapstructure:"live_ws_port"` // Live data WS (backend-to-frontend)
 }
 
 // LoadConfig reads and unmarshals the configuration file.

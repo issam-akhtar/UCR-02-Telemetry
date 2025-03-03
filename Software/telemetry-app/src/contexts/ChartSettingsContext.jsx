@@ -1,3 +1,4 @@
+// ChartSettingsContext.jsx
 import React, { createContext, useState } from 'react';
 
 const defaultSettings = {

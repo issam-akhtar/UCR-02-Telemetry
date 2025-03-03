@@ -2,9 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RealTimeChart from './RealTimeChart';
 
-/**
- * A simple wrapper around RealTimeChart that sets dimensions, title, etc.
- */
 const RealTimeChartWrapper = ({
   chartType,
   title = 'Real-Time Data',
@@ -16,26 +13,21 @@ const RealTimeChartWrapper = ({
   showLegend = true,
   isPaused = false,
 }) => {
-  // Convert width/height if numeric
   const containerStyle = {
     width: typeof width === 'number' ? `${width}px` : width,
     height: typeof height === 'number' ? `${height}px` : height,
-    border: '1px solid #ccc',
-    borderRadius: '4px',
+    border: '1px solid',
+    borderColor: 'divider',
+    borderRadius: 1,
     overflow: 'hidden',
     ...customStyles,
   };
 
   return (
-    <div className={`realtime-chart ${className}`} style={containerStyle}>
+    <div className={className} style={containerStyle}>
       <RealTimeChart
         chartType={chartType}
-        config={{
-          title,
-          axisTitles,
-          showLegend,
-          dimensions: { width, height },
-        }}
+        config={{ title, axisTitles, showLegend, dimensions: { width, height } }}
         isPaused={isPaused}
       />
     </div>

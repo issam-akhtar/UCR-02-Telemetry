@@ -1,3 +1,4 @@
+// RealTimeChart.jsx
 import React, { useEffect, useRef, useContext, useState } from 'react';
 import Plotly from 'plotly.js-dist-min';
 import useRealTimeData from '../../hooks/useRealTimeData';
@@ -11,7 +12,6 @@ const FONT_SIZES = {
   tick: 14,       // tick labels
 };
 
-// For line-based charts
 const LINE_COLORS = [
   '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
   '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
@@ -49,7 +49,6 @@ function getYAxisLabel(chartType) {
   }
 }
 
-/** Return a color based on the cell voltage threshold. */
 function getVoltageColor(voltage) {
   if (voltage < 3.2) return 'red';
   if (voltage < 3.7) return 'orange';
@@ -69,7 +68,6 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
   const { settings } = useContext(ChartSettingsContext);
   const rtSettings = settings.realTime;
 
-  // Theming
   const theme = settings.global.theme;
   const backgroundColor = theme === 'dark' ? '#161A1D' : '#fff';
   const fontColor = theme === 'dark' ? '#ecf3e8' : '#333';
@@ -80,9 +78,7 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
     }
   };
 
-  /** Layout for line/time-series charts */
   const createLineChartLayout = () => {
-    // Use a subtle grid color depending on theme
     const gridColor = theme === 'dark'
       ? 'rgba(255,255,255,0.1)'
       : 'rgba(0,0,0,0.1)';
@@ -122,23 +118,23 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
         gridcolor: gridColor,
         gridwidth: 1,
       },
+      // Legend moved to vertical orientation on the right
       legend: {
-        orientation: 'h',
+        orientation: 'v',
+        xanchor: 'left',
+        x: 1.02,
         yanchor: 'top',
-        y: 1.15,
-        xanchor: 'center',
-        x: 0.5,
+        y: 1,
         font: { size: FONT_SIZES.tick },
       },
       hovermode: 'x unified',
-      margin: { l: 80, r: 40, b: 90, t: 120 },
+      margin: { l: 80, r: 120, b: 90, t: 120 },
       paper_bgcolor: backgroundColor,
       plot_bgcolor: backgroundColor,
       font: { color: fontColor, size: FONT_SIZES.base },
     };
   };
 
-  /** Layout for the cell bar chart */
   const createCellBarLayout = () => {
     const gridColor = theme === 'dark'
       ? 'rgba(255,255,255,0.1)'
@@ -214,13 +210,13 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
       return v?.numberValue !== undefined || (!isNaN(parseFloat(v?.stringValue)));
     });
 
-    // If no numeric data
+    // If no numeric data, show placeholder annotation
     if (numericKeys.length === 0) {
       setNoData(true);
       const layout = createLineChartLayout();
       layout.annotations = [
         {
-          text: 'No data available',
+          text: 'No data to graph',
           x: 0.5,
           y: 0.5,
           xref: 'paper',
@@ -255,7 +251,6 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
       Plotly.newPlot(containerRef.current, traces, layout, PLOT_CONFIG);
       setChartInitialized(true);
     } else {
-      // Extend existing traces
       const update = { x: [], y: [] };
       seriesKeysRef.current.forEach((key, i) => {
         const rawVal = dataPoint.fields[key].stringValue || dataPoint.fields[key].numberValue;
@@ -271,12 +266,10 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
         maxPoints
       );
 
-      // Adjust x-axis window
       const currentTimeMs = new Date(dataPoint.time).getTime();
       const leftTimeMs = currentTimeMs - rtSettings.window;
       safeRelayout({ 'xaxis.range': [leftTimeMs, currentTimeMs] });
 
-      // If threshold
       if (rtSettings.threshold !== null) {
         seriesKeysRef.current.forEach((key, i) => {
           const rawVal = dataPoint.fields[key].stringValue || dataPoint.fields[key].numberValue;
@@ -321,7 +314,7 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
       const layout = createCellBarLayout();
       layout.annotations = [
         {
-          text: 'No cell data available',
+          text: 'No data to graph',
           x: 0.5,
           y: 0.5,
           xref: 'paper',
@@ -357,9 +350,30 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
     }
   };
 
+  // New effect: if no data is received after 3 seconds, display a placeholder.
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!chartInitialized && containerRef.current && containerRef.current.innerHTML.trim() === '') {
+        const layout = chartType === 'cell' ? createCellBarLayout() : createLineChartLayout();
+        layout.annotations = [
+          {
+            text: 'No data to graph',
+            x: 0.5,
+            y: 0.5,
+            xref: 'paper',
+            yref: 'paper',
+            showarrow: false,
+            font: { size: 20, color: fontColor },
+          },
+        ];
+        Plotly.newPlot(containerRef.current, [], layout, PLOT_CONFIG);
+      }
+    }, 3000);
+    return () => clearTimeout(timeoutId);
+  }, [chartInitialized, chartType, fontColor]);
+
   useRealTimeData(chartType, (msg) => handleNewData(msg));
 
-  // Theme/dimension changes
   useEffect(() => {
     if (!chartInitialized || noData) return;
     if (!containerRef.current) return;

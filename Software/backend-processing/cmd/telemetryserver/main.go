@@ -153,7 +153,6 @@ func telemetryHandler(w http.ResponseWriter, r *http.Request, cfg *config.Config
 
 func main() {
 	start := time.Now()
-	// Log startup time.
 	defer log.Printf("Telemetry Server started in %s", time.Since(start))
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -191,7 +190,7 @@ func main() {
 	processdata.BroadcastFunc = processdata.ThrottledBroadcast
 
 	// ---------------------
-	// API Server (using APIPort from config)
+	// REST API Server on port cfg.APIPort (9092)
 	// ---------------------
 	apiRouter := chi.NewRouter()
 	apiRouter.Use(middleware.Logger)
@@ -202,7 +201,6 @@ func main() {
 	})
 
 	// Register additional API endpoints.
-	apiRouter.Get("/ws", wsserver.ServeWS)
 	handlers.RegisterRoutes(apiRouter, queries)
 
 	go func() {
@@ -214,15 +212,28 @@ func main() {
 	}()
 
 	// ---------------------
-	// Telemetry WebSocket Server (using only the port)
+	// Raw Telemetry WebSocket Server on port cfg.WebSocket.Port (9091)
 	// ---------------------
 	telemetryMux := http.NewServeMux()
 	telemetryMux.HandleFunc("/telemetry", func(w http.ResponseWriter, r *http.Request) {
 		telemetryHandler(w, r, cfg, messageMap, cellDataBuffers)
 	})
 	telemetryAddr := fmt.Sprintf(":%d", cfg.WebSocket.Port)
-	log.Printf("Telemetry server listening on %s", telemetryAddr)
-	if err := http.ListenAndServe(telemetryAddr, telemetryMux); err != nil {
-		log.Fatalf("Telemetry server error: %v", err)
+	log.Printf("Raw Telemetry WS server listening on %s", telemetryAddr)
+	go func() {
+		if err := http.ListenAndServe(telemetryAddr, telemetryMux); err != nil {
+			log.Fatalf("Raw Telemetry WS server error: %v", err)
+		}
+	}()
+
+	// ---------------------
+	// Live Data WebSocket Server on port cfg.LiveWSPort (9094)
+	// ---------------------
+	liveWsMux := http.NewServeMux()
+	liveWsMux.HandleFunc("/ws", wsserver.ServeWS)
+	liveWsAddr := fmt.Sprintf(":%d", cfg.LiveWSPort)
+	log.Printf("Live Data WS server listening on %s", liveWsAddr)
+	if err := http.ListenAndServe(liveWsAddr, liveWsMux); err != nil {
+		log.Fatalf("Live Data WS server error: %v", err)
 	}
 }

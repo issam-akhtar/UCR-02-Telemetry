@@ -6,42 +6,11 @@ import HistoricalCharts from './pages/HistoricalCharts';
 import WebSocketDataDisplay from './components/WebSocketDataDisplay';
 import ChartSettingsModal from './modals/ChartSettingsModal';
 import { ChartSettingsProvider } from './contexts/ChartSettingsContext';
-
-import {
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-} from '@mui/material';
+import { ThemeProvider, CssBaseline, AppBar, Toolbar, Typography, Button, IconButton, Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-
-// NEW: Network Status
+import theme from './theme';
 import { NetworkStatusProvider } from './contexts/NetworkStatusContext';
 import NetworkStatusBar from './components/NetworkStatusBar';
-
-// COLOR PALETTE
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: { main: '#F5F3F4' },
-    secondary: { main: '#B1A7A6' },
-    error: { main: '#BA181B' },
-    background: {
-      default: '#161A1D',
-      paper: '#161A1D',
-    },
-    text: {
-      primary: '#ecf3e8',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-});
 
 const App = () => {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
@@ -52,8 +21,8 @@ const App = () => {
         <NetworkStatusProvider>
           <CssBaseline />
           <BrowserRouter>
-            <AppBar position="fixed" color="primary">
-              <Toolbar>
+            <AppBar position="fixed">
+              <Toolbar sx={{ gap: 2 }}>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                   Telemetry Dashboard
                 </Typography>
@@ -69,35 +38,24 @@ const App = () => {
                 <Button color="inherit" component={Link} to="/wsdata">
                   WS Data
                 </Button>
-                <IconButton
-                  color="inherit"
-                  onClick={() => setSettingsModalOpen(true)}
-                  sx={{ ml: 2 }}
-                >
+                <IconButton color="inherit" onClick={() => setSettingsModalOpen(true)}>
                   <SettingsIcon />
                 </IconButton>
               </Toolbar>
             </AppBar>
-
-            {/* Space under AppBar */}
+            {/* Provide space for the AppBar */}
             <Toolbar />
-
-            {/* Show network status bar */}
             <NetworkStatusBar />
-
-            {/* Chart Settings Modal */}
-            <ChartSettingsModal
-              isOpen={settingsModalOpen}
-              onClose={() => setSettingsModalOpen(false)}
-            />
-
-            <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/realtime" element={<RealTimeCharts />} />
-              <Route path="/historical" element={<HistoricalCharts />} />
-              <Route path="/wsdata" element={<WebSocketDataDisplay />} />
-              <Route path="*" element={<Dashboard />} />
-            </Routes>
+            <ChartSettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} />
+            <Box sx={{ flex: 1 }}>
+              <Routes>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/realtime" element={<RealTimeCharts />} />
+                <Route path="/historical" element={<HistoricalCharts />} />
+                <Route path="/wsdata" element={<WebSocketDataDisplay />} />
+                <Route path="*" element={<Dashboard />} />
+              </Routes>
+            </Box>
           </BrowserRouter>
         </NetworkStatusProvider>
       </ChartSettingsProvider>

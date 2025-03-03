@@ -59,7 +59,6 @@ export class WebSocketService {
 
     this.socket.onmessage = (event) => {
       if (!this.protoRoot) {
-        // If proto not loaded yet, queue the data
         this.messageQueue.push({ buffer: new Uint8Array(event.data) });
         return;
       }
@@ -98,6 +97,6 @@ export class WebSocketService {
   }
 }
 
-// Create a single instance and initialize
-export const wsService = new WebSocketService("ws://localhost:9000/ws");
+// Connect to the live data WebSocket on port 9094.
+export const wsService = new WebSocketService(`ws://${window.location.hostname}:9094/ws`);
 wsService.initialize();
