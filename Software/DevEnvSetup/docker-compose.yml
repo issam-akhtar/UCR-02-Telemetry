@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  frontend:
+    network_mode: "host"
+    build:
+      context: ../telemetry-app  # Path to the frontend directory where Dockerfile is located
+    volumes:
+      - ../telemetry-app:/src
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+    depends_on:
+      - backend
+
+  backend:
+    network_mode: "host"
+    build:
+      context: ../backend-processing  # Path to the frontend directory where Dockerfile is located
+    volumes:
+      - ../backend-processing:/go/src
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PORT=${PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+
