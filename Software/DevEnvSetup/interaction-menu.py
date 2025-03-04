@@ -1,10 +1,18 @@
 import subprocess
+import time
 
-def run_shell_command(command):
-    """Run a shell command and print the output."""
+dbstarted = False
+
+def run_shell_command(command, wait_for_output=True):
+    """Run a shell command and print the output, or run in the background if needed."""
     try:
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-        print(result.stdout)
+        if wait_for_output:
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            print(result.stdout)
+        else:
+            # Run command without blocking (for commands that open terminals or similar)
+            command_str = " ".join(command) if isinstance(command, list) else command
+            subprocess.Popen(["lxterminal", "-e", command_str])
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
 
@@ -23,7 +31,10 @@ def run_shell_command(command):
 def start_database():
     """Run the shell script to start the database."""
     print("Starting the database...")
-    run_shell_command(["bash", "../backend-processing/telemetry_database_pi_script.sh"])
+    # Run the database script in a new terminal
+    run_shell_command(["bash", "../backend-processing/telemetry_database_pi_script.sh"], wait_for_output=False)
+    global dbstarted
+    dbstarted = True
 
 # def get_database_name():
 #     """Retrieve the current database name."""
@@ -48,14 +59,16 @@ def build_docker():
 
 def run_docker(detached=False):
     """Run Docker using docker-compose, ensuring the database is running first."""
-    if not check_postgres_status():
+    if not dbstarted:
         start_database()
+        print("Waiting for the database to start...")
+        time.sleep(5)
     
-    print(" Starting Docker containers...")
+    print("Starting Docker containers...")
     command = ["docker", "compose", "up"]
     if detached:
         command.append("-d")
-    run_shell_command(command)
+    run_shell_command(command, wait_for_output=False)
 
 # def view_docker_logs():
 #     """View logs for a selected service."""
