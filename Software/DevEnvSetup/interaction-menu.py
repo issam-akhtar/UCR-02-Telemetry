@@ -70,14 +70,34 @@ def run_docker(detached=False):
         command.append("-d")
     run_shell_command(command, wait_for_output=False)
 
-# def view_docker_logs():
-#     """View logs for a selected service."""
-#     service = input("Which service logs do you want to view? (frontend/backend): ").strip().lower()
-#     if service in ["frontend", "backend"]:
-#         print(f" Viewing logs for {service}...")
-#         run_shell_command(["docker", "compose", "logs", service])
-#     else:
-#         print(" Invalid service selection.")
+def view_docker_logs():
+    """View logs for a selected service."""
+    services = {"1": "frontend", "2": "backend", "3": "return"}
+
+    while True:
+        print("\nSelect a service to view logs:")
+        print("1. Frontend")
+        print("2. Backend")
+        print("3. Return to main menu")
+
+        choice = input("Enter the number of your choice: ").strip()
+
+        if choice in services:
+            if choice == "3":
+                print("Returning to main menu...")
+                return  # Exit
+            service = services[choice]
+            print("\n")
+            print('/' * 80)
+            print('/' * 80)
+            print(f"Viewing logs for {service}...")
+            run_shell_command(["docker", "compose", "logs", service])
+            print('/' * 80)
+            print('/' * 80)
+            print("\n\n")
+            return  # Exit
+        else:
+            print("Invalid selection. Please enter 1, 2, or 3.")
 
 def quit_program():
     """Exit"""
@@ -93,8 +113,8 @@ def main_menu():
         print("2. Build Docker")
         print("3. Run Docker")
         #print("6 Run Docker in detached mode")
-        #print("7 View Docker logs")
-        print("4. Exit")
+        print("4. View Docker logs")
+        print("5. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -105,6 +125,8 @@ def main_menu():
         elif choice == "3":
             run_docker()
         elif choice == "4":
+            view_docker_logs()
+        elif choice == "5":
             quit_program()
         else:
             print("Invalid choice, please try again.")
