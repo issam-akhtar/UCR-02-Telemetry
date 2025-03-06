@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Activator extends Base {
+    static $t: Type;
+    static createInstance(a: Type): any;
+    static c(a: Type, ...b: any[]): any;
+    static createInstance$1<T>($t: Type): T;
+}

@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IFastItemColumnPropertyName {
+    readonly propertyName: string;
+}
+/**
+ * @hidden
+ */
+export declare let IFastItemColumnPropertyName_$type: Type;

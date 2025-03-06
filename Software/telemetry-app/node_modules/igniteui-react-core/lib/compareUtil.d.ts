@@ -1,0 +1,4 @@
+export declare class CompareUtil {
+    static compareToObject(obj1: any, obj2: any): number;
+    static compareTo(obj1: any, obj2: any): number;
+}

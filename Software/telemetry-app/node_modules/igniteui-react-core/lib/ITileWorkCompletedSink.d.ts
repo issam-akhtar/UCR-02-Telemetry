@@ -1,0 +1,12 @@
+import { TileImageCreatedEventArgs } from "./TileImageCreatedEventArgs";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ITileWorkCompletedSink {
+    onCompleted(a: TileImageCreatedEventArgs): void;
+}
+/**
+ * @hidden
+ */
+export declare let ITileWorkCompletedSink_$type: Type;

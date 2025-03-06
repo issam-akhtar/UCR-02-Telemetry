@@ -1,0 +1,17 @@
+import { FrameworkElement } from "./FrameworkElement";
+import { Type } from "./type";
+import { Thickness } from "./Thickness";
+import { HorizontalAlignment } from "./HorizontalAlignment";
+import { VerticalAlignment } from "./VerticalAlignment";
+/**
+ * @hidden
+ */
+export declare class Control extends FrameworkElement {
+    static $t: Type;
+    constructor();
+    ab: Type;
+    ae: Thickness;
+    ac(): void;
+    ad: HorizontalAlignment;
+    af: VerticalAlignment;
+}

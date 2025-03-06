@@ -1,0 +1,66 @@
+import { Type } from "./type";
+/**
+ * Describes available types of trend lines supported by series.
+ */
+export declare enum TrendLineType {
+    /**
+     * No trend line will be displayed.
+     */
+    None = 0,
+    /**
+     * Linear fit.
+     */
+    LinearFit = 1,
+    /**
+     * Quadratic polynomial fit.
+     */
+    QuadraticFit = 2,
+    /**
+     * Cubic polynomial fit.
+     */
+    CubicFit = 3,
+    /**
+     * Quartic polynomial fit.
+     */
+    QuarticFit = 4,
+    /**
+     * Quintic polynomial fit.
+     */
+    QuinticFit = 5,
+    /**
+     * Logarithmic fit.
+     */
+    LogarithmicFit = 6,
+    /**
+     * Exponential fit.
+     */
+    ExponentialFit = 7,
+    /**
+     * Powerlaw fit.
+     */
+    PowerLawFit = 8,
+    /**
+     * Simple moving average.
+     */
+    SimpleAverage = 9,
+    /**
+     * Exponential moving average.
+     */
+    ExponentialAverage = 10,
+    /**
+     * Modified moving average.
+     */
+    ModifiedAverage = 11,
+    /**
+     * Cumulative moving average.
+     */
+    CumulativeAverage = 12,
+    /**
+     * Weighted moving average.
+     */
+    WeightedAverage = 13
+}
+/**
+ * @hidden
+ */
+export declare let TrendLineType_$type: Type;

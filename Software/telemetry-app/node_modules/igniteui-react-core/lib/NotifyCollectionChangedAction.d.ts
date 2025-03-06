@@ -1,0 +1,11 @@
+import { Type } from "./type";
+export declare enum NotifyCollectionChangedAction {
+    Add = 0,
+    Remove = 1,
+    Replace = 2,
+    Reset = 4
+}
+/**
+ * @hidden
+ */
+export declare let NotifyCollectionChangedAction_$type: Type;

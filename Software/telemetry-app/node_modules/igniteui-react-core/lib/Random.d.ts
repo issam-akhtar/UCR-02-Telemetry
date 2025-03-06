@@ -1,0 +1,14 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Random extends Base {
+    static $t: Type;
+    constructor(a: number);
+    constructor(a: number, b: number);
+    constructor(a: number, ..._rest: any[]);
+    nextDouble(): number;
+    next(): number;
+    next1(a: number): number;
+    next2(a: number, b: number): number;
+}

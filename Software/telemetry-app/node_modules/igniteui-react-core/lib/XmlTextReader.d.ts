@@ -1,0 +1,1 @@
+export { XmlTextReader } from "./XmlParserContext_combined";

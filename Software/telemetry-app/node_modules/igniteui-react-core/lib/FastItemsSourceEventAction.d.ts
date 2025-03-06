@@ -1,0 +1,30 @@
+import { Type } from "./type";
+/**
+ * Describes available actions that can cause a DataSource event.
+ */
+export declare enum FastItemsSourceEventAction {
+    /**
+     * One or more rows were removed from the data source.
+     */
+    Remove = 0,
+    /**
+     * One or more rows were added to the data source.
+     */
+    Insert = 1,
+    /**
+     * One or more rows were replaced in the data source.
+     */
+    Replace = 2,
+    /**
+     * An item property value changed in the data source.
+     */
+    Change = 3,
+    /**
+     * The entire data source contents were reset.
+     */
+    Reset = 4
+}
+/**
+ * @hidden
+ */
+export declare let FastItemsSourceEventAction_$type: Type;

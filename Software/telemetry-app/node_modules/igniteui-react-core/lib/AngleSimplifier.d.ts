@@ -1,0 +1,8 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AngleSimplifier extends Base {
+    static $t: Type;
+    static a(a: number): number;
+}

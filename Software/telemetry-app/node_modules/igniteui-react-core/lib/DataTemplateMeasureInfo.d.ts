@@ -1,0 +1,17 @@
+import { Base, Type } from "./type";
+import { DataTemplatePassInfo } from "./DataTemplatePassInfo";
+/**
+ * @hidden
+ */
+export declare class DataTemplateMeasureInfo extends Base {
+    static $t: Type;
+    renderContext: any;
+    context: any;
+    width: number;
+    height: number;
+    isConstant: boolean;
+    data: any;
+    passInfo: DataTemplatePassInfo;
+    renderOffsetX: number;
+    renderOffsetY: number;
+}

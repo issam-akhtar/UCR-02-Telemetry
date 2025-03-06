@@ -1,0 +1,10 @@
+import { DependencyObject } from "./DependencyObject";
+import { INotifyPropertyChanged, PropertyChangedEventArgs, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DependencyObjectNotifier extends DependencyObject implements INotifyPropertyChanged {
+    static $t: Type;
+    protected j(a: string): void;
+    propertyChanged: (sender: any, e: PropertyChangedEventArgs) => void;
+}

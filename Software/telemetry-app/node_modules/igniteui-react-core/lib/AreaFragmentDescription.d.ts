@@ -1,0 +1,10 @@
+import { FragmentBaseDescription } from "./FragmentBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AreaFragmentDescription extends FragmentBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

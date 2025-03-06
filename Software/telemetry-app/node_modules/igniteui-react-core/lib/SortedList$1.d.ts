@@ -1,0 +1,12 @@
+import { List$1 } from "./List$1";
+import { IOrderedEnumerable$1 } from "./IOrderedEnumerable$1";
+import { IEnumerable$1, IEnumerator, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class SortedList$1<TElement> extends List$1<TElement> implements IOrderedEnumerable$1<TElement> {
+    static $t: Type;
+    protected $tElement: Type;
+    constructor($tElement: Type, a: IEnumerable$1<TElement>);
+    getEnumeratorObject(): IEnumerator;
+}

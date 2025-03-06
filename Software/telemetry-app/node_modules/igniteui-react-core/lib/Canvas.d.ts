@@ -1,0 +1,8 @@
+import { Panel } from "./Panel";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Canvas extends Panel {
+    static $t: Type;
+}

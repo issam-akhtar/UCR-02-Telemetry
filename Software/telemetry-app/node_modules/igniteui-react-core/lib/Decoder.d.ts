@@ -1,0 +1,17 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class Decoder extends Base {
+    static $t: Type;
+    e(a: number[], b: number, c: number, d: string[], e: number, f: number, g: boolean, h: number, i: number, j: boolean): {
+        p7: number;
+        p8: number;
+        p9: boolean;
+    };
+    abstract a(a: number[], b: number, c: number): number;
+    b(a: number[], b: number, c: number, d: boolean): number;
+    abstract c(a: number[], b: number, c: number, d: string[], e: number): number;
+    d(a: number[], b: number, c: number, d: string[], e: number, f: boolean): number;
+    f(): void;
+}

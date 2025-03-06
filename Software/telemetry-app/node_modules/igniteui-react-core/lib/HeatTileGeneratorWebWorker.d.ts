@@ -1,0 +1,1 @@
+export { HeatTileGeneratorWebWorker } from "./HeatTileGeneratorWebWorker_combined";

@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IDataSourceSupportsCount {
+    readonly actualCount: number;
+}
+/**
+ * @hidden
+ */
+export declare let IDataSourceSupportsCount_$type: Type;

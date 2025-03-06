@@ -1,0 +1,10 @@
+import { FinancialIndicatorDescription } from "./FinancialIndicatorDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class StrategyBasedIndicatorDescription extends FinancialIndicatorDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

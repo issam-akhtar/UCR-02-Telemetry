@@ -1,0 +1,18 @@
+import { Type } from "./type";
+/**
+ * Enum representing the direction of an arc.
+ */
+export declare enum SweepDirection {
+    /**
+     * In a direction opposite the typical forward movement of the hands of a clock.
+     */
+    Counterclockwise = 0,
+    /**
+     * In a direction corresponding to the typical forward movement of the hands of a clock.
+     */
+    Clockwise = 1
+}
+/**
+ * @hidden
+ */
+export declare let SweepDirection_$type: Type;

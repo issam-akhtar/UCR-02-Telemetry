@@ -1,0 +1,9 @@
+import { Base, IEnumerable, Type } from "./type";
+import { IQueryable } from "./IQueryable";
+/**
+ * @hidden
+ */
+export declare class Queryable extends Base {
+    static $t: Type;
+    static a(a: IEnumerable): IQueryable;
+}

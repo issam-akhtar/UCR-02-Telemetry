@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IExecutionContext {
+    execute(a: () => void): void;
+    enqueueAction(a: () => void): void;
+    enqueueAnimationAction(a: () => void): void;
+    executeDelayed(a: () => void, b: number): void;
+    getCurrentRelativeTime(): number;
+}
+/**
+ * @hidden
+ */
+export declare let IExecutionContext_$type: Type;

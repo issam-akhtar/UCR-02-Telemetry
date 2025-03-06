@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Triangle extends Base {
+    static $t: Type;
+    v1: number;
+    v2: number;
+    v3: number;
+}

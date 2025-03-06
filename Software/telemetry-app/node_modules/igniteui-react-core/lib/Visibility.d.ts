@@ -1,0 +1,18 @@
+import { Type } from "./type";
+/**
+ * Specifies the display state of an element.
+ */
+export declare enum Visibility {
+    /**
+     * Display the element.
+     */
+    Visible = 0,
+    /**
+     * Do not display the element.
+     */
+    Collapsed = 1
+}
+/**
+ * @hidden
+ */
+export declare let Visibility_$type: Type;

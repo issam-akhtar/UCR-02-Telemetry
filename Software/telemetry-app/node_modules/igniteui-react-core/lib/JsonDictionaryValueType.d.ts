@@ -1,0 +1,14 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum JsonDictionaryValueType {
+    NumberValue = 0,
+    BooleanValue = 1,
+    StringValue = 2,
+    NullValue = 3
+}
+/**
+ * @hidden
+ */
+export declare let JsonDictionaryValueType_$type: Type;

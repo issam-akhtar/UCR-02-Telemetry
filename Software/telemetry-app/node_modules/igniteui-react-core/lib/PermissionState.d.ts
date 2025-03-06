@@ -1,0 +1,9 @@
+import { Type } from "./type";
+export declare enum PermissionState {
+    Unrestricted = 1,
+    None = 0
+}
+/**
+ * @hidden
+ */
+export declare let PermissionState_$type: Type;

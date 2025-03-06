@@ -1,0 +1,1 @@
+export { DependencyPropertyChangedEventArgs } from "./DependencyObject_combined";

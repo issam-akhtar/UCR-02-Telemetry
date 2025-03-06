@@ -1,0 +1,16 @@
+import { IList$1, Type } from "./type";
+import { IFastItemColumnPropertyName } from "./IFastItemColumnPropertyName";
+import { IGetItemAtIndex } from "./IGetItemAtIndex";
+/**
+ * @hidden
+ */
+export interface IFastItemColumn$1<T> extends IList$1<T>, IFastItemColumnPropertyName, IGetItemAtIndex {
+    readonly minimum: T;
+    readonly maximum: T;
+    readonly mayContainUnknowns: boolean;
+    asArray(): T[];
+}
+/**
+ * @hidden
+ */
+export declare let IFastItemColumn$1_$type: Type;

@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IDataSourceUpdateNotifier {
+    rangeActualized(a: number, b: number): void;
+    notifySetItem(a: number, b: any, c: any): void;
+    notifyClearItems(): void;
+    notifyInsertItem(a: number, b: any): void;
+    notifyRemoveItem(a: number, b: any): void;
+}
+/**
+ * @hidden
+ */
+export declare let IDataSourceUpdateNotifier_$type: Type;

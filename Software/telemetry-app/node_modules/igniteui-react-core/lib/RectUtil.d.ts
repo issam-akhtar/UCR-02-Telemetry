@@ -1,0 +1,36 @@
+import { Base, Point, Type } from "./type";
+import { Rect } from "./Rect";
+import { Size } from "./Size";
+import { List$1 } from "./List$1";
+/**
+ * @hidden
+ */
+export declare class RectUtil extends Base {
+    static $t: Type;
+    static l(a: Rect): Point;
+    static e(a: Rect): number;
+    static p(a: Rect): Rect;
+    static m(a: Rect, b: Point): Point;
+    static g(a: Rect, b: Point): number;
+    static h(a: Rect, b: Rect): number;
+    private static f;
+    static a(a: Rect, b: Rect): boolean;
+    static b(a: Rect, b: Rect): boolean;
+    static i(a: Rect, b: Rect): number;
+    static q(a: Rect, b: number, c: number): Rect;
+    static t(a: Rect, b: number, c: number): Rect;
+    static s(a: Rect, b: number, c: number): Rect;
+    static r(a: Rect, b: number): Rect;
+    static y(a: Rect): Rect;
+    static c(a: Rect): boolean;
+    static z(a: Rect): Size;
+    static u(a: Rect, b: Rect): Rect;
+    static v(a: Rect, b: Size): Rect;
+    static n(a: Rect): Point;
+    static o(a: Rect): Point;
+    static j(a: Rect): Point;
+    static k(a: Rect): Point;
+    static d(a: Rect): List$1<Point>;
+    static w(a: Rect, b: number): Rect;
+    static x(a: Rect, b: number, c: number, d: number): Rect;
+}

@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { IFastItemsSource } from "./IFastItemsSource";
+/**
+ * @hidden
+ */
+export declare class FastItemsSourceReference extends Base {
+    static $t: Type;
+    constructor(a: IFastItemsSource);
+    a: IFastItemsSource;
+    b: number;
+}

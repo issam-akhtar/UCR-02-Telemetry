@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { IDataObject } from "./IDataObject";
+/**
+ * @hidden
+ */
+export declare class Clipboard extends Base {
+    static $t: Type;
+    private static b;
+    static c(): IDataObject;
+    static a(a: IDataObject, b?: boolean): void;
+}

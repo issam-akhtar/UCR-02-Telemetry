@@ -1,0 +1,13 @@
+import { Base, Type } from "./type";
+import { TouchVelocityReading } from "./TouchVelocityReading";
+/**
+ * @hidden
+ */
+export declare class TouchVelocityTracker extends Base {
+    static $t: Type;
+    private a;
+    private d;
+    g(a: number, b: number, c: number): void;
+    f(): void;
+    b(a: number): TouchVelocityReading;
+}

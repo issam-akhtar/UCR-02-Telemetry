@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { TypeDescriptionPlatform } from "./TypeDescriptionPlatform";
+/**
+ * @hidden
+ */
+export declare class TypeDescriptionCleanups extends Base {
+    static $t: Type;
+    private a;
+    constructor();
+    b(a: TypeDescriptionPlatform, b: any): void;
+}

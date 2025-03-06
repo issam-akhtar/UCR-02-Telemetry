@@ -1,0 +1,12 @@
+import { IFilterExpression } from "./IFilterExpression";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IPropertyReferenceFilterExpression extends IFilterExpression {
+    readonly propertyReference: string;
+}
+/**
+ * @hidden
+ */
+export declare let IPropertyReferenceFilterExpression_$type: Type;

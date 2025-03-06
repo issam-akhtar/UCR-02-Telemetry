@@ -1,0 +1,3 @@
+export declare class ReflectionUtil {
+    static getPropertyGetter: (type: Function, propertyName: string) => (instance: any) => any;
+}

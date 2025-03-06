@@ -1,0 +1,11 @@
+import { BaseError, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class ArgumentNullException extends BaseError {
+    static $t: Type;
+    constructor(a: number, b: string);
+    constructor(a: number);
+    constructor(a: number, b: string, c: string);
+    constructor(a: number, ..._rest: any[]);
+}

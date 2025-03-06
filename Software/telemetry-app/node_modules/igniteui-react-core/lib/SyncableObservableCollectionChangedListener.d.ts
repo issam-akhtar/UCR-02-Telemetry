@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface SyncableObservableCollectionChangedListener {
+    onChanged(a: any): void;
+}
+/**
+ * @hidden
+ */
+export declare let SyncableObservableCollectionChangedListener_$type: Type;

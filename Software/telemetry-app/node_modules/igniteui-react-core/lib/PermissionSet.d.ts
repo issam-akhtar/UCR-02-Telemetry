@@ -1,0 +1,16 @@
+import { Base, Type } from "./type";
+import { PermissionState } from "./PermissionState";
+import { IPermission } from "./IPermission";
+/**
+ * @hidden
+ */
+export declare class PermissionSet extends Base {
+    static $t: Type;
+    constructor(a: number);
+    constructor(a: number, b: PermissionState);
+    constructor(a: number, b: PermissionSet);
+    constructor(a: number, ..._rest: any[]);
+    b(a: IPermission): IPermission;
+    a(): boolean;
+    c(a: PermissionSet): PermissionSet;
+}

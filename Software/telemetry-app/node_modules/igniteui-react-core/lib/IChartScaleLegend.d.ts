@@ -1,0 +1,14 @@
+import { IChartLegend } from "./IChartLegend";
+import { IScaleLegendSeries } from "./IScaleLegendSeries";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IChartScaleLegend extends IChartLegend {
+    restoreOriginalState(): void;
+    initializeLegend(a: IScaleLegendSeries): void;
+}
+/**
+ * @hidden
+ */
+export declare let IChartScaleLegend_$type: Type;

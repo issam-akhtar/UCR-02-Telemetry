@@ -1,0 +1,12 @@
+import { Transform } from "./Transform";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class ScaleTransform extends Transform {
+    static $t: Type;
+    l: number;
+    m: number;
+    j: number;
+    k: number;
+}

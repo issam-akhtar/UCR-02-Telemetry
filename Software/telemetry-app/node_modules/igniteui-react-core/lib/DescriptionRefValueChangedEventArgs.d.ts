@@ -1,0 +1,9 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DescriptionRefValueChangedEventArgs extends Base {
+    static $t: Type;
+    b: any;
+    a: any;
+}

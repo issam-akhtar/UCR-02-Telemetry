@@ -1,0 +1,10 @@
+import { Base, IEnumerable, IEnumerator, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AbstractEnumerable extends Base implements IEnumerable {
+    static $t: Type;
+    private a;
+    constructor(a: any);
+    getEnumeratorObject(): IEnumerator;
+}

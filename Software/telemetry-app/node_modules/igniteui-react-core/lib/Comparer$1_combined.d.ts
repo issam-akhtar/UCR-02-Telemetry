@@ -1,0 +1,24 @@
+import { Base, Type } from "./type";
+import { IComparer } from "./IComparer";
+import { IComparer$1 } from "./IComparer$1";
+/**
+ * @hidden
+ */
+export declare abstract class Comparer$1<T> extends Base implements IComparer, IComparer$1<T> {
+    static $t: Type;
+    protected $t: Type;
+    constructor($t: Type);
+    static defaultComparerValue<T>($t: Type): Comparer$1<T>;
+    abstract compare(a: T, b: T): number;
+    static a<T>($t: Type, a: (x: T, y: T) => number): Comparer$1<T>;
+    compareObject(a: any, b: any): number;
+}
+/**
+ * @hidden
+ */
+export declare class DefaultComparer$1<T> extends Comparer$1<T> {
+    static $t: Type;
+    protected $t: Type;
+    constructor($t: Type);
+    compare(a: T, b: T): number;
+}

@@ -1,0 +1,47 @@
+import { Type } from "./type";
+/**
+ * Describes available positions for smart label placement with respect to the notional rectangle's
+ * origin
+ */
+export declare enum SmartPosition {
+    /**
+     * Specifies left top as a valid smart placement position.
+     */
+    LeftTop = 0,
+    /**
+     * Specifies center top as a valid smart placement position.
+     */
+    CenterTop = 1,
+    /**
+     * Specifies right top as a valid smart placement position.
+     */
+    RightTop = 2,
+    /**
+     * Specifies left center as a valid smart placement position.
+     */
+    LeftCenter = 3,
+    /**
+     * Specifies center center as a valid smart placement position.
+     */
+    CenterCenter = 4,
+    /**
+     * Specifies right center as a valid smart placement position.
+     */
+    RightCenter = 5,
+    /**
+     * Specifies left bottom as a valid smart placement position.
+     */
+    LeftBottom = 6,
+    /**
+     * Specifies center bottom as a valid smart placement position.
+     */
+    CenterBottom = 7,
+    /**
+     * Specifies right bottom as a valid smart placement position.
+     */
+    RightBottom = 8
+}
+/**
+ * @hidden
+ */
+export declare let SmartPosition_$type: Type;

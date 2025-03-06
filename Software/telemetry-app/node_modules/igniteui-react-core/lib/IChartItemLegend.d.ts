@@ -1,0 +1,17 @@
+import { IChartLegend } from "./IChartLegend";
+import { List$1 } from "./List$1";
+import { UIElement } from "./UIElement";
+import { ILegendSeries } from "./ILegendSeries";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IChartItemLegend extends IChartLegend {
+    createItemwiseLegendItems(a: List$1<UIElement>, b: ILegendSeries): void;
+    renderItemwiseContent(a: ILegendSeries): void;
+    createLegendItemsInsert(a: List$1<UIElement>, b: ILegendSeries): void;
+}
+/**
+ * @hidden
+ */
+export declare let IChartItemLegend_$type: Type;

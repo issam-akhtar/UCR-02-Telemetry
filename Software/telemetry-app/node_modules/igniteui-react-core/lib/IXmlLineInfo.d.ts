@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IXmlLineInfo {
+    readonly lineNumber: number;
+    readonly linePosition: number;
+    hasLineInfo(): boolean;
+}
+/**
+ * @hidden
+ */
+export declare let IXmlLineInfo_$type: Type;

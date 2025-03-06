@@ -1,0 +1,22 @@
+import { Base, IList$1, Point, IEnumerable$1, Type } from "./type";
+import { Rect } from "./Rect";
+import { List$1 } from "./List$1";
+import { PointCollection } from "./PointCollection";
+import { Clipper } from "./Clipper";
+/**
+ * @hidden
+ */
+export declare class PointCollectionUtil extends Base {
+    static $t: Type;
+    static d(a: IList$1<Point>, b: IList$1<Point>, c: number): void;
+    static g(a: IEnumerable$1<Point>): Rect;
+    static h(a: IEnumerable$1<IEnumerable$1<Point>>): Rect;
+    static i(a: IList$1<Point>): Rect;
+    static j(a: List$1<List$1<Point>>): Rect;
+    static k(a: List$1<PointCollection>): Rect;
+    static c(a: IList$1<Point>, b: IList$1<Point>, c: Clipper): void;
+    static e(a: IEnumerable$1<Point>): Point;
+    static f(a: IEnumerable$1<Point>): PointCollection;
+    static b(a: IEnumerable$1<Point>): List$1<Point>;
+    static a(a: List$1<List$1<Point>>): List$1<PointCollection>;
+}

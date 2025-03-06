@@ -1,0 +1,8 @@
+import { Size } from "./Size";
+export interface IgSize {
+    width: number;
+    height: number;
+}
+export declare function isSize(s: any): boolean;
+export declare function sizeFromLiteral(s: IgSize): Size;
+export declare function sizeToLiteral(s: Size): IgSize;

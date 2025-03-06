@@ -1,0 +1,34 @@
+import { Base, IFormatProvider, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Convert extends Base {
+    static $t: Type;
+    static toDouble5(a: number): number;
+    static toDouble1(a: number): number;
+    static toDouble(a: number): number;
+    static toDouble2(a: number): number;
+    static toDecimal(a: number): number;
+    static toDecimal3(a: number): number;
+    static toDecimal1(a: number): number;
+    static toInt32(a: number): number;
+    static toInt322(a: string): number;
+    static toDouble3(a: any): number;
+    static toDouble4(a: any, b: IFormatProvider): number;
+    static toInt321(a: any): number;
+    static toInt64(a: any): number;
+    static toDecimal2(a: any): number;
+    static toByte(a: boolean): number;
+    static toByte1(a: any): number;
+    static toBoolean(a: any): boolean;
+    static toDateTime(a: any): Date;
+    static toChar(a: number): string;
+    static toChar1(a: number): string;
+    static toDouble6(a: string, b: IFormatProvider): number;
+    static toUInt16(a: boolean): number;
+    static toBoolean1(a: number): boolean;
+    static toUInt32(a: number): number;
+    static fromBase64String(a: string): number[];
+    static toBase64String(a: number[]): string;
+    static toByte2(a: string, b: number): number;
+}

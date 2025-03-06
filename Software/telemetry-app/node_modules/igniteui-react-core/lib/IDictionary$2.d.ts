@@ -1,0 +1,23 @@
+import { ICollection$1, IEnumerable$1, IEnumerable, Type } from "./type";
+import { KeyValuePair$2 } from "./KeyValuePair$2";
+/**
+ * @hidden
+ */
+export interface IDictionary$2<TKey, TValue> extends ICollection$1<KeyValuePair$2<TKey, TValue>>, IEnumerable$1<KeyValuePair$2<TKey, TValue>>, IEnumerable {
+    addItem(a: TKey, b: TValue): void;
+    removeItem(a: TKey): boolean;
+    item(a: TKey, b?: TValue): TValue;
+    readonly count: number;
+    readonly keys: ICollection$1<TKey>;
+    readonly values: ICollection$1<TValue>;
+    tryGetValue(a: TKey, b: TValue): {
+        ret: boolean;
+        p1: TValue;
+    };
+    containsKey(a: TKey): boolean;
+    clear(): void;
+}
+/**
+ * @hidden
+ */
+export declare let IDictionary$2_$type: Type;

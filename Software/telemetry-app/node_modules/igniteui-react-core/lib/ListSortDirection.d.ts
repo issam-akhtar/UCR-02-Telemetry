@@ -1,0 +1,9 @@
+import { Type } from "./type";
+export declare enum ListSortDirection {
+    Ascending = 0,
+    Descending = 1
+}
+/**
+ * @hidden
+ */
+export declare let ListSortDirection_$type: Type;

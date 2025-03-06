@@ -1,0 +1,8 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class BinaryFileDownloader extends Base {
+    static $t: Type;
+    static a(uri_: string, callback_: (arg1: string) => void, errorCallback_: (arg1: string) => void): void;
+}

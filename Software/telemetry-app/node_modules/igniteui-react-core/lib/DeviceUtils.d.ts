@@ -1,0 +1,14 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DeviceUtils extends Base {
+    static $t: Type;
+    static g(a: number): number;
+    static f(a: number): number;
+    static a(a: number): number;
+    static c(a: number): number;
+    static b(a: number): number;
+    static d(): number;
+    static e(): number;
+}

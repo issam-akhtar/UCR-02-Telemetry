@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IVisualData {
+    serialize(): string;
+}
+/**
+ * @hidden
+ */
+export declare let IVisualData_$type: Type;

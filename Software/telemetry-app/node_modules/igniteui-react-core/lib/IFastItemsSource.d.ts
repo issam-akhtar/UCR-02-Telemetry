@@ -1,0 +1,26 @@
+import { IGetItemAtIndex } from "./IGetItemAtIndex";
+import { Type } from "./type";
+import { IFastItemColumn$1 } from "./IFastItemColumn$1";
+import { IFastItemColumnPropertyName } from "./IFastItemColumnPropertyName";
+import { FastItemsSourceEventArgs } from "./FastItemsSourceEventArgs";
+import { NotifyCollectionChangedEventArgs } from "./NotifyCollectionChangedEventArgs";
+/**
+ * @hidden
+ */
+export interface IFastItemsSource extends IGetItemAtIndex {
+    item(a: number): any;
+    indexOf(a: any): number;
+    registerColumn(a: string, b: (arg1: any) => any, c: boolean): IFastItemColumn$1<number>;
+    deregisterColumn(a: IFastItemColumnPropertyName): void;
+    registerColumnInt(a: string, b: (arg1: any) => any, c: boolean): IFastItemColumn$1<number>;
+    registerColumnObject(a: string, b: (arg1: any) => any, c: boolean): IFastItemColumn$1<any>;
+    registerColumnDateTime(a: string, b: (arg1: any) => any, c: boolean): IFastItemColumn$1<Date>;
+    event: (sender: any, e: FastItemsSourceEventArgs) => void;
+    asArray(): any[];
+    readonly count: number;
+    handleCollectionChanged(a: NotifyCollectionChangedEventArgs): void;
+}
+/**
+ * @hidden
+ */
+export declare let IFastItemsSource_$type: Type;

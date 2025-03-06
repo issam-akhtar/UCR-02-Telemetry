@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ITickProvider {
+    setupTicking(a: () => void): number;
+    requestFrame(a: number): void;
+    teardownTicking(a: number): void;
+}
+/**
+ * @hidden
+ */
+export declare let ITickProvider_$type: Type;

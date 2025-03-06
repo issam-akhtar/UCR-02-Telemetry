@@ -1,0 +1,12 @@
+import { IDataSourceLocalDataProvider } from "./IDataSourceLocalDataProvider";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IExternalLocalDataSource {
+    resolveDataProvider(): IDataSourceLocalDataProvider;
+}
+/**
+ * @hidden
+ */
+export declare let IExternalLocalDataSource_$type: Type;

@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+import { FrameworkElement } from "./FrameworkElement";
+import { Panel } from "./Panel";
+/**
+ * @hidden
+ */
+export declare class FrameworkElementExtensions extends Base {
+    static $t: Type;
+    static a(a: FrameworkElement, b: Panel): boolean;
+}

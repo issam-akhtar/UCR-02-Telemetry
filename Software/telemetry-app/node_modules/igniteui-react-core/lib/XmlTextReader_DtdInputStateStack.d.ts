@@ -1,0 +1,13 @@
+import { Base, Type } from "./type";
+import { XmlTextReader_DtdInputState } from "./XmlTextReader_DtdInputState";
+/**
+ * @hidden
+ */
+export declare class XmlTextReader_DtdInputStateStack extends Base {
+    static $t: Type;
+    private a;
+    constructor();
+    c(): XmlTextReader_DtdInputState;
+    d(): XmlTextReader_DtdInputState;
+    b(a: XmlTextReader_DtdInputState): void;
+}

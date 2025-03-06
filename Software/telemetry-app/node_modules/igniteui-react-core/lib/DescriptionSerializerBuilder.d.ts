@@ -1,0 +1,17 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DescriptionSerializerBuilder extends Base {
+    static $t: Type;
+    private d;
+    toString(): string;
+    constructor();
+    private b;
+    private a;
+    e(a: string): void;
+    f(a: string): void;
+    private g;
+    i(): void;
+    h(): void;
+}

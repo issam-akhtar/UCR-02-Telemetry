@@ -1,0 +1,11 @@
+import { Transform } from "./Transform";
+import { TransformCollection } from "./TransformCollection";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TransformGroup extends Transform {
+    static $t: Type;
+    j: TransformCollection;
+    constructor();
+}

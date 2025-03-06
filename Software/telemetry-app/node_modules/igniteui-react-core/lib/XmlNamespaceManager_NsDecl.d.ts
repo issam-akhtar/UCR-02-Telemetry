@@ -1,0 +1,10 @@
+import { ValueType, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class XmlNamespaceManager_NsDecl extends ValueType {
+    static $t: Type;
+    constructor();
+    a: string;
+    b: string;
+}

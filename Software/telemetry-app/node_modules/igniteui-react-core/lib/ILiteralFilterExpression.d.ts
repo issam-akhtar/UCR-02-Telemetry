@@ -1,0 +1,13 @@
+import { IFilterExpression } from "./IFilterExpression";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ILiteralFilterExpression extends IFilterExpression {
+    readonly literalValue: any;
+    readonly leaveUnquoted: boolean;
+}
+/**
+ * @hidden
+ */
+export declare let ILiteralFilterExpression_$type: Type;

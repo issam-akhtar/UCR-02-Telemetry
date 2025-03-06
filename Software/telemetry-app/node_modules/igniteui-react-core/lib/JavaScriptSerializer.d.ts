@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class JavaScriptSerializer extends Base {
+    static $t: Type;
+    constructor();
+    a(a: string): any;
+    b(a: any): string;
+}

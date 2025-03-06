@@ -1,0 +1,42 @@
+import { Base, IDisposable, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class TextReader extends Base implements IDisposable {
+    static $t: Type;
+    static staticInit(): void;
+    constructor();
+    static e: TextReader;
+    i(): void;
+    dispose(): void;
+    protected dispose1(a: boolean): void;
+    a(): number;
+    b(): number;
+    c(a: string[], b: number, c: number): number;
+    d(a: string[], b: number, c: number): number;
+    g(): string;
+    h(): string;
+    static f(a: TextReader): TextReader;
+}
+/**
+ * @hidden
+ */
+export declare class TextReader_NullTextReader extends TextReader {
+    static $t: Type;
+    g(): string;
+}
+/**
+ * @hidden
+ */
+export declare class SynchronizedReader extends TextReader {
+    static $t: Type;
+    private k;
+    constructor(a: TextReader);
+    i(): void;
+    a(): number;
+    d(a: string[], b: number, c: number): number;
+    g(): string;
+    h(): string;
+    b(): number;
+    c(a: string[], b: number, c: number): number;
+}

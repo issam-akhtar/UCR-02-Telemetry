@@ -1,0 +1,18 @@
+import { Base, Point, Type } from "./type";
+import { PathGeometry } from "./PathGeometry";
+import { GeometryGroup } from "./GeometryGroup";
+import { FrameworkElement } from "./FrameworkElement";
+import { Panel } from "./Panel";
+import { Rect } from "./Rect";
+/**
+ * @hidden
+ */
+export declare class Extensions extends Base {
+    static $t: Type;
+    static e(a: PathGeometry): void;
+    static d(a: GeometryGroup): void;
+    static c(a: FrameworkElement): void;
+    static f(a: Panel, b: Panel): void;
+    static a(a: Point): boolean;
+    static b(a: Rect): boolean;
+}

@@ -1,0 +1,12 @@
+import { Base, IList$1, Type } from "./type";
+import { Color } from "./Color";
+import { ObservableColorCollection } from "./ObservableColorCollection";
+/**
+ * @hidden
+ */
+export declare class ColorCollectionUtil extends Base {
+    static $t: Type;
+    static b(a: ObservableColorCollection, b: number): Color;
+    private static c;
+    static a(a: IList$1<Color>): ObservableColorCollection;
+}

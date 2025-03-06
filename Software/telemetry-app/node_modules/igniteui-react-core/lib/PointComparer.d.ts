@@ -1,0 +1,9 @@
+import { Base, IEqualityComparer$1, Point, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class PointComparer extends Base implements IEqualityComparer$1<Point> {
+    static $t: Type;
+    equalsC(a: Point, b: Point): boolean;
+    getHashCodeC(a: Point): number;
+}

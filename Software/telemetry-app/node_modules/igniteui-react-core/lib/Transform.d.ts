@@ -1,0 +1,8 @@
+import { DependencyObject } from "./DependencyObject";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class Transform extends DependencyObject {
+    static $t: Type;
+}

@@ -1,0 +1,9 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class UriParser extends Base {
+    static $t: Type;
+    private static readonly b;
+    static a(a: string): boolean;
+}

@@ -1,0 +1,10 @@
+import { NumericYAxisDescription } from "./NumericYAxisDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class PercentChangeYAxisDescription extends NumericYAxisDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

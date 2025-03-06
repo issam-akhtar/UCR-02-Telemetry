@@ -1,0 +1,15 @@
+import { DependencyObject } from "./DependencyObject";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IMapRenderDeferralHandler {
+    register(a: DependencyObject, b: (arg1: boolean) => void): void;
+    unRegister(a: DependencyObject): void;
+    deferredRefresh(): void;
+    deferAction(a: () => void): void;
+}
+/**
+ * @hidden
+ */
+export declare let IMapRenderDeferralHandler_$type: Type;

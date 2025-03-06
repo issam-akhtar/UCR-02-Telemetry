@@ -1,0 +1,16 @@
+import { SmartPosition } from "./SmartPosition";
+import { Rect } from "./Rect";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ISmartPlaceable {
+    getSmartPositions(): SmartPosition[];
+    getSmartBounds(a: SmartPosition): Rect;
+    smartPosition: SmartPosition;
+    opacity: number;
+}
+/**
+ * @hidden
+ */
+export declare let ISmartPlaceable_$type: Type;

@@ -1,0 +1,26 @@
+import { Type } from "./type";
+/**
+ * Indicates the horizontal position of an item relative to another object.
+ */
+export declare enum HorizontalAlignment {
+    /**
+     * Align the item to the left
+     */
+    Left = 0,
+    /**
+     * Center the item
+     */
+    Center = 1,
+    /**
+     * Align the item to the right
+     */
+    Right = 2,
+    /**
+     * Stretch the item to the full width
+     */
+    Stretch = 3
+}
+/**
+ * @hidden
+ */
+export declare let HorizontalAlignment_$type: Type;

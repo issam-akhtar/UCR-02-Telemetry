@@ -1,0 +1,16 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ISchedulableRender {
+    isDirty: boolean;
+    undirty(a: boolean): void;
+    readonly index: number;
+    postRender(): void;
+    preRender(): void;
+    isValid(): boolean;
+}
+/**
+ * @hidden
+ */
+export declare let ISchedulableRender_$type: Type;

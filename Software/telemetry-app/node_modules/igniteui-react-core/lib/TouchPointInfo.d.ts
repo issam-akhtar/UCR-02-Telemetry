@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TouchPointInfo extends Base {
+    static $t: Type;
+    constructor(a: number, b: number, c: number);
+    constructor(a: number);
+    constructor(a: number, ..._rest: any[]);
+    a: number;
+    b: number;
+}

@@ -1,0 +1,22 @@
+import { Type } from "./type";
+/**
+ * Indicates the priority for a page request.
+ */
+export declare enum DataSourcePageRequestPriority {
+    /**
+     * Indicates a request with low priority.
+     */
+    Low = 0,
+    /**
+     * Indicates a request with normal priority.
+     */
+    Normal = 1,
+    /**
+     * Indicates a request with high priority.
+     */
+    High = 2
+}
+/**
+ * @hidden
+ */
+export declare let DataSourcePageRequestPriority_$type: Type;

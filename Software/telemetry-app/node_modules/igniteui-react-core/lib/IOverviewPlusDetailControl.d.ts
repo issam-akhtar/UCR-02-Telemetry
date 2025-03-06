@@ -1,0 +1,23 @@
+import { Rect } from "./Rect";
+import { InteractionState } from "./InteractionState";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IOverviewPlusDetailControl {
+    zoomTo100(): void;
+    scaleToFit(): void;
+    renderPreview(): void;
+    readonly worldRect: Rect;
+    readonly viewportRect: Rect;
+    readonly minimumZoomLevel: number;
+    readonly maximumZoomLevel: number;
+    readonly zoomLevelDisplayText: string;
+    defaultInteraction: InteractionState;
+    isDirty: boolean;
+    readonly isIsoScaled: boolean;
+}
+/**
+ * @hidden
+ */
+export declare let IOverviewPlusDetailControl_$type: Type;

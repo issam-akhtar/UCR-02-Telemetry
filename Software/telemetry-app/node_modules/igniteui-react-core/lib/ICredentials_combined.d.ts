@@ -1,0 +1,25 @@
+import { Uri } from "./Uri";
+import { Type, Base } from "./type";
+/**
+ * @hidden
+ */
+export interface ICredentials {
+    getCredential(a: Uri, b: string): NetworkCredential;
+}
+/**
+ * @hidden
+ */
+export declare let ICredentials_$type: Type;
+/**
+ * @hidden
+ */
+export declare class NetworkCredential extends Base implements ICredentials {
+    static $t: Type;
+    constructor(a: number, b: string, c: string);
+    constructor(a: number, b: string, c: string, d: string);
+    constructor(a: number, ..._rest: any[]);
+    getCredential(a: Uri, b: string): NetworkCredential;
+    c: string;
+    b: string;
+    a: string;
+}

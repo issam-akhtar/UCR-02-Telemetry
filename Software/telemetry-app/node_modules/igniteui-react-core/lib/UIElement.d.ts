@@ -1,0 +1,10 @@
+import { DependencyObject } from "./DependencyObject";
+import { Transform } from "./Transform";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class UIElement extends DependencyObject {
+    static $t: Type;
+    j: Transform;
+}

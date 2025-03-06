@@ -1,0 +1,11 @@
+import { ISupportsDataChangeNotifications } from "./ISupportsDataChangeNotifications";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IDataSourceDataProviderUpdateNotifier extends ISupportsDataChangeNotifications {
+}
+/**
+ * @hidden
+ */
+export declare let IDataSourceDataProviderUpdateNotifier_$type: Type;

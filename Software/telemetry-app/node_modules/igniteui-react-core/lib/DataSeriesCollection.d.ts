@@ -1,0 +1,10 @@
+import { ObservableCollection$1 } from "./ObservableCollection$1";
+import { DataSeries } from "./DataSeries";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DataSeriesCollection extends ObservableCollection$1<DataSeries> {
+    static $t: Type;
+    constructor();
+}

@@ -1,0 +1,1 @@
+export { DataSeriesAdapterUpdateNotifier } from "./IDataSeriesAdapterRule_combined";

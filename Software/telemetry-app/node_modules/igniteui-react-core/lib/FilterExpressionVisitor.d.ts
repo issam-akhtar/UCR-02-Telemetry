@@ -1,0 +1,17 @@
+import { Base, Type } from "./type";
+import { IFilterExpression } from "./IFilterExpression";
+import { IOperationFilterExpression } from "./IOperationFilterExpression";
+import { IFunctionFilterExpression } from "./IFunctionFilterExpression";
+import { ILiteralFilterExpression } from "./ILiteralFilterExpression";
+import { IPropertyReferenceFilterExpression } from "./IPropertyReferenceFilterExpression";
+/**
+ * @hidden
+ */
+export declare class FilterExpressionVisitor extends Base {
+    static $t: Type;
+    visit(a: IFilterExpression): void;
+    visitOperationExpression(a: IOperationFilterExpression): void;
+    visitFunctionExpression(a: IFunctionFilterExpression): void;
+    visitLiteralExpression(a: ILiteralFilterExpression): void;
+    visitPropertyReferenceExpression(a: IPropertyReferenceFilterExpression): void;
+}

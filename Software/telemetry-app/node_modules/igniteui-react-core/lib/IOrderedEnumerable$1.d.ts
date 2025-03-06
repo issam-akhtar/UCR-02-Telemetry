@@ -1,0 +1,10 @@
+import { IEnumerable$1, IEnumerable, Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IOrderedEnumerable$1<TElement> extends IEnumerable$1<TElement>, IEnumerable {
+}
+/**
+ * @hidden
+ */
+export declare let IOrderedEnumerable$1_$type: Type;

@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TouchHistoryItem extends Base {
+    static $t: Type;
+    a: number;
+    b: number;
+    c: number;
+}

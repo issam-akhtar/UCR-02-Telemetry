@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { IFastItemColumnInternal } from "./IFastItemColumnInternal";
+/**
+ * @hidden
+ */
+export declare class ColumnReference extends Base {
+    static $t: Type;
+    constructor(a: IFastItemColumnInternal);
+    a: IFastItemColumnInternal;
+    b: number;
+}

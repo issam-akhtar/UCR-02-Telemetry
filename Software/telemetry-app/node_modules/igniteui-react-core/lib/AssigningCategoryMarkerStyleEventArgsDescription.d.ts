@@ -1,0 +1,10 @@
+import { AssigningCategoryStyleEventArgsBaseDescription } from "./AssigningCategoryStyleEventArgsBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AssigningCategoryMarkerStyleEventArgsDescription extends AssigningCategoryStyleEventArgsBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

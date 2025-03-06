@@ -1,0 +1,71 @@
+import { Type } from "./type";
+export interface XmlDocument extends XmlElement {
+    createNode(nodeType: XmlNodeType, name: string, namespaceUri: string): XmlNode;
+    cloneNode(deep?: boolean): XmlNode;
+    readonly childNodes: XmlNodeList;
+    documentElement: XmlElement;
+    importNode(node: XmlNode, p2: boolean): XmlNode;
+    createElementNS(namespaceName: string, localName: string): XmlNode;
+}
+export declare let XmlDocument_$type: Type;
+export interface XmlElement extends XmlNode {
+}
+export declare let XmlElement_$type: Type;
+export interface XmlNode {
+    xml: string;
+    text: string;
+    baseName: string;
+    cloneNode(deep?: boolean): XmlNode;
+    ownerDocument: XmlDocument;
+    namespaceURI: string;
+    nodeType: XmlNodeType;
+    appendChild(child: XmlNode): void;
+    removeChild(child: XmlNode): void;
+    localName: string;
+    value: string;
+    nodeValue: string;
+    attributes: XmlNodeList;
+    setAttributeNode(attr: XmlAttribute): void;
+    getAttributeNodeNS(namespaceName: string, localName: string): XmlAttribute;
+    readonly childNodes: XmlNodeList;
+    textContent: string;
+}
+export declare let XmlNode_$type: Type;
+export interface XmlAttribute extends XmlNode {
+    cloneNode(deep?: boolean): XmlNode;
+    readonly childNodes: XmlNodeList;
+}
+export declare let XmlAttribute_$type: Type;
+export interface XmlLinkedNode extends XmlNode {
+}
+export declare let XmlLinkedNode_$type: Type;
+export interface XmlNodeList extends XmlNamedNodeMap {
+    item(i: number): XmlNode;
+    length: number;
+}
+export declare let XmlNodeList_$type: Type;
+export interface XmlNamedNodeMap {
+    getQualifiedItem(localName: string, namespaceName: string): XmlNode;
+}
+export declare let XmlNamedNodeMap_$type: Type;
+export declare enum XmlNodeType {
+    None = 0,
+    Element = 1,
+    Attribute = 2,
+    Text = 3,
+    CDATA = 4,
+    EntityReference = 5,
+    Entity = 6,
+    ProcessingInstruction = 7,
+    Comment = 8,
+    Document = 9,
+    DocumentType = 10,
+    DocumentFragment = 11,
+    Notation = 12,
+    Whitespace = 13,
+    SignificantWhitespace = 14,
+    EndElement = 15,
+    EndEntity = 16,
+    XmlDeclaration = 17
+}
+export declare let XmlNodeType_$type: Type;

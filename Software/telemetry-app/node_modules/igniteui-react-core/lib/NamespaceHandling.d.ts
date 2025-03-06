@@ -1,0 +1,12 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum NamespaceHandling {
+    Default = 0,
+    OmitDuplicates = 1
+}
+/**
+ * @hidden
+ */
+export declare let NamespaceHandling_$type: Type;

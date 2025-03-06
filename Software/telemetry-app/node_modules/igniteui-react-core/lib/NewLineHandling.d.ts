@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum NewLineHandling {
+    Replace = 0,
+    Entitize = 1,
+    None = 2
+}
+/**
+ * @hidden
+ */
+export declare let NewLineHandling_$type: Type;

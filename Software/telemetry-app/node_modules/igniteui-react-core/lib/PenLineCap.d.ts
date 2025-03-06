@@ -1,0 +1,26 @@
+import { Type } from "./type";
+/**
+ * Indicates the type of shape at the end of a line.
+ */
+export declare enum PenLineCap {
+    /**
+     * A flat end
+     */
+    Flat = 0,
+    /**
+     * A square end
+     */
+    Square = 1,
+    /**
+     * A round end
+     */
+    Round = 2,
+    /**
+     * A triangluar end
+     */
+    Triangle = 3
+}
+/**
+ * @hidden
+ */
+export declare let PenLineCap_$type: Type;

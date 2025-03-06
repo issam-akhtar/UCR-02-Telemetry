@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum XmlNamespaceScope {
+    All = 0,
+    ExcludeXml = 1,
+    Local = 2
+}
+/**
+ * @hidden
+ */
+export declare let XmlNamespaceScope_$type: Type;

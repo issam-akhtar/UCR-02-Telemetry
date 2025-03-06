@@ -1,0 +1,31 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class BitConverter extends Base {
+    static $t: Type;
+    static k: boolean;
+    static r(a: number): number;
+    static a(a: boolean): number[];
+    static b(a: string): number[];
+    static c(a: number): number[];
+    static g(a: number): number[];
+    static e(a: number): number[];
+    static f(a: number): number[];
+    static d(a: number): number[];
+    static i(a: number): number[];
+    static j(a: number): number[];
+    static h(a: number): number[];
+    static n(a: number): number;
+    static l(a: number[], b: number): boolean;
+    static m(a: number[], b: number): string;
+    static o(a: number[], b: number): number;
+    static p(a: number[], b: number): number;
+    static q(a: number[], b: number): number;
+    static s(a: number[], b: number): number;
+    static t(a: number[]): string;
+    static u(a: number[], b: number): string;
+    static v(a: number[], b: number, c: number): string;
+    static w(a: number[], b: number): number;
+    static x(a: number[], b: number): number;
+}

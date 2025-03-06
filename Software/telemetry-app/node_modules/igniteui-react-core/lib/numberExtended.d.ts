@@ -1,0 +1,144 @@
+import { CultureInfo } from "./culture";
+export declare const enum NumberStyles {
+    None = 0,
+    AllowLeadingWhite = 1,
+    AllowTrailingWhite = 2,
+    AllowLeadingSign = 4,
+    Integer = 7,
+    AllowTrailingSign = 8,
+    AllowParentheses = 16,
+    AllowDecimalPoint = 32,
+    AllowThousands = 64,
+    Number = 111,
+    AllowExponent = 128,
+    Float = 167,
+    AllowCurrencySymbol = 256,
+    Currency = 383,
+    Any = 511,
+    AllowHexSpecifier = 512,
+    HexNumber = 515
+}
+export declare function ieeeRemainder(a: number, b: number): number;
+export declare function numberToString1(value: number, provider: CultureInfo): string;
+export declare function tryParseNumber1(s: string, style: NumberStyles, provider: any, v?: number): {
+    p3: number;
+    ret: boolean;
+};
+export declare function parseNumber(s: string, provider: CultureInfo): number;
+export declare function parseNumber1(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseInt8_1(s: string, provider?: CultureInfo): number;
+export declare function parseInt8_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseInt16_1(s: string, provider?: CultureInfo): number;
+export declare function parseInt16_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseInt32_1(s: string, provider?: CultureInfo): number;
+export declare function parseInt32_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseInt64_1(s: string, provider?: CultureInfo): number;
+export declare function parseInt64_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseUInt8_1(s: string, provider?: CultureInfo): number;
+export declare function parseUInt8_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseUInt16_1(s: string, provider?: CultureInfo): number;
+export declare function parseUInt16_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseUInt32_1(s: string, provider?: CultureInfo): number;
+export declare function parseUInt32_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseUInt64_1(s: string, provider?: CultureInfo): number;
+export declare function parseUInt64_2(s: string, style: NumberStyles, provider?: CultureInfo): number;
+export declare function parseIntCore(s: string, provider: CultureInfo, min: number, max: number, style?: NumberStyles): number;
+export declare function tryParseInt8_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt8_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt16_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt16_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt32_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt32_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt64_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseInt64_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt8_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt8_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt16_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt16_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt32_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt32_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt64_1(s: string, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseUInt64_2(s: string, style: NumberStyles, provider?: CultureInfo, value?: number): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function tryParseIntCore(s: string, provider: CultureInfo, min: number, max: number, style?: NumberStyles): {
+    p1: number;
+    p3: number;
+    ret: boolean;
+};
+export declare function numberToString(number: number, provider?: any): string;
+export declare function numberToString2(number: number, format: string, provider?: any): string;
+export declare function intToString(number: number, provider?: any): string;
+export declare function intToString1(number: number, format: string, provider?: any): string;
+export declare function intSToU(number: number): number;
+export declare function u32BitwiseAnd(a: number, b: number): number;
+export declare function u32BitwiseOr(a: number, b: number): number;
+export declare function u32BitwiseXor(a: number, b: number): number;
+export declare function u32LS(a: number, b: number): number;
+export declare function decimalAdjust(type: string, value: any, exp: number): any;
+export declare function round10(value: any, exp: number): any;
+export declare function round10N(value: any, exp: number): any;
+export declare function floor10(value: any, exp: number): any;
+export declare function ceil10(value: any, exp: number): any;

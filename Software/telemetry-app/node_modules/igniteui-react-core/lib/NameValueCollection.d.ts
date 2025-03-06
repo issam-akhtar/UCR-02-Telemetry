@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class NameValueCollection extends Base {
+    static $t: Type;
+    private a;
+    constructor();
+    item(a: string, b?: string): string;
+}

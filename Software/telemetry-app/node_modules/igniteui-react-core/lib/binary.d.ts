@@ -1,0 +1,4 @@
+export declare class BinaryUtil {
+    static isResponseTypeSupported(responseType: any): boolean;
+    static getBinary(url: string, callback: (data: any) => void, error: (error: any) => void): void;
+}

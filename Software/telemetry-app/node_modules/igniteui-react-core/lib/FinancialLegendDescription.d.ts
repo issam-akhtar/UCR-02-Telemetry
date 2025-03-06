@@ -1,0 +1,10 @@
+import { LegendBaseDescription } from "./LegendBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class FinancialLegendDescription extends LegendBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

@@ -1,0 +1,18 @@
+import { Type } from "./type";
+/**
+ * Describes available behaviors for choosing the direction of error bars calculation in scatter series.
+ */
+export declare enum ErrorBarCalculatorReference {
+    /**
+     * Variable X.
+     */
+    X = 0,
+    /**
+     * Variable Y.
+     */
+    Y = 1
+}
+/**
+ * @hidden
+ */
+export declare let ErrorBarCalculatorReference_$type: Type;

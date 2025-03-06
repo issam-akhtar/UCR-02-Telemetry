@@ -1,0 +1,13 @@
+import { IPool$1 } from "./IPool$1";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IIndexedPool$1<T> extends IPool$1<T> {
+    item(a: number): T;
+    readonly count: number;
+}
+/**
+ * @hidden
+ */
+export declare let IIndexedPool$1_$type: Type;

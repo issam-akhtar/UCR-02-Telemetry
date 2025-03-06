@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class XmlNameTable extends Base {
+    static $t: Type;
+    abstract b(a: string): string;
+    abstract a(a: string[], b: number, c: number): string;
+    abstract d(a: string): string;
+    abstract c(a: string[], b: number, c: number): string;
+}

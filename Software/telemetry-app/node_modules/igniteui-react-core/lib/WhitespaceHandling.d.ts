@@ -1,0 +1,18 @@
+import { Type } from "./type";
+/**
+ */
+export declare enum WhitespaceHandling {
+    /**
+     */
+    All = 0,
+    /**
+     */
+    Significant = 1,
+    /**
+     */
+    None = 2
+}
+/**
+ * @hidden
+ */
+export declare let WhitespaceHandling_$type: Type;

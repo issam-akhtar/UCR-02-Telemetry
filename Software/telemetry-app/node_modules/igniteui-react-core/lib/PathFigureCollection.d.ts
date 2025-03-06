@@ -1,0 +1,10 @@
+import { List$1 } from "./List$1";
+import { PathFigure } from "./PathFigure";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class PathFigureCollection extends List$1<PathFigure> {
+    static $t: Type;
+    constructor();
+}

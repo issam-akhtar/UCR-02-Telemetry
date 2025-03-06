@@ -1,0 +1,16 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum DescriptionTreeActionType {
+    UpdateProperty = 0,
+    ResetProperty = 1,
+    InsertItem = 2,
+    ReplaceItem = 3,
+    RemoveItem = 4,
+    ClearItems = 5
+}
+/**
+ * @hidden
+ */
+export declare let DescriptionTreeActionType_$type: Type;

@@ -1,0 +1,19 @@
+import { Type } from "./type";
+/**
+ * Describes available methods of plotting data with unknown values in a series.
+ * <para>Double.NaN and null are examples of unknown values.</para>
+ */
+export declare enum UnknownValuePlotting {
+    /**
+     * Plot the unknown value as the midpoint between surrounding known values using linear interpolation.
+     */
+    LinearInterpolate = 0,
+    /**
+     * Do not plot the unknown value on the chart.
+     */
+    DontPlot = 1
+}
+/**
+ * @hidden
+ */
+export declare let UnknownValuePlotting_$type: Type;

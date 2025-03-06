@@ -1,0 +1,1 @@
+export { DataSeriesAdapterRuleCollection } from "./IDataSeriesAdapterRule_combined";

@@ -1,0 +1,28 @@
+import { Base, Type } from "./type";
+import { Rect } from "./Rect";
+import { List$1 } from "./List$1";
+/**
+ * @hidden
+ */
+export declare class HeatTileScaler extends Base {
+    static $t: Type;
+    private b;
+    private c;
+    private d;
+    private e;
+    constructor();
+    private k;
+    private static a;
+    static m(a: number): number;
+    t(a: number, b: Rect, c: Rect): number;
+    r(a: number, b: Rect, c: Rect): number;
+    private l;
+    u(a: number, b: Rect, c: Rect): number;
+    s(a: number, b: Rect, c: Rect): number;
+    i(a: Rect, b: Rect): number;
+    g(a: Rect, b: Rect): number;
+    j(a: Rect, b: Rect): number;
+    h(a: Rect, b: Rect): number;
+    v(a: List$1<number>, b: Rect, c: Rect): void;
+    w(a: List$1<number>, b: Rect, c: Rect): void;
+}

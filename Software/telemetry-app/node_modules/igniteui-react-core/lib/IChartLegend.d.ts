@@ -1,0 +1,22 @@
+import { ILegendOwner } from "./ILegendOwner";
+import { Type } from "./type";
+import { ILegendSeries } from "./ILegendSeries";
+/**
+ * @hidden
+ */
+export interface IChartLegend {
+    seriesOwner: ILegendOwner;
+    chartOwner: ILegendOwner;
+    containsChild(a: any): boolean;
+    removeChild(a: any): void;
+    addChildInOrder(a: any, b: ILegendSeries): void;
+    clearLegendItemsForSeries(a: ILegendSeries): void;
+    readonly isItemwise: boolean;
+    readonly isScale: boolean;
+    readonly isFinancial: boolean;
+    provideContainer(a: any): void;
+}
+/**
+ * @hidden
+ */
+export declare let IChartLegend_$type: Type;

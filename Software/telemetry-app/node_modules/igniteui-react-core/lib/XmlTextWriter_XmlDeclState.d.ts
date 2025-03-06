@@ -1,0 +1,14 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum XmlTextWriter_XmlDeclState {
+    Allow = 0,
+    Ignore = 1,
+    Auto = 2,
+    Prohibit = 3
+}
+/**
+ * @hidden
+ */
+export declare let XmlTextWriter_XmlDeclState_$type: Type;

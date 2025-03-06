@@ -1,0 +1,11 @@
+import { Transform } from "./Transform";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class RotateTransform extends Transform {
+    static $t: Type;
+    j: number;
+    k: number;
+    l: number;
+}

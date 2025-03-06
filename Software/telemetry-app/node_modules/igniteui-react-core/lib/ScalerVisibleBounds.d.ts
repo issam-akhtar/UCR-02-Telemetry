@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class ScalerVisibleBounds extends Base {
+    static $t: Type;
+    constructor(a: number, b: number, c: number, d: number);
+    d: number;
+    a: number;
+    c: number;
+    b: number;
+}

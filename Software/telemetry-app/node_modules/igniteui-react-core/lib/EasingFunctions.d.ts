@@ -1,0 +1,15 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class EasingFunctions extends Base {
+    static $t: Type;
+    private static c;
+    private static g;
+    private static a;
+    private static e;
+    private static f;
+    static cubicEase(a: number): number;
+    static exponentialEase(a: number): number;
+    static circleEase(a: number): number;
+}

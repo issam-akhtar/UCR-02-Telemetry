@@ -1,0 +1,15 @@
+import { IFilterExpression } from "./IFilterExpression";
+import { FilterExpressionOperatorType } from "./FilterExpressionOperatorType";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IOperationFilterExpression extends IFilterExpression {
+    readonly operator: FilterExpressionOperatorType;
+    readonly left: IFilterExpression;
+    readonly right: IFilterExpression;
+}
+/**
+ * @hidden
+ */
+export declare let IOperationFilterExpression_$type: Type;

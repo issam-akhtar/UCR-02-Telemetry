@@ -1,0 +1,22 @@
+import { Base, IEqualityComparer, IEqualityComparer$1, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class EqualityComparer$1<T> extends Base implements IEqualityComparer, IEqualityComparer$1<T> {
+    static $t: Type;
+    protected $t: Type;
+    constructor($t: Type);
+    static defaultEqualityComparerValue<T>($t: Type): EqualityComparer$1<T>;
+    equalsC(a: any, b: any): boolean;
+    getHashCodeC(a: any): number;
+}
+/**
+ * @hidden
+ */
+export declare class DefaultEqualityComparer$1<T> extends EqualityComparer$1<T> {
+    static $t: Type;
+    protected $t: Type;
+    constructor($t: Type);
+    equalsC(a: T, b: T): boolean;
+    getHashCodeC(a: T): number;
+}

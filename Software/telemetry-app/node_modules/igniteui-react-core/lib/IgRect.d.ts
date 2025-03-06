@@ -1,0 +1,10 @@
+import { Rect } from "./Rect";
+export interface IgRect {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+}
+export declare function isRect(r: any): boolean;
+export declare function rectFromLiteral(r: IgRect): Rect;
+export declare function rectToLiteral(r: Rect): IgRect;

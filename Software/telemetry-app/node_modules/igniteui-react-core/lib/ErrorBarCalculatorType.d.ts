@@ -1,0 +1,30 @@
+import { Type } from "./type";
+/**
+ * Describes available types of error bar calculators.
+ */
+export declare enum ErrorBarCalculatorType {
+    /**
+     * A calculator type that provides a fixed value.
+     */
+    Fixed = 0,
+    /**
+     * A calculator type that provides a fixed percentage of each input value
+     */
+    Percentage = 1,
+    /**
+     * A calculator type that provides the input values directly.
+     */
+    Data = 2,
+    /**
+     * A calculator type that provides the standard deviation of the input values.
+     */
+    StandardDeviation = 3,
+    /**
+     * A calculator type that provides the standard error of the input values.
+     */
+    StandardError = 4
+}
+/**
+ * @hidden
+ */
+export declare let ErrorBarCalculatorType_$type: Type;

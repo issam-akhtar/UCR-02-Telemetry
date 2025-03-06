@@ -1,0 +1,22 @@
+import { Type } from "./type";
+/**
+ * Specifies the current xml:space scope
+ */
+export declare enum XmlSpace {
+    /**
+     * No xml:space scope.
+     */
+    None = 0,
+    /**
+     * the xml:space scope = "default"
+     */
+    Default = 1,
+    /**
+     * the xml:space scope = "preserve"
+     */
+    Preserve = 2
+}
+/**
+ * @hidden
+ */
+export declare let XmlSpace_$type: Type;

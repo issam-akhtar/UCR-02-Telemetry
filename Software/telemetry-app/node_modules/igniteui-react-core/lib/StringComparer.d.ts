@@ -1,0 +1,26 @@
+import { Base, IEqualityComparer, IEqualityComparer$1, Type } from "./type";
+import { IComparer } from "./IComparer";
+import { IComparer$1 } from "./IComparer$1";
+import { StringComparison } from "./string";
+import { CultureInfo } from "./culture";
+/**
+ * @hidden
+ */
+export declare class StringComparer extends Base implements IComparer, IEqualityComparer, IComparer$1<string>, IEqualityComparer$1<string> {
+    static $t: Type;
+    private readonly h;
+    constructor(a: number);
+    constructor(a: number, b: StringComparison);
+    constructor(a: number, ..._rest: any[]);
+    static readonly b: StringComparer;
+    static readonly c: StringComparer;
+    static readonly d: StringComparer;
+    static readonly e: StringComparer;
+    static readonly f: StringComparer;
+    static readonly g: StringComparer;
+    compareObject(a: any, b: any): number;
+    compare(a: string, b: string): number;
+    static a(a: CultureInfo, b: boolean): StringComparer;
+    equalsC(a: string, b: string): boolean;
+    getHashCodeC(a: string): number;
+}

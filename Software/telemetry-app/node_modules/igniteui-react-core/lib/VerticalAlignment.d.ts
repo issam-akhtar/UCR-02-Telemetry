@@ -1,0 +1,26 @@
+import { Type } from "./type";
+/**
+ * Indicates the vertica position of an item relative to another object.
+ */
+export declare enum VerticalAlignment {
+    /**
+     * Align the item to the top
+     */
+    Top = 0,
+    /**
+     * Center the item
+     */
+    Center = 1,
+    /**
+     * Align the item to the bottom
+     */
+    Bottom = 2,
+    /**
+     * Stretch the item to the full height
+     */
+    Stretch = 3
+}
+/**
+ * @hidden
+ */
+export declare let VerticalAlignment_$type: Type;

@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { ODataLiteralEmitter } from "./ODataLiteralEmitter";
+/**
+ * @hidden
+ */
+export declare class DefaultODataLiteralEmitter extends Base implements ODataLiteralEmitter {
+    static $t: Type;
+    emitLiteral(a: any, b: boolean): string;
+    private b;
+    private a;
+}

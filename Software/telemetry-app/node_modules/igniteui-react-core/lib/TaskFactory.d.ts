@@ -1,0 +1,14 @@
+import { Base, Type } from "./type";
+import { Task } from "./Task";
+import { Task$1 } from "./Task$1";
+/**
+ * @hidden
+ */
+export declare class TaskFactory extends Base {
+    static $t: Type;
+    c(a: Task[], b: (arg1: Task[]) => void): Task;
+    d<TResult>($tResult: Type, a: Task[], b: (arg1: Task[]) => TResult): Task$1<TResult>;
+    e<TAntecedentResult, TResult>($tAntecedentResult: Type, $tResult: Type, a: Task$1<TAntecedentResult>[], b: (arg1: Task$1<TAntecedentResult>[]) => TResult): Task$1<TResult>;
+    private a;
+    private b;
+}

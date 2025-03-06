@@ -1,0 +1,14 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class LinkedListNode$1<T> extends Base {
+    static $t: Type;
+    protected $t: Type;
+    c: T;
+    b: LinkedListNode$1<T>;
+    a: LinkedListNode$1<T>;
+    constructor($t: Type, a: number);
+    constructor($t: Type, a: number, b: T);
+    constructor($t: Type, a: number, ..._rest: any[]);
+}

@@ -1,0 +1,1 @@
+export { MemberExpression } from "./ExpressionSyntax_combined";

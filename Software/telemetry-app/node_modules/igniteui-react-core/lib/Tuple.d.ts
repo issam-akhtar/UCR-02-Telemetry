@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { Tuple$2 } from "./Tuple$2";
+import { Tuple$3 } from "./Tuple$3";
+/**
+ * @hidden
+ */
+export declare class Tuple extends Base {
+    static $t: Type;
+    static a<T1, T2>($t1: Type, $t2: Type, a: T1, b: T2): Tuple$2<T1, T2>;
+    static b<T1, T2, T3>($t1: Type, $t2: Type, $t3: Type, a: T1, b: T2, c: T3): Tuple$3<T1, T2, T3>;
+}

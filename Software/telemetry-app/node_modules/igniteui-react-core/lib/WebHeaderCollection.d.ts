@@ -1,0 +1,8 @@
+import { NameValueCollection } from "./NameValueCollection";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class WebHeaderCollection extends NameValueCollection {
+    static $t: Type;
+}

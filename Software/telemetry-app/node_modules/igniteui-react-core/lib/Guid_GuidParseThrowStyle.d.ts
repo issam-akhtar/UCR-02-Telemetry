@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum Guid_GuidParseThrowStyle {
+    None = 0,
+    All = 1,
+    AllButOverflow = 2
+}
+/**
+ * @hidden
+ */
+export declare let Guid_GuidParseThrowStyle_$type: Type;

@@ -1,0 +1,26 @@
+import { FilterExpressionVisitor } from "./FilterExpressionVisitor";
+import { ODataLiteralEmitter } from "./ODataLiteralEmitter";
+import { Type } from "./type";
+import { IOperationFilterExpression } from "./IOperationFilterExpression";
+import { IFunctionFilterExpression } from "./IFunctionFilterExpression";
+import { ILiteralFilterExpression } from "./ILiteralFilterExpression";
+import { IPropertyReferenceFilterExpression } from "./IPropertyReferenceFilterExpression";
+/**
+ * @hidden
+ */
+export declare class ODataDataSourceFilterExpressionVisitor extends FilterExpressionVisitor {
+    static $t: Type;
+    private h;
+    private f;
+    constructor(a: number);
+    constructor(a: number, b: ODataLiteralEmitter);
+    constructor(a: number, ..._rest: any[]);
+    toString(): string;
+    visitOperationExpression(a: IOperationFilterExpression): void;
+    private g;
+    visitFunctionExpression(a: IFunctionFilterExpression): void;
+    visitLiteralExpression(a: ILiteralFilterExpression): void;
+    private i;
+    visitPropertyReferenceExpression(a: IPropertyReferenceFilterExpression): void;
+    private j;
+}

@@ -1,0 +1,15 @@
+import { FontInfo } from "./FontInfo";
+import { Brush } from "./Brush";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IInternalLegendOwner {
+    getFontInfo(): FontInfo;
+    getFontHeight(): number;
+    getFontBrush(): Brush;
+}
+/**
+ * @hidden
+ */
+export declare let IInternalLegendOwner_$type: Type;

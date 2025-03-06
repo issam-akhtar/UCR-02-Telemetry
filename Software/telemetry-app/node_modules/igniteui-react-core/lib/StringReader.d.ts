@@ -1,0 +1,20 @@
+import { TextReader } from "./TextReader";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class StringReader extends TextReader {
+    static $t: Type;
+    private m;
+    private k;
+    private l;
+    constructor(a: string);
+    i(): void;
+    protected dispose1(a: boolean): void;
+    a(): number;
+    b(): number;
+    c(a: string[], b: number, c: number): number;
+    g(): string;
+    h(): string;
+    private n;
+}

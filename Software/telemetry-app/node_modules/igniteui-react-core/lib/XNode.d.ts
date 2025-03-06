@@ -1,0 +1,10 @@
+import { XObject } from "./XObject";
+import { XmlNode } from "./xml";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class XNode extends XObject {
+    static $t: Type;
+    constructor(a: XmlNode);
+}

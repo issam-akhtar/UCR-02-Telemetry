@@ -1,0 +1,7 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class MarshalByRefObject extends Base {
+    static $t: Type;
+}

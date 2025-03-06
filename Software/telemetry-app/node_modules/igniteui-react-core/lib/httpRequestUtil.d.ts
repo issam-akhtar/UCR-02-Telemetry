@@ -1,0 +1,3 @@
+export declare class HttpRequestUtil {
+    static submit(url: string, callback: (data: any, request: any) => void, error: (error: any, request: any) => void): any;
+}

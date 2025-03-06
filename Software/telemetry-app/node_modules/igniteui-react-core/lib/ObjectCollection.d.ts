@@ -1,0 +1,12 @@
+import { ObservableCollection$1 } from "./ObservableCollection$1";
+import { IEnumerable$1, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class ObjectCollection extends ObservableCollection$1<any> {
+    static $t: Type;
+    constructor(a: number);
+    constructor(a: number, b: IEnumerable$1<any>);
+    constructor(a: number, b: number);
+    constructor(a: number, ..._rest: any[]);
+}

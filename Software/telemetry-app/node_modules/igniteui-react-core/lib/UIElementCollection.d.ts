@@ -1,0 +1,15 @@
+import { ObservableCollection$1 } from "./ObservableCollection$1";
+import { UIElement } from "./UIElement";
+import { FrameworkElement } from "./FrameworkElement";
+import { NotifyCollectionChangedEventArgs } from "./NotifyCollectionChangedEventArgs";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class UIElementCollection extends ObservableCollection$1<UIElement> {
+    static $t: Type;
+    private ae;
+    constructor(a: FrameworkElement);
+    protected ac(a: NotifyCollectionChangedEventArgs): void;
+    protected p(): void;
+}

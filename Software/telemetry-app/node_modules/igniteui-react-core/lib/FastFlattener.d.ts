@@ -1,0 +1,18 @@
+import { Base, IList$1, Type } from "./type";
+import { List$1 } from "./List$1";
+/**
+ * @hidden
+ */
+export declare class FastFlattener extends Base {
+    static $t: Type;
+    constructor();
+    static e(a: List$1<number>, b: number[], c: number[], d: number, e: number, f: number): List$1<number>;
+    static c(a: number, b: List$1<number[]>, c: boolean, d: boolean, e: number): IList$1<number>;
+    static b(a: number, b: List$1<number[]>, c: boolean, d: boolean, e: number): IList$1<number>;
+    static d(a: number, b: List$1<number[]>, c: number, d: number, e: number): IList$1<number>;
+    static a(a: List$1<number>, b: List$1<number[]>, c: boolean, d: boolean, e: number, f: number, g: number): IList$1<number>;
+    static f(a: List$1<number>, b: List$1<number[]>, c: boolean, d: boolean, e: number, f: number, g: number): List$1<number>;
+    static g(a: List$1<number>, b: List$1<number[]>, c: number, d: number, e: number, f: number, g: number): List$1<number>;
+    private static h;
+    private static i;
+}

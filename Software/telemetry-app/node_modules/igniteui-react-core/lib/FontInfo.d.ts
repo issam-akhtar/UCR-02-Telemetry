@@ -1,0 +1,1 @@
+export { FontInfo } from "./IRenderer_combined";

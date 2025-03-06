@@ -1,0 +1,9 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class QuadTreeForceVector extends Base {
+    static $t: Type;
+    a: number;
+    b: number;
+}

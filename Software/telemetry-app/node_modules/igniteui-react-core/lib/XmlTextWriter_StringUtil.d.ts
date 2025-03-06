@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class XmlTextWriter_StringUtil extends Base {
+    static $t: Type;
+    private static b;
+    private static a;
+    static d(a: string, b: string): number;
+    static c(a: string, b: string): number;
+    static e(a: string, ...b: any[]): string;
+}

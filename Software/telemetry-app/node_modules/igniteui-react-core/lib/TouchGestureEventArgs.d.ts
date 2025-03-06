@@ -1,0 +1,16 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TouchGestureEventArgs extends Base {
+    static $t: Type;
+    d: number;
+    e: number;
+    c: number;
+    f: number;
+    g: number;
+    a: number;
+    b: number;
+    h: number;
+    i: number;
+}

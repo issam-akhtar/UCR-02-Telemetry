@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+import { List$1 } from "./List$1";
+/**
+ * @hidden
+ */
+export declare class SpiralFlattener extends Base {
+    static $t: Type;
+    constructor();
+    static a(a: number, b: number, c: number, d: number, e: number): List$1<number>;
+}

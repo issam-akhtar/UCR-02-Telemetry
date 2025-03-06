@@ -1,0 +1,28 @@
+import { Base, IList$1, Point, Type } from "./type";
+import { List$1 } from "./List$1";
+import { Triangle } from "./Triangle";
+import { LinkedList$1 } from "./LinkedList$1";
+import { HalfEdgeSet } from "./HalfEdgeSet";
+import { PointTester } from "./PointTester";
+/**
+ * @hidden
+ */
+export declare class TriangulatorContext extends Base {
+    static $t: Type;
+    j: number;
+    d: IList$1<number>;
+    e: IList$1<number>;
+    i: List$1<Triangle>;
+    n: Point;
+    o: Point;
+    p: Point;
+    g: LinkedList$1<Triangle>;
+    f: LinkedList$1<Triangle>;
+    h: List$1<number>;
+    a: HalfEdgeSet;
+    b: PointTester;
+    m: number;
+    l: number;
+    k: number;
+    c: boolean;
+}

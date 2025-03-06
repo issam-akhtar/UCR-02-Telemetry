@@ -1,0 +1,76 @@
+import { ValueType, IComparable, IComparable$1, IEquatable$1, IFormatProvider, BaseError, Nullable$1, Type } from "./type";
+import { IFormattable } from "./IFormattable";
+import { Guid_GuidParseThrowStyle } from "./Guid_GuidParseThrowStyle";
+import { Guid_ParseFailureKind } from "./Guid_ParseFailureKind";
+/**
+ * @hidden
+ */
+export declare class Guid extends ValueType implements IFormattable, IComparable, IComparable$1<Guid>, IEquatable$1<Guid> {
+    static $t: Type;
+    constructor(a: number, b: number[]);
+    constructor(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number);
+    constructor(a: number, b: string);
+    constructor();
+    constructor(a: number, ..._rest: any[]);
+    static readonly empty: Guid;
+    private ae;
+    private ac;
+    private ad;
+    private r;
+    private s;
+    private t;
+    private u;
+    private v;
+    private w;
+    private x;
+    private y;
+    compareTo(a: Guid): number;
+    compareToObject(a: any): number;
+    equals(a: Guid): boolean;
+    static newGuid(): Guid;
+    toByteArray(): number[];
+    toString(): string;
+    toString2(a: string): string;
+    toString1(a: string, b: IFormatProvider): string;
+    private static af;
+    private static ag;
+    private static z;
+    static tryParse(a: string, b: Guid): {
+        ret: boolean;
+        p1: Guid;
+    };
+    private static n;
+    private static o;
+    private static ah;
+    private static p;
+    private static q;
+    private static k;
+    private static l;
+    private static i;
+    private static j;
+    private static b;
+    static l_op_Inequality(a: Guid, b: Guid): boolean;
+    static l_op_Inequality_Lifted(a: Nullable$1<Guid>, b: Nullable$1<Guid>): boolean;
+    static l_op_Equality(a: Guid, b: Guid): boolean;
+    static l_op_Equality_Lifted(a: Nullable$1<Guid>, b: Nullable$1<Guid>): boolean;
+}
+/**
+ * @hidden
+ */
+export declare class Guid_GuidResult extends ValueType {
+    static $t: Type;
+    constructor();
+    c: Guid;
+    d: Guid_GuidParseThrowStyle;
+    e: Guid_ParseFailureKind;
+    h: string;
+    f: any;
+    g: string;
+    b: BaseError;
+    i(a: Guid_GuidParseThrowStyle): void;
+    j(a: BaseError): void;
+    k(a: Guid_ParseFailureKind, b: string): void;
+    l(a: Guid_ParseFailureKind, b: string, c: any): void;
+    m(a: Guid_ParseFailureKind, b: string, c: any, d: string, e: BaseError): void;
+    a(): BaseError;
+}

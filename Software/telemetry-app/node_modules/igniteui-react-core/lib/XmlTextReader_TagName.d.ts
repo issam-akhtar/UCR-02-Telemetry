@@ -1,0 +1,13 @@
+import { ValueType, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class XmlTextReader_TagName extends ValueType {
+    static $t: Type;
+    constructor(a: number, b: string, c: string, d: string);
+    constructor();
+    constructor(a: number, ..._rest: any[]);
+    readonly b: string;
+    readonly a: string;
+    readonly c: string;
+}

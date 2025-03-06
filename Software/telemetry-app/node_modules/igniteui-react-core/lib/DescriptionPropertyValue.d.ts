@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { TypeDescriptionMetadata } from "./TypeDescriptionMetadata";
+/**
+ * @hidden
+ */
+export declare class DescriptionPropertyValue extends Base {
+    static $t: Type;
+    c: string;
+    b: any;
+    a: TypeDescriptionMetadata;
+}

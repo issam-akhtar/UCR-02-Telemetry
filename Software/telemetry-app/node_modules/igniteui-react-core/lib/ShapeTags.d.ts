@@ -1,0 +1,9 @@
+import { List$1 } from "./List$1";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class ShapeTags extends List$1<string> {
+    static $t: Type;
+    constructor();
+}

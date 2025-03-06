@@ -1,0 +1,16 @@
+import { IFilterExpression } from "./IFilterExpression";
+import { FilterExpressionCollection } from "./FilterExpressionCollection";
+import { FilterExpressionFunctionType } from "./FilterExpressionFunctionType";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IFunctionFilterExpression extends IFilterExpression {
+    readonly functionArguments: FilterExpressionCollection;
+    readonly functionType: FilterExpressionFunctionType;
+    readonly hasFunctionArguments: boolean;
+}
+/**
+ * @hidden
+ */
+export declare let IFunctionFilterExpression_$type: Type;

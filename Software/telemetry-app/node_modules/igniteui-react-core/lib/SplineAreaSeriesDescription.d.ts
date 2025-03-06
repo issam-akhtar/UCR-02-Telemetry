@@ -1,0 +1,10 @@
+import { SplineSeriesBaseDescription } from "./SplineSeriesBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class SplineAreaSeriesDescription extends SplineSeriesBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

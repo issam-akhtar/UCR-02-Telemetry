@@ -1,0 +1,17 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AnimationState extends Base {
+    static $t: Type;
+    e: number;
+    d: number;
+    i: any;
+    g: number;
+    c: Date;
+    a: (arg1: number, arg2: AnimationState) => void;
+    f: (arg1: number) => number;
+    j: string;
+    h: number;
+    b: boolean;
+}

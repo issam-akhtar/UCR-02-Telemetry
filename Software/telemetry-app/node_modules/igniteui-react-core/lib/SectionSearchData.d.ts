@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { SectionData } from "./SectionData";
+/**
+ * @hidden
+ */
+export declare class SectionSearchData extends Base {
+    static $t: Type;
+    a: SectionData[];
+    c: number;
+    b: number[];
+}

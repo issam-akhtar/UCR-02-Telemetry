@@ -1,0 +1,33 @@
+import { Type } from "./type";
+/**
+ */
+export declare enum WriteState {
+    /**
+     * A write method has not been called.
+     */
+    Start = 0,
+    /**
+     * The prolog is being written.
+     */
+    Prolog = 1,
+    /**
+     * An element start tag is being written.
+     */
+    Element = 2,
+    /**
+     * An attribute is being written.
+     */
+    Attribute = 3,
+    /**
+     * Element content is being written.
+     */
+    Content = 4,
+    /**
+     * The close method has been called.
+     */
+    Closed = 5
+}
+/**
+ * @hidden
+ */
+export declare let WriteState_$type: Type;

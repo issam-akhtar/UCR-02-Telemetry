@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ODataLiteralEmitter {
+    emitLiteral(a: any, b: boolean): string;
+}
+/**
+ * @hidden
+ */
+export declare let ODataLiteralEmitter_$type: Type;

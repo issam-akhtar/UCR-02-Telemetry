@@ -1,0 +1,13 @@
+import { Base, IList$1, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Flattener extends Base {
+    static $t: Type;
+    constructor();
+    static d(a: number, b: (arg1: number) => number, c: (arg1: number) => number, d: number): IList$1<number>;
+    static c(a: IList$1<number>, b: (arg1: number) => number, c: (arg1: number) => number, d: number, e: number, f: number): IList$1<number>;
+    static a(a: IList$1<number>, b: IList$1<number>, c: (arg1: number) => number, d: (arg1: number) => number, e: number, f: number, g: number): IList$1<number>;
+    private static b;
+    private static e;
+}

@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class HalfEdge extends Base {
+    static $t: Type;
+    constructor(a: number, b: number);
+    a: number;
+    b: number;
+}

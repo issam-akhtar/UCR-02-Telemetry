@@ -1,0 +1,12 @@
+import { IPool$1 } from "./IPool$1";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IHashPool$2<TKey, TValue> extends IPool$1<TValue> {
+    item(a: TKey): TValue;
+}
+/**
+ * @hidden
+ */
+export declare let IHashPool$2_$type: Type;

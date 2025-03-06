@@ -1,0 +1,6 @@
+export declare class IgEvent<TSender, TArgs> {
+    private _callbacks;
+    emit(sender: TSender, args: TArgs): void;
+    add(callback: (sender: TSender, args: TArgs) => void): void;
+    remove(callback: (sender: TSender, args: TArgs) => void): void;
+}

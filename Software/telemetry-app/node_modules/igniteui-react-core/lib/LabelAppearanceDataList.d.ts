@@ -1,0 +1,12 @@
+import { List$1 } from "./List$1";
+import { LabelAppearanceData } from "./LabelAppearanceData";
+import { IVisualData } from "./IVisualData";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class LabelAppearanceDataList extends List$1<LabelAppearanceData> implements IVisualData {
+    static $t: Type;
+    constructor();
+    serialize(): string;
+}

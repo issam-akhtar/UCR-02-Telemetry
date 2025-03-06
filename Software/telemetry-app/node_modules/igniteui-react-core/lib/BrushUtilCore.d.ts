@@ -1,0 +1,13 @@
+import { Base, Type } from "./type";
+import { Brush } from "./Brush";
+import { LinearGradientBrush } from "./LinearGradientBrush";
+import { GradientStop } from "./GradientStop";
+/**
+ * @hidden
+ */
+export declare class BrushUtilCore extends Base {
+    static $t: Type;
+    static a(a: Brush): boolean;
+    static c(a: LinearGradientBrush): boolean;
+    static b(a: GradientStop): boolean;
+}

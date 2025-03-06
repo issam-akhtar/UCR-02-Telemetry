@@ -1,0 +1,13 @@
+import { IDataSourceVirtualDataProvider } from "./IDataSourceVirtualDataProvider";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IExternalVirtualDataSource {
+    resolveDataProvider(): IDataSourceVirtualDataProvider;
+    resetCache(): void;
+}
+/**
+ * @hidden
+ */
+export declare let IExternalVirtualDataSource_$type: Type;

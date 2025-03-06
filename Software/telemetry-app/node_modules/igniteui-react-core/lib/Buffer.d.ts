@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Buffer extends Base {
+    static $t: Type;
+    static b(a: any[]): number;
+    static a(a: any[], b: number): number;
+    static d(a: any[], b: number, c: number): void;
+    static c(a: any[], b: number, c: any[], d: number, e: number): void;
+}

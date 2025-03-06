@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IPermission {
+    copy(): IPermission;
+    demand(): void;
+    intersect(a: IPermission): IPermission;
+    isSubsetOf(a: IPermission): boolean;
+    union(a: IPermission): IPermission;
+}
+/**
+ * @hidden
+ */
+export declare let IPermission_$type: Type;

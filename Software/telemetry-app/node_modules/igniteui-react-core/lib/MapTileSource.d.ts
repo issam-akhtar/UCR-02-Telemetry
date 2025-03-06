@@ -1,0 +1,9 @@
+import { XamMultiScaleTileSource } from "./XamMultiScaleTileSource";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class MapTileSource extends XamMultiScaleTileSource {
+    static $t: Type;
+    constructor(a: number, b: number, c: number, d: number, e: number);
+}

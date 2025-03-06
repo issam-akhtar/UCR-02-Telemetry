@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Matcher extends Base {
+    static $t: Type;
+    protected c: RegExp;
+    constructor(a: string);
+    b(a: string): boolean;
+    static a(a: string): boolean;
+    static d(a: string): string;
+}

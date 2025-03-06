@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class FaultReason extends Base {
+    static $t: Type;
+    private a;
+    constructor(a: string);
+    toString(): string;
+}

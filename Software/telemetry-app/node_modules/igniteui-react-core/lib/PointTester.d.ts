@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class PointTester extends Base {
+    static $t: Type;
+    c(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number): boolean;
+    a: boolean;
+    b: boolean;
+}

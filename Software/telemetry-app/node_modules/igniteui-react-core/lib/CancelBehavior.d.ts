@@ -1,0 +1,10 @@
+import { Type } from "./type";
+export declare enum CancelBehavior {
+    KeepCurrent = 0,
+    ToEnd = 1,
+    ToBeginning = 2
+}
+/**
+ * @hidden
+ */
+export declare let CancelBehavior_$type: Type;

@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IFastItemColumnInternal {
+    reset(): boolean;
+    insertRange(a: number, b: number): boolean;
+    removeRange(a: number, b: number): boolean;
+    replaceRange(a: number, b: number): boolean;
+    readonly propertyName: string;
+}
+/**
+ * @hidden
+ */
+export declare let IFastItemColumnInternal_$type: Type;

@@ -1,0 +1,62 @@
+import { Base, IEnumerable$1, IEnumerable, Type } from "./type";
+import { IOrderedEnumerable$1 } from "./IOrderedEnumerable$1";
+import { List$1 } from "./List$1";
+import { Dictionary$2 } from "./Dictionary$2";
+/**
+ * @hidden
+ */
+export declare class Enumerable extends Base {
+    static $t: Type;
+    private static _u;
+    static u<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => boolean): IEnumerable$1<TSource>;
+    private static _v;
+    static v<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource, arg2: number) => boolean): IEnumerable$1<TSource>;
+    private static _o;
+    static o<TSource, TResult>($tSource: Type, $tResult: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => TResult): IEnumerable$1<TResult>;
+    private static _p;
+    static p<TSource, TResult>($tSource: Type, $tResult: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => IEnumerable$1<TResult>): IEnumerable$1<TResult>;
+    private static _l;
+    static l<TResult>($tResult: Type, a: IEnumerable): IEnumerable$1<TResult>;
+    static ah<TSource>($tSource: Type, a: IEnumerable$1<TSource>): TSource;
+    static ad<TSource>($tSource: Type, a: IEnumerable$1<TSource>): TSource;
+    static ae<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => boolean): TSource;
+    static af<TSource>($tSource: Type, a: IEnumerable$1<TSource>): TSource;
+    static x<TSource, TKey>($tSource: Type, $tKey: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => TKey): IOrderedEnumerable$1<TSource>;
+    static y<TSource, TKey>($tSource: Type, $tKey: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => TKey): IOrderedEnumerable$1<TSource>;
+    static z<TSource>($tSource: Type, a: IEnumerable$1<TSource>): List$1<TSource>;
+    private static _m;
+    static m(a: number, b: number): IEnumerable$1<number>;
+    private static _i;
+    static i<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: IEnumerable$1<TSource>): IEnumerable$1<TSource>;
+    static ak(a: IEnumerable$1<number>): number;
+    static al<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => number): number;
+    static am(a: IEnumerable$1<number>): number;
+    static an<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => number): number;
+    static aj<TSource>($tSource: Type, a: IEnumerable$1<TSource>): number;
+    private static _n;
+    static n<TSource>($tSource: Type, a: IEnumerable$1<TSource>): IEnumerable$1<TSource>;
+    static h<TResult>($tResult: Type, a: IEnumerable): IEnumerable$1<TResult>;
+    private static _s;
+    static s<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: number): IEnumerable$1<TSource>;
+    private static _r;
+    static r<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: number): IEnumerable$1<TSource>;
+    static c<TSource>($tSource: Type, a: IEnumerable$1<TSource>): boolean;
+    static e<TSource>($tSource: Type, a: IEnumerable$1<TSource>, value_: TSource): boolean;
+    static t<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: IEnumerable$1<TSource>): IEnumerable$1<TSource>;
+    static a<TSource>($tSource: Type, a: IEnumerable$1<TSource>): TSource[];
+    static ac<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: number): TSource;
+    static aa(a: IEnumerable$1<number>): number;
+    static ab<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => number): number;
+    static f<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: IEnumerable$1<TSource>): boolean;
+    private static _k;
+    static k<TSource>($tSource: Type): IEnumerable$1<TSource>;
+    private static _q;
+    static q<TSource, TCollection, TResult>($tSource: Type, $tCollection: Type, $tResult: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => IEnumerable$1<TCollection>, c: (arg1: TSource, arg2: TCollection) => TResult): IEnumerable$1<TResult>;
+    static d<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => boolean): boolean;
+    static ag<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => boolean): TSource;
+    static b<TSource>($tSource: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => boolean): boolean;
+    static g<TSource, TKey>($tSource: Type, $tKey: Type, a: IEnumerable$1<TSource>, b: (arg1: TSource) => TKey): Dictionary$2<TKey, TSource>;
+    static ai<TSource>($tSource: Type, a: IEnumerable$1<TSource>): TSource;
+    static w<TFirst, TSecond, TResult>($tFirst: Type, $tSecond: Type, $tResult: Type, a: IEnumerable$1<TFirst>, b: IEnumerable$1<TSecond>, c: (arg1: TFirst, arg2: TSecond) => TResult): IEnumerable$1<TResult>;
+    static j<TSource>($tSource: Type, a: IEnumerable$1<TSource>): IEnumerable$1<TSource>;
+}

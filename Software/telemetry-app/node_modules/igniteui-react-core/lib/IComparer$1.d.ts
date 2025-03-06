@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IComparer$1<T> {
+    compare(a: T, b: T): number;
+}
+/**
+ * @hidden
+ */
+export declare let IComparer$1_$type: Type;

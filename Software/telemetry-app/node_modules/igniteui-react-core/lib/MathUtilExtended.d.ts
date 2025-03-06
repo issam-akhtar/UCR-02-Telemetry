@@ -1,0 +1,17 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class MathUtilExtended extends Base {
+    static $t: Type;
+    static d(a: number): number;
+    static j(a: number, b: number, c: number): number;
+    private static c;
+    private static f;
+    private static e;
+    private static a;
+    static h(a: number): number;
+    static i(a: number): number;
+    static g(a: number): number;
+    private static b;
+}

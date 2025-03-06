@@ -1,0 +1,24 @@
+import { Base, Type } from "./type";
+import { XmlDocument, XmlNode, XmlElement, XmlAttribute } from "./xml";
+/**
+ * @hidden
+ */
+export declare class XmlUtils extends Base {
+    static $t: Type;
+    private static a;
+    private static m;
+    private static l;
+    private static f;
+    private static e;
+    private static k;
+    static n(a: string): XmlDocument;
+    static xmlNodeToString(a: XmlNode): string;
+    static j(): XmlDocument;
+    static o(a: string, b: string): XmlElement;
+    static c(a: XmlNode): string;
+    static h(a: XmlNode, b: string): void;
+    static p(a: XmlDocument, b: XmlNode): XmlNode;
+    static d(a: XmlNode): string;
+    static i(a: XmlElement, b: string, c: string): XmlAttribute;
+    static b(a: XmlAttribute): string;
+}

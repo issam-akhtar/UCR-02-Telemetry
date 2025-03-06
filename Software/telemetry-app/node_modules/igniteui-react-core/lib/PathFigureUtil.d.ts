@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { PathFigureCollection } from "./PathFigureCollection";
+import { PathFigure } from "./PathFigure";
+/**
+ * @hidden
+ */
+export declare class PathFigureUtil extends Base {
+    static $t: Type;
+    static b(a: PathFigureCollection): PathFigureCollection;
+    static a(a: PathFigure): PathFigure;
+}

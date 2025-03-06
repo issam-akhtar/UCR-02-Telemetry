@@ -1,0 +1,10 @@
+import { FrameworkElement } from "./FrameworkElement";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Image extends FrameworkElement {
+    static $t: Type;
+    ac: any;
+    ab: boolean;
+}

@@ -1,0 +1,1 @@
+export { XmlTextReader_XmlTokenInfo } from "./XmlParserContext_combined";

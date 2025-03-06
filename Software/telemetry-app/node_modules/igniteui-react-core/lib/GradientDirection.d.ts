@@ -1,0 +1,30 @@
+import { Type } from "./type";
+/**
+ * Describes available behaviors for setting direction of linear gradient brush or a radial gradient brush
+ */
+export declare enum GradientDirection {
+    /**
+     * Specifies from top to bottom direction of gradient brush
+     */
+    TopBottom = 0,
+    /**
+     * Specifies from bottom to top direction of gradient brush
+     */
+    BottomTop = 1,
+    /**
+     * Specifies from left to right direction of gradient brush
+     */
+    LeftRight = 2,
+    /**
+     * Specifies from right to left direction of gradient brush
+     */
+    RightLeft = 3,
+    /**
+     * Specifies radial gradient brush
+     */
+    Radial = 4
+}
+/**
+ * @hidden
+ */
+export declare let GradientDirection_$type: Type;

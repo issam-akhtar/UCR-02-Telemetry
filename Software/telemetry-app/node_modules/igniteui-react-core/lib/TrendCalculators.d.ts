@@ -1,0 +1,21 @@
+import { Base, IEnumerable$1, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TrendCalculators extends Base {
+    static $t: Type;
+    private static _g;
+    static g(a: IEnumerable$1<number>, b: number): IEnumerable$1<number>;
+    private static _b;
+    static b(a: IEnumerable$1<number>, b: number): IEnumerable$1<number>;
+    private static _c;
+    static c(a: IEnumerable$1<number>, b: number): IEnumerable$1<number>;
+    private static _a;
+    static a(a: IEnumerable$1<number>): IEnumerable$1<number>;
+    private static _e;
+    static e(a: IEnumerable$1<number>, b: number): IEnumerable$1<number>;
+    private static _d;
+    static d(a: IEnumerable$1<number>, b: number): IEnumerable$1<number>;
+    private static _f;
+    static f(a: IEnumerable$1<number>, b: number): IEnumerable$1<number>;
+}

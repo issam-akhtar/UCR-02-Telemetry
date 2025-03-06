@@ -1,0 +1,18 @@
+import { Base, Point, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DataSourceVelocityTracker extends Base {
+    static $t: Type;
+    private f;
+    private d;
+    constructor();
+    private a;
+    private b;
+    i(a: Point): void;
+    h(): void;
+    j(): Point;
+    private c;
+    private g;
+    private e;
+}

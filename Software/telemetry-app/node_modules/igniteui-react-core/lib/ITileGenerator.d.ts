@@ -1,0 +1,14 @@
+import { Type } from "./type";
+import { TileImageCreatedEventArgs } from "./TileImageCreatedEventArgs";
+import { TileImageZoomChangingEventArgs } from "./TileImageZoomChangingEventArgs";
+/**
+ * @hidden
+ */
+export interface ITileGenerator {
+    getTile(a: number, b: number, c: number, d: (sender: any, eventArgs: TileImageCreatedEventArgs) => void, e: (sender: any, eventArgs: TileImageCreatedEventArgs) => void, f: (sender: any, eventArgs: TileImageZoomChangingEventArgs) => void, g: HTMLImageElement): void;
+    cancelTile(a: number, b: number, c: number): void;
+}
+/**
+ * @hidden
+ */
+export declare let ITileGenerator_$type: Type;

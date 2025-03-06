@@ -1,0 +1,11 @@
+import { IFormatProvider, Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IFormattable {
+    toString(a: string, b: IFormatProvider): string;
+}
+/**
+ * @hidden
+ */
+export declare let IFormattable_$type: Type;

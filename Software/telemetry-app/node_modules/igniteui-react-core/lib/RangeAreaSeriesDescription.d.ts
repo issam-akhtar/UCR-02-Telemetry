@@ -1,0 +1,10 @@
+import { HorizontalRangeCategorySeriesDescription } from "./HorizontalRangeCategorySeriesDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class RangeAreaSeriesDescription extends HorizontalRangeCategorySeriesDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

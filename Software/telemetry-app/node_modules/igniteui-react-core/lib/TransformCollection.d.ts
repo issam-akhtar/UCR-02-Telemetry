@@ -1,0 +1,10 @@
+import { List$1 } from "./List$1";
+import { Transform } from "./Transform";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TransformCollection extends List$1<Transform> {
+    static $t: Type;
+    constructor();
+}

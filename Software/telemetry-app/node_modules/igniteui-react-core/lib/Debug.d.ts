@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Debug extends Base {
+    static $t: Type;
+    static b(a: boolean, b: string): void;
+    static d(a: string): void;
+    static a(a: boolean): void;
+    static c(a: string): void;
+}

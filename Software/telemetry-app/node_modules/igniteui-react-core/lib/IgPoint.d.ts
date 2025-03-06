@@ -1,0 +1,8 @@
+import { Point } from "./type";
+export interface IgPoint {
+    x: number;
+    y: number;
+}
+export declare function isPoint(p: any): boolean;
+export declare function pointFromLiteral(p: IgPoint): Point;
+export declare function pointToLiteral(p: Point): IgPoint;

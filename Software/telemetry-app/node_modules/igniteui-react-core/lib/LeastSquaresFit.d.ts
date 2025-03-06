@@ -1,0 +1,37 @@
+import { Numeric } from "./Numeric";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class LeastSquaresFit extends Numeric {
+    static $t: Type;
+    static aa(): boolean;
+    constructor();
+    static k(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ad(a: number[], b: number): number;
+    static t(): boolean;
+    static l(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ae(a: number[], b: number): number;
+    static u(): boolean;
+    static j(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ac(a: number[], b: number): number;
+    static s(): boolean;
+    static n(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ag(a: number[], b: number): number;
+    static w(): boolean;
+    static o(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ah(a: number[], b: number): number;
+    static x(): boolean;
+    static i(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ab(a: number[], b: number): number;
+    static r(): boolean;
+    static p(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static ai(a: number[], b: number): number;
+    static y(): boolean;
+    static q(a: number, b: (arg1: number) => number, c: (arg1: number) => number): number[];
+    static aj(a: number[], b: number): number;
+    static z(): boolean;
+    static m(a: number, b: number, c: (arg1: number) => number, d: (arg1: number) => number): number[];
+    static af(a: number[], b: number): number;
+    static v(a: number): boolean;
+}

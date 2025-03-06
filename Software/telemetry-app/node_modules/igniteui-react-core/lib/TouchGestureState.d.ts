@@ -1,0 +1,16 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum TouchGestureState {
+    None = 0,
+    Pan = 1,
+    Zoom = 2,
+    Hold = 3,
+    PendingPan = 4,
+    Flinging = 5
+}
+/**
+ * @hidden
+ */
+export declare let TouchGestureState_$type: Type;

@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class NameTable_Entry extends Base {
+    static $t: Type;
+    c: string;
+    a: number;
+    b: number;
+    d: NameTable_Entry;
+    constructor(a: string, b: number, c: NameTable_Entry);
+}

@@ -1,0 +1,19 @@
+import { IFormatProvider } from "./type";
+export declare class ConvertUtil {
+    static toBoolean(v: any, provider?: IFormatProvider): boolean;
+    static toString1(v: any, provider?: IFormatProvider): string;
+    static toChar(v: any, provider?: IFormatProvider): string;
+    static toDateTime(v: any, provider?: IFormatProvider): Date;
+    static convertToNumber(meth: string, v: any, minValue: number, maxValue: number, trunc: boolean, provider?: IFormatProvider, throwOnNaN?: boolean): number;
+    static toByte(v: any, provider?: IFormatProvider): number;
+    static toDecimal(v: any, provider?: IFormatProvider): number;
+    static toDouble(v: any, provider?: IFormatProvider): number;
+    static toInt16(v: any, provider?: IFormatProvider): number;
+    static toInt32(v: any, provider?: IFormatProvider): number;
+    static toInt64(v: any, provider?: IFormatProvider): number;
+    static toSByte(v: any, provider?: IFormatProvider): number;
+    static toUInt16(v: any, provider?: IFormatProvider): number;
+    static toUInt32(v: any, provider?: IFormatProvider): number;
+    static toUInt64(v: any, provider?: IFormatProvider): number;
+    static toSingle(v: any, provider?: IFormatProvider): number;
+}

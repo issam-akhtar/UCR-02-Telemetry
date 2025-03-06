@@ -1,0 +1,58 @@
+import { Type } from "./type";
+/**
+ * Enumerates the available property types on a data source schema.
+ */
+export declare enum DataSourceSchemaPropertyType {
+    /**
+     * The property is of type string.
+     */
+    StringValue = 0,
+    /**
+     * The property is of type integer.
+     */
+    IntValue = 1,
+    /**
+     * The property is of type boolean.
+     */
+    BooleanValue = 2,
+    /**
+     * The property is of type long.
+     */
+    LongValue = 3,
+    /**
+     * The property if of type short.
+     */
+    ShortValue = 4,
+    /**
+     * The property is of type double.
+     */
+    DoubleValue = 5,
+    /**
+     * The property is of type decimal.
+     */
+    DecimalValue = 6,
+    /**
+     * The property is of type single.
+     */
+    SingleValue = 7,
+    /**
+     * The property is of type datetime.
+     */
+    DateTimeValue = 8,
+    /**
+     * The property is of type datetimeoffset.
+     */
+    DateTimeOffsetValue = 9,
+    /**
+     * The property is of type byte.
+     */
+    ByteValue = 10,
+    /**
+     * The property is of type object.
+     */
+    ObjectValue = 11
+}
+/**
+ * @hidden
+ */
+export declare let DataSourceSchemaPropertyType_$type: Type;

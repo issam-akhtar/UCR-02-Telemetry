@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Style extends Base {
+    static $t: Type;
+    fill: string;
+    stroke: string;
+    strokeThickness: number;
+    opacity: number;
+}

@@ -1,0 +1,1 @@
+export { DependencyProperty } from "./DependencyObject_combined";

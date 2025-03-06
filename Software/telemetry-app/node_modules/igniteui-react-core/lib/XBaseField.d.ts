@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { XBaseDataType } from "./XBaseDataType";
+/**
+ * @hidden
+ */
+export declare class XBaseField extends Base {
+    static $t: Type;
+    c: string;
+    a: XBaseDataType;
+    b: number;
+}

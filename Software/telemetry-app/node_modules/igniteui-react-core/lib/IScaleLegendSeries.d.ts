@@ -1,0 +1,19 @@
+import { ILegendSeries } from "./ILegendSeries";
+import { Brush } from "./Brush";
+import { IChartLegend } from "./IChartLegend";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IScaleLegendSeries extends ILegendSeries {
+    isAttachedTo(a: IChartLegend): boolean;
+    readonly legendReady: boolean;
+    readonly minScaleText: string;
+    readonly maxScaleText: string;
+    readonly actualMarkerBrush: Brush;
+    forScaleColors(a: (arg1: Brush, arg2: number) => void): boolean;
+}
+/**
+ * @hidden
+ */
+export declare let IScaleLegendSeries_$type: Type;

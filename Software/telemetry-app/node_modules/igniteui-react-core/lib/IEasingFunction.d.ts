@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IEasingFunction {
+    ease(a: number): number;
+}
+/**
+ * @hidden
+ */
+export declare let IEasingFunction_$type: Type;

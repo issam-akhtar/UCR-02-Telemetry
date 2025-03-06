@@ -1,0 +1,10 @@
+import { StackedBarSeriesDescription } from "./StackedBarSeriesDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Stacked100BarSeriesDescription extends StackedBarSeriesDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

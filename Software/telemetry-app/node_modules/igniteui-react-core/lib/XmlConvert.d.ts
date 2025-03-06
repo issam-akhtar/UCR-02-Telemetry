@@ -1,0 +1,57 @@
+import { Base, Type } from "./type";
+import { TextWriter } from "./TextWriter";
+/**
+ * @hidden
+ */
+export declare class XmlConvert extends Base {
+    static $t: Type;
+    private static readonly a;
+    constructor();
+    private static ap;
+    static s(a: string): string;
+    static u(a: string): string;
+    static c(a: string, b: boolean): boolean;
+    private static w;
+    static v(a: string): string;
+    static x(a: string): string;
+    static d(a: string): boolean;
+    static y(a: number[]): string;
+    static ay(a: number[], b: number, c: number, d: TextWriter): void;
+    static f(a: string): number;
+    static g(a: string): string;
+    static h(a: string): number;
+    static i(a: string): number;
+    private static r;
+    private static e;
+    static l(a: string): number;
+    static n(a: string): number;
+    static o(a: string): number;
+    static p(a: string): number;
+    static q(a: string): number;
+    static ah(a: number): string;
+    static ag(a: number): string;
+    static aa(a: number): string;
+    static ai(a: number): string;
+    static ab(a: string): string;
+    static z(a: boolean): string;
+    static aj(a: number): string;
+    static ae(a: number): string;
+    static ao(a: number): string;
+    static al(a: number): string;
+    static af(a: number): string;
+    static ak(a: number): string;
+    static an(a: number): string;
+    static am(a: number): string;
+    static ac(a: Date): string;
+    static ad(a: Date, b: string): string;
+    static au(a: string): number;
+    static av(a: string): number;
+    static aw(a: string): number;
+    static ax(a: string): number;
+    static aq(a: string): string;
+    static ar(a: string): string;
+    static at(a: string): string;
+    static as(a: string): string;
+    static b(a: string): number[];
+    static m(a: string[], b: number, c: number, d: number[]): number;
+}

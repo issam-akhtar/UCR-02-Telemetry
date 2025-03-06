@@ -1,0 +1,14 @@
+import { Base, Point, Type } from "./type";
+import { Rect } from "./Rect";
+import { Size } from "./Size";
+import { Color } from "./Color";
+/**
+ * @hidden
+ */
+export declare class APIFactory extends Base {
+    static $t: Type;
+    static createPoint(a: number, b: number): Point;
+    static createRect(a: number, b: number, c: number, d: number): Rect;
+    static createSize(a: number, b: number): Size;
+    static createColor(a: string): Color;
+}

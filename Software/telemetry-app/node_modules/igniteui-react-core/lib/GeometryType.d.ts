@@ -1,0 +1,12 @@
+import { Type } from "./type";
+export declare enum GeometryType {
+    Group = 0,
+    Line = 1,
+    Rectangle = 2,
+    Ellipse = 3,
+    Path = 4
+}
+/**
+ * @hidden
+ */
+export declare let GeometryType_$type: Type;

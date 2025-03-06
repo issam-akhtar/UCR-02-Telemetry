@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DataFormats extends Base {
+    static $t: Type;
+    static readonly a: string;
+    static readonly b: string;
+    static readonly c: string;
+    static readonly d: string;
+    static readonly e: string;
+}

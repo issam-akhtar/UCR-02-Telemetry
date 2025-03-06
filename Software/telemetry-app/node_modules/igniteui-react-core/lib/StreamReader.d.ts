@@ -1,0 +1,21 @@
+import { TextReader } from "./TextReader";
+import { Stream, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class StreamReader extends TextReader {
+    static $t: Type;
+    private readonly o;
+    private q;
+    private p;
+    private k;
+    private l;
+    private m;
+    constructor(a: Stream);
+    private r;
+    a(): number;
+    b(): number;
+    c(a: string[], b: number, c: number): number;
+    g(): string;
+    h(): string;
+}

@@ -1,0 +1,11 @@
+import { Type } from "./type";
+export declare enum Stretch {
+    None = 0,
+    Fill = 1,
+    Uniform = 2,
+    UniformToFill = 3
+}
+/**
+ * @hidden
+ */
+export declare let Stretch_$type: Type;

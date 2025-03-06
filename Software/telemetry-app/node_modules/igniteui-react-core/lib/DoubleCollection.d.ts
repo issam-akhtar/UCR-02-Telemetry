@@ -1,0 +1,9 @@
+import { List$1 } from "./List$1";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DoubleCollection extends List$1<number> {
+    static $t: Type;
+    constructor();
+}

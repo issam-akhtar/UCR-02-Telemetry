@@ -1,0 +1,10 @@
+import { Base, IEqualityComparer$1, Type } from "./type";
+import { Tile } from "./Tile";
+/**
+ * @hidden
+ */
+export declare class TilePositionComparer extends Base implements IEqualityComparer$1<Tile> {
+    static $t: Type;
+    equalsC(a: Tile, b: Tile): boolean;
+    getHashCodeC(a: Tile): number;
+}

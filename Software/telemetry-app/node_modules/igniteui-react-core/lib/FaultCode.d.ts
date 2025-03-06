@@ -1,0 +1,9 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class FaultCode extends Base {
+    static $t: Type;
+    constructor(a: string);
+    a: string;
+}

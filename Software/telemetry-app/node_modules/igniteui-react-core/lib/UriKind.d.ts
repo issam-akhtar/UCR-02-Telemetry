@@ -1,0 +1,10 @@
+import { Type } from "./type";
+export declare enum UriKind {
+    RelativeOrAbsolute = 0,
+    Absolute = 1,
+    Relative = 2
+}
+/**
+ * @hidden
+ */
+export declare let UriKind_$type: Type;

@@ -1,0 +1,43 @@
+import { CultureInfo } from "./culture";
+import { StringComparison, CompareOptions } from "./string";
+export declare const enum StringSplitOptions {
+    None = 0,
+    RemoveEmptyEntries = 1
+}
+export declare function startsWith1(target: string, s: string, comparisonType: StringComparison): boolean;
+export declare function endsWith1(target: string, s: string, comparisonType: StringComparison): boolean;
+export declare function isLower(target: string): boolean;
+export declare function isLetterOrDigit(target: string): boolean;
+export declare function isLetter(c: string): boolean;
+export declare function isDigit1(c: string, index: number): boolean;
+export declare function isDigit(c: string): boolean;
+export declare function isNumber(c: string): boolean;
+export declare function padLeft(target: string, len: number, c: string): string;
+export declare function reverse(target: string): string;
+export declare function padRight(target: string, len: number, c: string): string;
+export declare function indexOfAny(target: string, chars: string[]): number;
+export declare function lastIndexOfAny(target: string, chars: string[]): number;
+export declare function stringFormat(format: string, ...rest: any[]): string;
+export declare function stringFormat1(format: string, ...args: any[]): string;
+export declare function stringFormat2(provider: any, format: string, ...args: any[]): string;
+export declare function stringCompare1(strA: string, strB: string, comparisonType: StringComparison): number;
+export declare function stringCompare2(strA: string, strB: string, culture: CultureInfo, options: CompareOptions): number;
+export declare function stringCompare3(strA: string, indexA: number, strB: string, indexB: number, length: number): number;
+export declare function stringCompareOrdinal(strA: string, indexA: number, strB: string, indexB: number, length: number): number;
+export declare function stringEquals1(strA: string, strB: string, comparisonType: StringComparison): boolean;
+export declare function stringInsert(str: string, index: number, value: string): string;
+export declare function b64toUint8Array(b64Data: string, nBlocksSize?: number): any;
+export declare function uint8ArraytoB64(aBytes: number[]): string;
+export declare function stringSplit(value: string, separators: string[], options: StringSplitOptions): string[];
+export declare function unicode_hack(regexpString: string | RegExp): RegExp;
+export declare function netRegexToJS(netPattern: string): {
+    pattern: string;
+    nameToNetGroupIndexMap: {
+        [name: string]: number;
+    };
+    netToJSGroupIndexMap: number[][];
+    matchMustStartAtCurrentPosition: boolean;
+};
+export declare function trim(target: string, ...rest: string[]): string;
+export declare function trimStart(target: string, ...rest: any[]): string;
+export declare function trimEnd(target: string, ...rest: any[]): string;

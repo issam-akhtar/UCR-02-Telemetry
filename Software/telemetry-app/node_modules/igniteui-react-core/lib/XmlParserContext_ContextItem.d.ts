@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+import { XmlSpace } from "./XmlSpace";
+/**
+ * @hidden
+ */
+export declare class XmlParserContext_ContextItem extends Base {
+    static $t: Type;
+    a: string;
+    b: string;
+    c: XmlSpace;
+}

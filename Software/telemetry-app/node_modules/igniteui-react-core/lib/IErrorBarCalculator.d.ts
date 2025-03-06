@@ -1,0 +1,19 @@
+import { ErrorBarCalculatorType } from "./ErrorBarCalculatorType";
+import { IFastItemColumn$1 } from "./IFastItemColumn$1";
+import { EventArgs, Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IErrorBarCalculator {
+    getCalculatorType(): ErrorBarCalculatorType;
+    getIndependentValue(): number;
+    getDependentValue(a: number): number;
+    getItemColumn(): IFastItemColumn$1<number>;
+    changed: (sender: any, e: EventArgs) => void;
+    hasConstantPosition(): boolean;
+    getPosition(): number;
+}
+/**
+ * @hidden
+ */
+export declare let IErrorBarCalculator_$type: Type;

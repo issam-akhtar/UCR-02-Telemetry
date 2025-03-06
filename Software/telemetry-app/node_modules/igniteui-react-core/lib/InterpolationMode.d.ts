@@ -1,0 +1,18 @@
+import { Type } from "./type";
+/**
+ * Describes available modes for color interpolation.
+ */
+export declare enum InterpolationMode {
+    /**
+     * Interpolation in RGB space.
+     */
+    RGB = 0,
+    /**
+     * Interpolation in HSV space.
+     */
+    HSV = 1
+}
+/**
+ * @hidden
+ */
+export declare let InterpolationMode_$type: Type;

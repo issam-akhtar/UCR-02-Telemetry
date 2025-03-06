@@ -1,0 +1,10 @@
+import { List$1 } from "./List$1";
+import { Geometry } from "./Geometry";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class GeometryCollection extends List$1<Geometry> {
+    static $t: Type;
+    constructor();
+}

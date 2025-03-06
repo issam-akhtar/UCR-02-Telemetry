@@ -1,0 +1,13 @@
+import { IFastItemsSource } from "./IFastItemsSource";
+import { IEnumerable, Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IFastItemsSourceProvider {
+    getFastItemsSource(a: IEnumerable): IFastItemsSource;
+    releaseFastItemsSource(a: IEnumerable): IFastItemsSource;
+}
+/**
+ * @hidden
+ */
+export declare let IFastItemsSourceProvider_$type: Type;

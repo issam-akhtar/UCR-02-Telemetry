@@ -1,0 +1,1 @@
+export { LambdaExpression } from "./ExpressionSyntax_combined";

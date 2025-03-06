@@ -1,0 +1,36 @@
+import { ExpressionSyntax } from "./ExpressionSyntax";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IQueryable {
+    readonly expressionSyntax: ExpressionSyntax;
+    readonly elementType: Type;
+    readonly provider: IQueryProvider;
+}
+/**
+ * @hidden
+ */
+export declare let IQueryable_$type: Type;
+/**
+ * @hidden
+ */
+export interface IQueryable$1<T> extends IQueryable {
+}
+/**
+ * @hidden
+ */
+export declare let IQueryable$1_$type: Type;
+/**
+ * @hidden
+ */
+export interface IQueryProvider {
+    createQuery(a: ExpressionSyntax): IQueryable;
+    createQuery$1<TElement>($tElement: Type, a: ExpressionSyntax): IQueryable$1<TElement>;
+    execute(a: ExpressionSyntax): any;
+    execute$1<TResult>($tResult: Type, a: ExpressionSyntax): TResult;
+}
+/**
+ * @hidden
+ */
+export declare let IQueryProvider_$type: Type;

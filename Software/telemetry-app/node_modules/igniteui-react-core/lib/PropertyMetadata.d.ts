@@ -1,0 +1,1 @@
+export { PropertyMetadata } from "./DependencyObject_combined";

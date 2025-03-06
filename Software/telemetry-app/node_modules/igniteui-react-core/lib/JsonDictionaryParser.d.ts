@@ -1,0 +1,13 @@
+import { Base, Type } from "./type";
+import { JsonDictionaryItem } from "./JsonDictionaryItem";
+import { List$1 } from "./List$1";
+/**
+ * @hidden
+ */
+export declare class JsonDictionaryParser extends Base {
+    static $t: Type;
+    parse(json_: string): JsonDictionaryItem;
+    static d(item_: any): List$1<string>;
+    private static b;
+    private static a;
+}

@@ -1,0 +1,10 @@
+import { SplineSeriesBaseDescription } from "./SplineSeriesBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class SplineFragmentBaseDescription extends SplineSeriesBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

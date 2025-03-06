@@ -1,0 +1,28 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class XmlChar extends Base {
+    static $t: Type;
+    static readonly d: string[];
+    static p(a: number): boolean;
+    static q(a: string): boolean;
+    static u(a: string): number;
+    static e(a: number): boolean;
+    static n(a: number): boolean;
+    static f(a: number): boolean;
+    static t(a: string, b: boolean): number;
+    static s(a: string[], b: number, c: number, d: boolean): number;
+    static h(a: number): boolean;
+    static j(a: number): boolean;
+    static g(a: string): boolean;
+    static i(a: string): boolean;
+    static k(a: string): boolean;
+    static m(a: number): boolean;
+    static l(a: string): boolean;
+    static o(a: string): boolean;
+    static r(a: string): number;
+    private static readonly a;
+    private static readonly c;
+    private static readonly b;
+}

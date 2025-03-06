@@ -1,0 +1,14 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ISupportsDataChangeNotifications {
+    notifySetItem(a: number, b: any, c: any): void;
+    notifyClearItems(): void;
+    notifyInsertItem(a: number, b: any): void;
+    notifyRemoveItem(a: number, b: any): void;
+}
+/**
+ * @hidden
+ */
+export declare let ISupportsDataChangeNotifications_$type: Type;

@@ -1,0 +1,4 @@
+export declare class PlatformConstants {
+    static Prefix: string;
+    static Postfix: string;
+}

@@ -1,0 +1,1 @@
+export { BaseDOMEventProxy } from "./BaseDOMEventProxy_combined";

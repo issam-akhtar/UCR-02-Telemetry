@@ -1,0 +1,18 @@
+import { XmlNameTable } from "./XmlNameTable";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class NameTable extends XmlNameTable {
+    static $t: Type;
+    private g;
+    private e;
+    private i;
+    constructor();
+    a(a: string[], b: number, c: number): string;
+    b(a: string): string;
+    c(a: string[], b: number, c: number): string;
+    d(a: string): string;
+    private j;
+    private static f;
+}

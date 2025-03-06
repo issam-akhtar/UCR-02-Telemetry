@@ -1,0 +1,24 @@
+import { Type } from "./type";
+/**
+ */
+export declare enum ReadState {
+    /**
+     */
+    Initial = 0,
+    /**
+     */
+    Interactive = 1,
+    /**
+     */
+    Error = 2,
+    /**
+     */
+    EndOfFile = 3,
+    /**
+     */
+    Closed = 4
+}
+/**
+ * @hidden
+ */
+export declare let ReadState_$type: Type;

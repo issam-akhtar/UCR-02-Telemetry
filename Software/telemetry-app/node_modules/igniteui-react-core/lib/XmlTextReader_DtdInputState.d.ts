@@ -1,0 +1,19 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum XmlTextReader_DtdInputState {
+    Free = 1,
+    ElementDecl = 2,
+    AttlistDecl = 3,
+    EntityDecl = 4,
+    NotationDecl = 5,
+    PI = 6,
+    Comment = 7,
+    InsideSingleQuoted = 8,
+    InsideDoubleQuoted = 9
+}
+/**
+ * @hidden
+ */
+export declare let XmlTextReader_DtdInputState_$type: Type;

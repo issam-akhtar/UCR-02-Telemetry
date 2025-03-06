@@ -1,0 +1,12 @@
+import { Base, IEnumerable$1, IEnumerator$1, IEnumerator, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class GenericEnumerable$1<T> extends Base implements IEnumerable$1<T> {
+    static $t: Type;
+    protected $t: Type;
+    private a;
+    constructor($t: Type, a: any);
+    getEnumerator(): IEnumerator$1<T>;
+    getEnumeratorObject(): IEnumerator;
+}

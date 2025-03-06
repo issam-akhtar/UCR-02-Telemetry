@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IPool$1<T> {
+    create: () => T;
+    disactivate: (arg1: T) => void;
+    activate: (arg1: T) => void;
+    destroy: (arg1: T) => void;
+    clear(): void;
+}
+/**
+ * @hidden
+ */
+export declare let IPool$1_$type: Type;

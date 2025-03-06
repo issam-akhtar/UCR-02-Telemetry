@@ -1,0 +1,16 @@
+import { Type } from "./type";
+export declare enum SecurityAction {
+    Demand = 2,
+    Assert = 3,
+    Deny = 4,
+    PermitOnly = 5,
+    LinkDemand = 6,
+    InheritanceDemand = 7,
+    RequestMinimum = 8,
+    RequestOptional = 9,
+    RequestRefuse = 10
+}
+/**
+ * @hidden
+ */
+export declare let SecurityAction_$type: Type;

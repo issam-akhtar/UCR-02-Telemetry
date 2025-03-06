@@ -1,0 +1,15 @@
+import { Base, Type } from "./type";
+import { XmlSpace } from "./XmlSpace";
+/**
+ * @hidden
+ */
+export declare class XmlTextWriter_XmlNodeInfo extends Base {
+    static $t: Type;
+    e: string;
+    c: string;
+    d: string;
+    b: boolean;
+    a: boolean;
+    f: string;
+    g: XmlSpace;
+}

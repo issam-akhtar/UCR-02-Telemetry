@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IGetItemAtIndex {
+    getItem(a: number): any;
+}
+/**
+ * @hidden
+ */
+export declare let IGetItemAtIndex_$type: Type;

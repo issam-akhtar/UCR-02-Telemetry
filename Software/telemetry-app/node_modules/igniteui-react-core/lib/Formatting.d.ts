@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ */
+export declare enum Formatting {
+    /**
+     */
+    None = 0,
+    /**
+     */
+    Indented = 1
+}
+/**
+ * @hidden
+ */
+export declare let Formatting_$type: Type;

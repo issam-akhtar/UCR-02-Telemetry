@@ -1,0 +1,14 @@
+import { IDictionary, Type } from "./type";
+import { XmlNamespaceScope } from "./XmlNamespaceScope";
+/**
+ * @hidden
+ */
+export interface IXmlNamespaceResolver {
+    getNamespacesInScope(a: XmlNamespaceScope): IDictionary;
+    lookupNamespace(a: string): string;
+    lookupPrefix(a: string): string;
+}
+/**
+ * @hidden
+ */
+export declare let IXmlNamespaceResolver_$type: Type;

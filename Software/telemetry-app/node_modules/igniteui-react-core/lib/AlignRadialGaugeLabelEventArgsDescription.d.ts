@@ -1,0 +1,10 @@
+import { FormatRadialGaugeLabelEventArgsDescription } from "./FormatRadialGaugeLabelEventArgsDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AlignRadialGaugeLabelEventArgsDescription extends FormatRadialGaugeLabelEventArgsDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

@@ -1,0 +1,15 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DataTemplatePassInfo extends Base {
+    static $t: Type;
+    renderContext: any;
+    context: any;
+    viewportTop: number;
+    viewportLeft: number;
+    viewportWidth: number;
+    viewportHeight: number;
+    isHitTestRender: boolean;
+    passID: string;
+}

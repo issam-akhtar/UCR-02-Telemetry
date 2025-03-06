@@ -1,0 +1,12 @@
+import { Type } from "./type";
+export declare enum PathSegmentType {
+    Line = 0,
+    Bezier = 1,
+    PolyBezier = 2,
+    PolyLine = 3,
+    Arc = 4
+}
+/**
+ * @hidden
+ */
+export declare let PathSegmentType_$type: Type;

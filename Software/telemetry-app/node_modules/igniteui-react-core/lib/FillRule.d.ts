@@ -1,0 +1,9 @@
+import { Type } from "./type";
+export declare enum FillRule {
+    EvenOdd = 0,
+    Nonzero = 1
+}
+/**
+ * @hidden
+ */
+export declare let FillRule_$type: Type;

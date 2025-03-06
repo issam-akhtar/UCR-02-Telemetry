@@ -1,0 +1,22 @@
+import { Base, Type } from "./type";
+import { IComparer$1 } from "./IComparer$1";
+import { ListSortDirection } from "./ListSortDirection";
+import { IDataSource } from "./IDataSource";
+/**
+ * @hidden
+ */
+export declare class DataSourcePropertiesComparer extends Base implements IComparer$1<any> {
+    static $t: Type;
+    private e;
+    private b;
+    private a;
+    private g;
+    private f;
+    private d;
+    private c;
+    constructor(a: string[], b: ListSortDirection[], c: boolean[], d: IDataSource);
+    compare(a: any, b: any): number;
+    h(a: any[], b: any[]): number;
+    i(a: any, b: any[]): number;
+    private j;
+}

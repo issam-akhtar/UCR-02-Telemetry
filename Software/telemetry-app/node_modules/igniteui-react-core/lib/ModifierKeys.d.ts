@@ -1,0 +1,13 @@
+import { Type } from "./type";
+export declare enum ModifierKeys {
+    None = 0,
+    Alt = 1,
+    Control = 2,
+    Shift = 4,
+    Windows = 8,
+    Apple = 8
+}
+/**
+ * @hidden
+ */
+export declare let ModifierKeys_$type: Type;

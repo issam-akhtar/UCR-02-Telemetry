@@ -1,0 +1,24 @@
+import { List$1 } from "./List$1";
+import { INotifyCollectionChanged } from "./INotifyCollectionChanged";
+import { INotifyPropertyChanged, IEnumerable$1, PropertyChangedEventArgs, Type } from "./type";
+import { NotifyCollectionChangedEventArgs } from "./NotifyCollectionChangedEventArgs";
+/**
+ * @hidden
+ */
+export declare class ObservableCollection$1<T> extends List$1<T> implements INotifyCollectionChanged, INotifyPropertyChanged {
+    static $t: Type;
+    protected $t: Type;
+    constructor($t: Type, a: number);
+    constructor($t: Type, a: number, b: IEnumerable$1<T>);
+    constructor($t: Type, a: number, b: number);
+    constructor($t: Type, a: number, ..._rest: any[]);
+    protected x(a: number, b: T): void;
+    protected p(): void;
+    protected r(a: number, b: T): void;
+    protected n(a: T): void;
+    protected u(a: number): void;
+    collectionChanged: (sender: any, e: NotifyCollectionChangedEventArgs) => void;
+    propertyChanged: (sender: any, e: PropertyChangedEventArgs) => void;
+    protected ad(a: PropertyChangedEventArgs): void;
+    protected ac(a: NotifyCollectionChangedEventArgs): void;
+}

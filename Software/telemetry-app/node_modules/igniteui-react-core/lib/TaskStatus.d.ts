@@ -1,0 +1,11 @@
+import { Type } from "./type";
+export declare enum TaskStatus {
+    Created = 0,
+    RanToCompletion = 5,
+    Canceled = 6,
+    Faulted = 7
+}
+/**
+ * @hidden
+ */
+export declare let TaskStatus_$type: Type;

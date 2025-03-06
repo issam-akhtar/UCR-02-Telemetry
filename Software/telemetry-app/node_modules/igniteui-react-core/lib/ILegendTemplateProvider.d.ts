@@ -1,0 +1,13 @@
+import { DataTemplate } from "./DataTemplate";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ILegendTemplateProvider {
+    readonly legendItemTemplate: DataTemplate;
+    readonly legendItemBadgeTemplate: DataTemplate;
+}
+/**
+ * @hidden
+ */
+export declare let ILegendTemplateProvider_$type: Type;

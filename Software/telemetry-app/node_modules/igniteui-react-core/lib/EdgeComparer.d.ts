@@ -1,0 +1,10 @@
+import { Base, IEqualityComparer$1, Type } from "./type";
+import { HalfEdge } from "./HalfEdge";
+/**
+ * @hidden
+ */
+export declare class EdgeComparer extends Base implements IEqualityComparer$1<HalfEdge> {
+    static $t: Type;
+    equalsC(a: HalfEdge, b: HalfEdge): boolean;
+    getHashCodeC(a: HalfEdge): number;
+}

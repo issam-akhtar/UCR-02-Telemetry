@@ -1,0 +1,13 @@
+import { List$1 } from "./List$1";
+import { PrimitiveVisualData } from "./PrimitiveVisualData";
+import { IVisualData } from "./IVisualData";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class PrimitiveVisualDataList extends List$1<PrimitiveVisualData> implements IVisualData {
+    static $t: Type;
+    constructor();
+    containingTag(a: string): PrimitiveVisualDataList;
+    serialize(): string;
+}

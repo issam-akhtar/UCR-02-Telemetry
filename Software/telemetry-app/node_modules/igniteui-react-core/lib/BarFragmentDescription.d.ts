@@ -1,0 +1,10 @@
+import { ColumnFragmentDescription } from "./ColumnFragmentDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class BarFragmentDescription extends ColumnFragmentDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

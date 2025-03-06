@@ -1,0 +1,44 @@
+import { Base, Type, IEnumerable$1 } from "./type";
+import { ReadOnlyCollection$1 } from "./ReadOnlyCollection$1";
+/**
+ * @hidden
+ */
+export declare abstract class ExpressionSyntax extends Base {
+    static $t: Type;
+    static c(a: Type, b: string, c: Type[], ...d: ExpressionSyntax[]): MethodCallExpression;
+    static a(a: ExpressionSyntax, ...b: ParameterExpression[]): LambdaExpression;
+    static b(a: ExpressionSyntax, b: string): MemberExpression;
+    static d(a: Type): ParameterExpression;
+    static e(a: Type, b: string): ParameterExpression;
+}
+/**
+ * @hidden
+ */
+export declare abstract class LambdaExpression extends ExpressionSyntax {
+    static $t: Type;
+}
+/**
+ * @hidden
+ */
+export declare class MemberExpression extends ExpressionSyntax {
+    static $t: Type;
+    f: ExpressionSyntax;
+    g(a: ExpressionSyntax): MemberExpression;
+}
+/**
+ * @hidden
+ */
+export declare class MethodCallExpression extends ExpressionSyntax {
+    static $t: Type;
+    f: ReadOnlyCollection$1<ExpressionSyntax>;
+    g: ExpressionSyntax;
+    h(a: ExpressionSyntax, b: IEnumerable$1<ExpressionSyntax>): MethodCallExpression;
+}
+/**
+ * @hidden
+ */
+export declare class ParameterExpression extends ExpressionSyntax {
+    static $t: Type;
+    f: boolean;
+    g: string;
+}

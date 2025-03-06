@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+import { Tuple$2 } from "./Tuple$2";
+/**
+ * @hidden
+ */
+export declare class PolySimplification extends Base {
+    static $t: Type;
+    static b(a: Tuple$2<number[], number[]>, b: number): number;
+    private static a;
+}

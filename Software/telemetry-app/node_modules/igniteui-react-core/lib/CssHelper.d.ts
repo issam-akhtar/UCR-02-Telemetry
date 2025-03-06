@@ -1,0 +1,27 @@
+import { Base, Type } from "./type";
+import { DomWrapper, DomRenderer } from "./dom";
+import { List$1 } from "./List$1";
+/**
+ * @hidden
+ */
+export declare class CssHelper extends Base {
+    static $t: Type;
+    static readonly defaultMarginValue: string;
+    static readonly defaultColorValue: string;
+    static readonly defaultBackgroundImageValue: string;
+    static readonly defaultTextAlignValue: string;
+    static readonly defaultVerticalAlignValue: string;
+    static readonly defaultOpacityValue: string;
+    static readonly defaultVisibilityValue: string;
+    static readonly defaultWidthHeightValue: string;
+    static readonly maxClasses: number;
+    static getDisoveryElement(a: DomRenderer): DomWrapper;
+    static getDefaultValue(a: string): string;
+    static numberOfClasses(a: DomWrapper, b: string, c: string): number;
+    static getPropertyValue1(a: DomWrapper, b: string, c: string): string;
+    static getPropertyValue(a: DomWrapper, b: string): string;
+    private static a;
+    private static c;
+    private static b;
+    static getValuesForClassCollection(a: DomWrapper, b: string, c: List$1<string>): List$1<List$1<string>>;
+}

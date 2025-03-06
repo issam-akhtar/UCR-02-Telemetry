@@ -1,0 +1,11 @@
+import { List$1 } from "./List$1";
+import { Point, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class PointCollection extends List$1<Point> {
+    static $t: Type;
+    constructor(a: number);
+    constructor(a: number, source_: List$1<Point>);
+    constructor(a: number, ..._rest: any[]);
+}

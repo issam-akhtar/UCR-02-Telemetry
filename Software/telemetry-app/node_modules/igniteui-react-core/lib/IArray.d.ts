@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IArray {
+    asArray(): any[];
+}
+/**
+ * @hidden
+ */
+export declare let IArray_$type: Type;

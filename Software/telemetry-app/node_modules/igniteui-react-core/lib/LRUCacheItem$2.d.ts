@@ -1,0 +1,14 @@
+import { Base, Type } from "./type";
+import { LinkedListNode$1 } from "./LinkedListNode$1";
+/**
+ * @hidden
+ */
+export declare class LRUCacheItem$2<TKey, TValue> extends Base {
+    static $t: Type;
+    protected $tKey: Type;
+    protected $tValue: Type;
+    constructor($tKey: Type, $tValue: Type);
+    a: TKey;
+    b: TValue;
+    c: LinkedListNode$1<LRUCacheItem$2<TKey, TValue>>;
+}

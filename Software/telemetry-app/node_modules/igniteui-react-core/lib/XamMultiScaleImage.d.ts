@@ -1,0 +1,1 @@
+export { XamMultiScaleImage } from "./XamMultiScaleImageView_combined";

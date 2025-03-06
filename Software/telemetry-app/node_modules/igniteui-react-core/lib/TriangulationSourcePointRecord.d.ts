@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class TriangulationSourcePointRecord extends Base {
+    static $t: Type;
+    pointX: number;
+    pointY: number;
+    value: number;
+}

@@ -1,0 +1,12 @@
+import { UnknownValuePlotting } from "./UnknownValuePlotting";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IUnknownValuePlotting {
+    unknownValuePlotting: UnknownValuePlotting;
+}
+/**
+ * @hidden
+ */
+export declare let IUnknownValuePlotting_$type: Type;

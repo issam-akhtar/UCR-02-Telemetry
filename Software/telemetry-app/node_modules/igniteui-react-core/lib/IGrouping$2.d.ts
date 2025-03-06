@@ -1,0 +1,11 @@
+import { IEnumerable$1, IEnumerable, Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IGrouping$2<TKey, TElement> extends IEnumerable$1<TElement>, IEnumerable {
+    readonly key: TKey;
+}
+/**
+ * @hidden
+ */
+export declare let IGrouping$2_$type: Type;

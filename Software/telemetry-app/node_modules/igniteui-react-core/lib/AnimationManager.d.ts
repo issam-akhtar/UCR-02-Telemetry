@@ -1,0 +1,25 @@
+import { Base, Type } from "./type";
+import { ITickProvider } from "./ITickProvider";
+import { AnimationState } from "./AnimationState";
+import { CancelBehavior } from "./CancelBehavior";
+/**
+ * @hidden
+ */
+export declare class AnimationManager extends Base {
+    static $t: Type;
+    private a;
+    constructor(a: ITickProvider);
+    private c;
+    private d;
+    h(a: string, b: any, c: number, d: (arg1: number, arg2: AnimationState) => void, e: (arg1: number) => number, f: number, g: number): void;
+    g(a: string, b: any, c: number, d: (arg1: number, arg2: AnimationState) => void, e: (arg1: number) => number): void;
+    private f;
+    i(a: string, b: CancelBehavior): void;
+    private b;
+    private j;
+    private e;
+    private l;
+    private m;
+    private n;
+    k(): void;
+}

@@ -1,0 +1,26 @@
+import { Base, Type } from "./type";
+import { Encoding } from "./Encoding";
+import { WebHeaderCollection } from "./WebHeaderCollection";
+import { ICredentials } from "./ICredentials";
+import { UploadStringCompletedEventArgs } from "./UploadStringCompletedEventArgs";
+import { Uri } from "./Uri";
+import { Task$1 } from "./Task$1";
+import { UploadDataCompletedEventArgs } from "./UploadDataCompletedEventArgs";
+/**
+ * @hidden
+ */
+export declare class WebClient extends Base {
+    static $t: Type;
+    constructor();
+    e: Encoding;
+    d: WebHeaderCollection;
+    a: ICredentials;
+    uploadStringCompleted: (sender: any, e: UploadStringCompletedEventArgs) => void;
+    k(a: Uri, b: string, c: string, d: any): void;
+    g(a: Uri, b: string, c: string): Task$1<string>;
+    uploadDataCompleted: (sender: any, e: UploadDataCompletedEventArgs) => void;
+    j(a: Uri, b: string, c: string, d: any): void;
+    f(a: Uri, b: string, c: string): Task$1<number[]>;
+    private i;
+    private h;
+}

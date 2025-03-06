@@ -1,0 +1,15 @@
+import { Type } from "./type";
+/**
+ */
+export declare enum EntityHandling {
+    /**
+     */
+    ExpandEntities = 1,
+    /**
+     */
+    ExpandCharEntities = 2
+}
+/**
+ * @hidden
+ */
+export declare let EntityHandling_$type: Type;

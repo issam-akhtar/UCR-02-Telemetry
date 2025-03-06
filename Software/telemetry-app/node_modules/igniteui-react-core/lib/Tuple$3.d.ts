@@ -1,0 +1,16 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Tuple$3<T1, T2, T3> extends Base {
+    static $t: Type;
+    protected $t1: Type;
+    protected $t2: Type;
+    protected $t3: Type;
+    c: T1;
+    d: T2;
+    e: T3;
+    constructor($t1: Type, $t2: Type, $t3: Type, a: T1, b: T2, c: T3);
+    equals(a: any): boolean;
+    getHashCode(): number;
+}

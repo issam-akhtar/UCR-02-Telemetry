@@ -1,0 +1,14 @@
+import { Base, Type } from "./type";
+import { DescriptionTreeNode } from "./DescriptionTreeNode";
+/**
+ * @hidden
+ */
+export declare class DescriptionTreeReconciler_TreeModeData extends Base {
+    static $t: Type;
+    f: string;
+    a: DescriptionTreeNode;
+    d: number;
+    c: boolean;
+    e: number;
+    b: boolean;
+}

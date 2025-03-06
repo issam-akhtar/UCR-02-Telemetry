@@ -1,0 +1,12 @@
+import { IDataSourceSupportsCount } from "./IDataSourceSupportsCount";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IDataSourceSupportsIndexedAccess extends IDataSourceSupportsCount {
+    getItemAtIndex(a: number): any;
+}
+/**
+ * @hidden
+ */
+export declare let IDataSourceSupportsIndexedAccess_$type: Type;

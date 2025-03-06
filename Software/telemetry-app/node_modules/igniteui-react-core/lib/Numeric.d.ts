@@ -1,0 +1,19 @@
+import { Base, Type } from "./type";
+import { List$1 } from "./List$1";
+import { PathFigureCollection } from "./PathFigureCollection";
+import { PathFigure } from "./PathFigure";
+/**
+ * @hidden
+ */
+export declare class Numeric extends Base {
+    static $t: Type;
+    constructor();
+    static e(a: List$1<number>, b: List$1<number>, c: List$1<number>, d: List$1<number>, e: List$1<number>): boolean;
+    static d(a: number[][], b: number[]): boolean;
+    static c(a: number, b: (arg1: number) => number, c: (arg1: number) => number, d: number, e: number): number[];
+    static b(a: number, b: number, c: (arg1: number) => number, d: (arg1: number) => number, e: number, f: number): number[];
+    static a(a: number, b: (arg1: number) => number, c: (arg1: number) => number, d: number, e: number): number[];
+    f(a: number, b: number, c: number, d: number, e: number, f: number, g: number): number;
+    static h(a: number, b: (arg1: number) => number, c: (arg1: number) => number, d: number): PathFigureCollection;
+    static g(a: number, b: number, c: (arg1: number) => number, d: (arg1: number) => number, e: number): PathFigure;
+}

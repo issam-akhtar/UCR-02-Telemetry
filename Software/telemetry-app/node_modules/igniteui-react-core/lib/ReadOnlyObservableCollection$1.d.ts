@@ -1,0 +1,15 @@
+import { ReadOnlyCollection$1 } from "./ReadOnlyCollection$1";
+import { INotifyCollectionChanged } from "./INotifyCollectionChanged";
+import { INotifyPropertyChanged, PropertyChangedEventArgs, Type } from "./type";
+import { ObservableCollection$1 } from "./ObservableCollection$1";
+import { NotifyCollectionChangedEventArgs } from "./NotifyCollectionChangedEventArgs";
+/**
+ * @hidden
+ */
+export declare class ReadOnlyObservableCollection$1<T> extends ReadOnlyCollection$1<T> implements INotifyCollectionChanged, INotifyPropertyChanged {
+    static $t: Type;
+    protected $t: Type;
+    constructor($t: Type, a: ObservableCollection$1<T>);
+    collectionChanged: (sender: any, e: NotifyCollectionChangedEventArgs) => void;
+    propertyChanged: (sender: any, e: PropertyChangedEventArgs) => void;
+}

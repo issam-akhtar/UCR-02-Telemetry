@@ -1,0 +1,38 @@
+import { Base, IEnumerable$1, Type } from "./type";
+import { ColorData } from "./ColorData";
+import { Brush } from "./Brush";
+import { BrushAppearanceData } from "./BrushAppearanceData";
+import { List$1 } from "./List$1";
+import { FrameworkElement } from "./FrameworkElement";
+import { GeometryData } from "./GeometryData";
+import { Path } from "./Path";
+import { Line } from "./Line";
+import { Geometry } from "./Geometry";
+import { PrimitiveAppearanceData } from "./PrimitiveAppearanceData";
+import { Shape } from "./Shape";
+import { LabelAppearanceData } from "./LabelAppearanceData";
+import { FontInfo } from "./FontInfo";
+import { StringBuilder } from "./StringBuilder";
+import { IVisualData } from "./IVisualData";
+/**
+ * @hidden
+ */
+export declare class AppearanceHelper extends Base {
+    static $t: Type;
+    static b(a: Brush): ColorData;
+    static a(a: Brush): BrushAppearanceData;
+    static m(a: FrameworkElement): number;
+    static n(a: FrameworkElement): number;
+    static o(a: FrameworkElement): number;
+    static j(a: Path): List$1<GeometryData>;
+    static h(a: Line): List$1<GeometryData>;
+    static g(a: Geometry): List$1<GeometryData>;
+    private static f;
+    private static l;
+    private static i;
+    private static k;
+    static p(a: PrimitiveAppearanceData, b: Shape): void;
+    static c(a: FrameworkElement, b: FontInfo): LabelAppearanceData;
+    static serializeItems(a: StringBuilder, b: string, c: IEnumerable$1<IVisualData>, d: boolean): boolean;
+    static serializeItem(a: StringBuilder, b: string, c: IVisualData, d: boolean): boolean;
+}

@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface ILegendOwner {
+    readonly name: string;
+}
+/**
+ * @hidden
+ */
+export declare let ILegendOwner_$type: Type;

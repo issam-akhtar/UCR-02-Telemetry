@@ -1,0 +1,10 @@
+import { HorizontalAnchoredCategorySeriesDescription } from "./HorizontalAnchoredCategorySeriesDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class StepAreaSeriesDescription extends HorizontalAnchoredCategorySeriesDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

@@ -1,0 +1,35 @@
+import { Type } from "./type";
+export declare const enum DateTimeKind {
+    Unspecified = 0,
+    Utc = 1,
+    Local = 2
+}
+export declare let DateTimeKind_$type: Type;
+export declare function dateKind(): DateTimeKind;
+export declare function defaultDVDateParse(str: string): Date;
+export declare function dateNow(): Date;
+export declare function dateMinValue(): Date;
+export declare function dateMaxValue(): Date;
+export declare function dateFromMilliseconds(value: number): Date;
+export declare function dateStdTimezoneOffset(date: Date): number;
+export declare function dateIsDST(date: Date): boolean;
+export declare function dateFromValues(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): Date;
+export declare function dateFromTicks(ticks: number): Date;
+export declare function dateAddSeconds(value: Date, seconds: number): Date;
+export declare function dateAddMinutes(value: Date, minutes: number): Date;
+export declare function dateAddHours(value: Date, hours: number): Date;
+export declare function dateAddDays(value: Date, days: number): Date;
+export declare function dateAddMonths(value: Date, num: number): Date;
+export declare function dateAddYears(value: Date, num: number): Date;
+export declare function dateIsLeapYear(year: number): boolean;
+export declare function dateToFileTime(value: Date): number;
+export declare function dateFromFileTime(value: number): number;
+export declare function dateFromFileTimeUtc(value: number): Date;
+export declare function dateGetMonth(value: Date): number;
+export declare function dateToday(): Date;
+export declare function dateGetTimeOfDay(value: Date): number;
+export declare function dateGetDate(value: Date): Date;
+export declare function dateEquals(d1: Date, d2: Date): boolean;
+export declare function dateAdd(d: any, t: any): Date;
+export declare function dateSubtract(d: any, t: any): Date;
+export declare function daysInMonth(year: number, month: number): number;

@@ -1,0 +1,17 @@
+import { NonBlockingStreamReader } from "./NonBlockingStreamReader";
+import { XmlInputStream } from "./XmlInputStream";
+import { Stream, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class XmlStreamReader extends NonBlockingStreamReader {
+    static $t: Type;
+    private ae;
+    constructor(a: number, b: XmlInputStream);
+    constructor(a: number, b: Stream);
+    constructor(a: number, ..._rest: any[]);
+    private static ad;
+    i(): void;
+    c(a: string[], b: number, c: number): number;
+    protected dispose1(a: boolean): void;
+}

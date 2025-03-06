@@ -1,0 +1,7 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class AsyncVirtualDataSourceProviderTaskDataHolder extends Base {
+    static $t: Type;
+}

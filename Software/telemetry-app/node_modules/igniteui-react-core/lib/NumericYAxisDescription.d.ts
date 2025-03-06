@@ -1,0 +1,10 @@
+import { StraightNumericAxisBaseDescription } from "./StraightNumericAxisBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class NumericYAxisDescription extends StraightNumericAxisBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

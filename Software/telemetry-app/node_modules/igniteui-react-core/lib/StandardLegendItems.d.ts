@@ -1,0 +1,12 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare const enum StandardLegendItems {
+    Default = 0,
+    Discrete = 1
+}
+/**
+ * @hidden
+ */
+export declare let StandardLegendItems_$type: Type;

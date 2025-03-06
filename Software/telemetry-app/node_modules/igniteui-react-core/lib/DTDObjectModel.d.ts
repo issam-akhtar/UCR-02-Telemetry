@@ -1,0 +1,11 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DTDObjectModel extends Base {
+    static $t: Type;
+    b: string;
+    c: string;
+    d: string;
+    a: string;
+}

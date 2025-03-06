@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IDataObject {
+    getData(a: string): any;
+    getDataPresent(a: string): boolean;
+    setData(a: string, b: any): void;
+}
+/**
+ * @hidden
+ */
+export declare let IDataObject_$type: Type;

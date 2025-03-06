@@ -1,0 +1,47 @@
+import { Rect } from "./Rect";
+import { CanvasRenderScheduler } from "./CanvasRenderScheduler";
+import { RenderingContext } from "./RenderingContext";
+import { Size } from "./Size";
+import { Visibility } from "./Visibility";
+import { IOverviewPlusDetailControl } from "./IOverviewPlusDetailControl";
+import { Point, Type } from "./type";
+import { PropertyChangedEventArgs$1 } from "./PropertyChangedEventArgs$1";
+import { EventProxy } from "./EventProxy";
+/**
+ * @hidden
+ */
+export interface IOverviewPlusDetailPane {
+    thumbnailSizeChanged: (sender: any, e: PropertyChangedEventArgs$1<Size>) => void;
+    initializeScalingRatio(a: number): void;
+    isZoomable: boolean;
+    changeRect(a: Rect, b: Rect, c: boolean, d: boolean, e: Rect): Rect;
+    doRefresh(a: boolean): void;
+    readonly updatingSliderRanges: boolean;
+    window: Rect;
+    world: Rect;
+    readonly previewViewportdRect: Rect;
+    backgroundImageUri: string;
+    readonly worldRectViewport: Rect;
+    isSurfaceInteractionDisabled: boolean;
+    mobileMode: boolean;
+    provideContext(a: RenderingContext): void;
+    provideContainer(a: any): void;
+    provideEventSource(a: EventProxy): void;
+    viewScheduler: CanvasRenderScheduler;
+    readonly viewThumbnailContext: RenderingContext;
+    readonly viewThumbnailSize: Size;
+    viewShouldInteract(a: Point): boolean;
+    arrange(a: Rect): void;
+    getDesiredSize(a: Size): Size;
+    pushZoomLevel(a: number): void;
+    readonly isPinching: boolean;
+    visibility: Visibility;
+    windowChanged: (sender: any, e: PropertyChangedEventArgs$1<Rect>) => void;
+    windowChanging: (sender: any, e: PropertyChangedEventArgs$1<Rect>) => void;
+    surfaceIsDirty: boolean;
+    surfaceViewer: IOverviewPlusDetailControl;
+}
+/**
+ * @hidden
+ */
+export declare let IOverviewPlusDetailPane_$type: Type;

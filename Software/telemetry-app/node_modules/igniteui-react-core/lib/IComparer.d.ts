@@ -1,0 +1,11 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IComparer {
+    compareObject(a: any, b: any): number;
+}
+/**
+ * @hidden
+ */
+export declare let IComparer_$type: Type;

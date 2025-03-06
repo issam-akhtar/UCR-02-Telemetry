@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IDataSourceExecutionContext {
+    execute(a: () => void): void;
+    enqueueAction(a: () => void): void;
+    executeDelayed(a: () => void, b: number): void;
+}
+/**
+ * @hidden
+ */
+export declare let IDataSourceExecutionContext_$type: Type;

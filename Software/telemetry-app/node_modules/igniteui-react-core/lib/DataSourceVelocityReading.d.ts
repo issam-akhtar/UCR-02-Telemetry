@@ -1,0 +1,10 @@
+import { Base, Point, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class DataSourceVelocityReading extends Base {
+    static $t: Type;
+    constructor(a: Point, b: number);
+    b: Point;
+    a: number;
+}

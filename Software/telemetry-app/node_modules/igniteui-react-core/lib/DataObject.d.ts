@@ -1,0 +1,13 @@
+import { Base, Type } from "./type";
+import { IDataObject } from "./IDataObject";
+/**
+ * @hidden
+ */
+export declare class DataObject extends Base implements IDataObject {
+    static $t: Type;
+    private readonly a;
+    constructor();
+    getData(a: string): any;
+    getDataPresent(a: string): boolean;
+    setData(a: string, b: any): void;
+}

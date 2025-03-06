@@ -1,0 +1,10 @@
+import { Base, Type } from "./type";
+import { IComparer$1 } from "./IComparer$1";
+import { SectionData } from "./SectionData";
+/**
+ * @hidden
+ */
+export declare class SectionDataStartIndexComparer extends Base implements IComparer$1<SectionData> {
+    static $t: Type;
+    compare(a: SectionData, b: SectionData): number;
+}

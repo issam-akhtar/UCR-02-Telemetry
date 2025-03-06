@@ -1,0 +1,10 @@
+import { PolarBaseDescription } from "./PolarBaseDescription";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare abstract class PolarLineSeriesBaseDescription extends PolarBaseDescription {
+    static $t: Type;
+    protected get_type(): string;
+    constructor();
+}

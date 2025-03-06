@@ -1,0 +1,11 @@
+import { FrameworkElement } from "./FrameworkElement";
+import { UIElementCollection } from "./UIElementCollection";
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Panel extends FrameworkElement {
+    static $t: Type;
+    constructor();
+    ab: UIElementCollection;
+}

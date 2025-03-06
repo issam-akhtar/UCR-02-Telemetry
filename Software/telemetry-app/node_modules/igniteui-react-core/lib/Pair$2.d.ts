@@ -1,0 +1,12 @@
+import { Base, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class Pair$2<T1, T2> extends Base {
+    static $t: Type;
+    protected $t1: Type;
+    protected $t2: Type;
+    constructor($t1: Type, $t2: Type, a: T1, b: T2);
+    a: T1;
+    b: T2;
+}

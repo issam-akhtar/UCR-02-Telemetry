@@ -1,0 +1,13 @@
+import { Base, Type } from "./type";
+import { Rect } from "./Rect";
+/**
+ * @hidden
+ */
+export declare class WriteableBitmap extends Base {
+    static $t: Type;
+    constructor(a: number, b: number);
+    b: number;
+    a: number;
+    c: any;
+    d: Rect;
+}

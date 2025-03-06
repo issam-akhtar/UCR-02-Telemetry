@@ -1,0 +1,15 @@
+import { Base, Type } from "./type";
+import { Rect } from "./Rect";
+import { ISmartPlaceable } from "./ISmartPlaceable";
+/**
+ * @hidden
+ */
+export declare class SmartPlacer extends Base {
+    static $t: Type;
+    constructor();
+    e: Rect;
+    c: number;
+    b: number;
+    d(a: ISmartPlaceable): void;
+    private a;
+}

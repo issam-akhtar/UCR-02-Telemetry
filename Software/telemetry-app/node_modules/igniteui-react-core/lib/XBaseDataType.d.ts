@@ -1,0 +1,78 @@
+import { Type } from "./type";
+/**
+ * Enum for XBase field data types.
+ */
+export declare enum XBaseDataType {
+    /**
+     * Character data type.
+     */
+    Character = 0,
+    /**
+     * Number data type.
+     */
+    Number = 1,
+    /**
+     * Logical data type.
+     */
+    Logical = 2,
+    /**
+     * Date data type.
+     */
+    Date = 3,
+    /**
+     * Memo data type.
+     */
+    Memo = 4,
+    /**
+     * Floating point data type.
+     */
+    FloatingPoint = 5,
+    /**
+     * Binary data type.
+     */
+    Binary = 6,
+    /**
+     * General data type.
+     */
+    General = 7,
+    /**
+     * Picture data type.
+     */
+    Picture = 8,
+    /**
+     * Currency data type.
+     */
+    Currency = 9,
+    /**
+     * DateTime data type.
+     */
+    DateTime = 10,
+    /**
+     * Integer data type.
+     */
+    Integer = 11,
+    /**
+     * VariField data type.
+     */
+    VariField = 12,
+    /**
+     * Variant data type.
+     */
+    Variant = 13,
+    /**
+     * Timestamp data type.
+     */
+    Timestamp = 14,
+    /**
+     * Double data type.
+     */
+    double1 = 15,
+    /**
+     * Auto increment data type.
+     */
+    AutoIncrement = 16
+}
+/**
+ * @hidden
+ */
+export declare let XBaseDataType_$type: Type;

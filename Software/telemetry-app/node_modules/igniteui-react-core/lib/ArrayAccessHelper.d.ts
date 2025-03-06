@@ -1,0 +1,10 @@
+import { Base, IList$1, Type } from "./type";
+/**
+ * @hidden
+ */
+export declare class ArrayAccessHelper extends Base {
+    static $t: Type;
+    static b(values_: IList$1<number>): number[];
+    static c(values_: IList$1<number>): number[];
+    static a(a: IList$1<number[]>): number[][];
+}

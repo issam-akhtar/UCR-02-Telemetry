@@ -1,0 +1,13 @@
+import { Type } from "./type";
+/**
+ * @hidden
+ */
+export interface IExternalDataSource {
+    readonly isSortingSupportedOverride: boolean;
+    readonly isFilteringSupportedOverride: boolean;
+    readonly isGroupingSupportedOverride: boolean;
+}
+/**
+ * @hidden
+ */
+export declare let IExternalDataSource_$type: Type;
