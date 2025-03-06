@@ -1,10 +1,18 @@
 import subprocess
+import time
 
-def run_shell_command(command):
-    """Run a shell command and print the output."""
+dbstarted = False
+
+def run_shell_command(command, wait_for_output=True):
+    """Run a shell command and print the output, or run in the background if needed."""
     try:
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-        print(result.stdout)
+        if wait_for_output:
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            print(result.stdout)
+        else:
+            # Run command without blocking (for commands that open terminals or similar)
+            command_str = " ".join(command) if isinstance(command, list) else command
+            subprocess.Popen(["lxterminal", "-e", command_str])
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
 
@@ -23,7 +31,10 @@ def run_shell_command(command):
 def start_database():
     """Run the shell script to start the database."""
     print("Starting the database...")
-    run_shell_command(["bash", "../backend-processing/telemetry_database_pi_script.sh"])
+    # Run the database script in a new terminal
+    run_shell_command(["bash", "../backend-processing/telemetry_database_pi_script.sh"], wait_for_output=False)
+    global dbstarted
+    dbstarted = True
 
 # def get_database_name():
 #     """Retrieve the current database name."""
@@ -48,23 +59,45 @@ def build_docker():
 
 def run_docker(detached=False):
     """Run Docker using docker-compose, ensuring the database is running first."""
-    if not check_postgres_status():
+    if not dbstarted:
         start_database()
+        print("Waiting for the database to start...")
+        time.sleep(5)
     
-    print(" Starting Docker containers...")
+    print("Starting Docker containers...")
     command = ["docker", "compose", "up"]
     if detached:
         command.append("-d")
-    run_shell_command(command)
+    run_shell_command(command, wait_for_output=False)
 
-# def view_docker_logs():
-#     """View logs for a selected service."""
-#     service = input("Which service logs do you want to view? (frontend/backend): ").strip().lower()
-#     if service in ["frontend", "backend"]:
-#         print(f" Viewing logs for {service}...")
-#         run_shell_command(["docker", "compose", "logs", service])
-#     else:
-#         print(" Invalid service selection.")
+def view_docker_logs():
+    """View logs for a selected service."""
+    services = {"1": "frontend", "2": "backend", "3": "return"}
+
+    while True:
+        print("\nSelect a service to view logs:")
+        print("1. Frontend")
+        print("2. Backend")
+        print("3. Return to main menu")
+
+        choice = input("Enter the number of your choice: ").strip()
+
+        if choice in services:
+            if choice == "3":
+                print("Returning to main menu...")
+                return  # Exit
+            service = services[choice]
+            print("\n")
+            print('/' * 80)
+            print('/' * 80)
+            print(f"Viewing logs for {service}...")
+            run_shell_command(["docker", "compose", "logs", service])
+            print('/' * 80)
+            print('/' * 80)
+            print("\n\n")
+            return  # Exit
+        else:
+            print("Invalid selection. Please enter 1, 2, or 3.")
 
 def quit_program():
     """Exit"""
@@ -80,8 +113,8 @@ def main_menu():
         print("2. Build Docker")
         print("3. Run Docker")
         #print("6 Run Docker in detached mode")
-        #print("7 View Docker logs")
-        print("4. Exit")
+        print("4. View Docker logs")
+        print("5. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -92,6 +125,8 @@ def main_menu():
         elif choice == "3":
             run_docker()
         elif choice == "4":
+            view_docker_logs()
+        elif choice == "5":
             quit_program()
         else:
             print("Invalid choice, please try again.")
