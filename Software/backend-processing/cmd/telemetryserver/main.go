@@ -21,6 +21,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/go-chi/cors"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -190,15 +193,19 @@ func main() {
 	processdata.BroadcastFunc = processdata.ThrottledBroadcast
 
 	// ---------------------
-	// REST API Server on port cfg.APIPort (9092)
+	// REST API Server on port cfg.APIPort (e.g., 9092)
 	// ---------------------
 	apiRouter := chi.NewRouter()
 	apiRouter.Use(middleware.Logger)
 
-	// Serve the Protobuf schema.
-	apiRouter.Get("/proto/telemetry.proto", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../../proto/telemetry.proto")
-	})
+	apiRouter.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300, // 5 minutes
+	}))
 
 	// Register additional API endpoints.
 	handlers.RegisterRoutes(apiRouter, queries)
@@ -212,7 +219,7 @@ func main() {
 	}()
 
 	// ---------------------
-	// Raw Telemetry WebSocket Server on port cfg.WebSocket.Port (9091)
+	// Raw Telemetry WebSocket Server on port cfg.WebSocket.Port (e.g., 9091)
 	// ---------------------
 	telemetryMux := http.NewServeMux()
 	telemetryMux.HandleFunc("/telemetry", func(w http.ResponseWriter, r *http.Request) {
@@ -227,7 +234,7 @@ func main() {
 	}()
 
 	// ---------------------
-	// Live Data WebSocket Server on port cfg.LiveWSPort (9094)
+	// Live Data WebSocket Server on port cfg.LiveWSPort (e.g., 9094)
 	// ---------------------
 	liveWsMux := http.NewServeMux()
 	liveWsMux.HandleFunc("/ws", wsserver.ServeWS)

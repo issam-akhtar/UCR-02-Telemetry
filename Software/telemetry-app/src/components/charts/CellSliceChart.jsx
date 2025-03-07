@@ -15,10 +15,10 @@ const CellSliceChart = ({ data, groupIndex, groupSize = 16, theme }) => {
   if (!data || data.length === 0) {
     return (
       <div style={{
-        width: '100%', 
-        height: '200px', 
-        display: 'flex', 
-        alignItems: 'center', 
+        width: '100%',
+        height: '200px',
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(0,0,0,0.2)',
       }}>
@@ -68,11 +68,33 @@ const CellSliceChart = ({ data, groupIndex, groupSize = 16, theme }) => {
     const fontColor = isDark ? '#ecf3e8' : '#333';
     const gridLineColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
 
+    // 1) Enable confine to prevent the tooltip from going off-canvas
+    // 2) Use a custom formatter to list each series horizontally
     const option = {
       backgroundColor,
-      tooltip: { trigger: 'axis' },
+      tooltip: {
+        trigger: 'axis',
+        confine: true,
+        formatter: (params) => {
+          if (!params.length) return '';
+          const timeLabel = params[0].axisValueLabel;
+          // First line: the time
+          let html = `<div>Time: <strong>${timeLabel}</strong></div>`;
+          // Then each series horizontally, with colored dots
+          html += `<div style="display: flex; flex-wrap: wrap; margin-top: 4px;">`;
+          params.forEach((p) => {
+            html += `
+              <div style="margin-right: 12px; white-space: nowrap;">
+                <span style="color:${p.color};">●</span> 
+                ${p.seriesName}: <strong>${p.value}</strong>
+              </div>
+            `;
+          });
+          html += '</div>';
+          return html;
+        },
+      },
       legend: { show: false },
-      // Increased margins to prevent overlap of rotated x-axis labels
       grid: {
         top: 30,
         left: 60,
@@ -82,9 +104,6 @@ const CellSliceChart = ({ data, groupIndex, groupSize = 16, theme }) => {
       xAxis: {
         type: 'category',
         data: xData,
-        nameLocation: 'middle',
-        // Extra space between the axis name and labels
-        nameGap: 30,
         axisLabel: {
           rotate: 45,
           interval: showLabelInterval - 1,
@@ -101,7 +120,7 @@ const CellSliceChart = ({ data, groupIndex, groupSize = 16, theme }) => {
         type: 'value',
         name: 'Voltage (V)',
         nameLocation: 'middle',
-        nameGap: 45,
+        nameGap: 35,
         axisLabel: { fontSize: 12, color: fontColor },
         splitLine: {
           show: true,
@@ -120,6 +139,17 @@ const CellSliceChart = ({ data, groupIndex, groupSize = 16, theme }) => {
       }
     };
   }, [data, groupIndex, groupSize, theme, xData]);
+
+  // Listen for window resize so the chart resizes properly
+  useEffect(() => {
+    const handleResize = () => {
+      if (chartRef.current) {
+        chartRef.current.resize();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div

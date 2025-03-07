@@ -5,12 +5,10 @@ import { Box, Typography } from '@mui/material';
 const NetworkStatusBar = () => {
   const { isWebSocketConnected, isApiConnected } = useContext(NetworkStatusContext);
 
-  // If both are good, hide the bar
   if (isWebSocketConnected && isApiConnected) {
     return null;
   }
 
-  // Otherwise, show a single combined message
   let message = '';
   if (!isWebSocketConnected && !isApiConnected) {
     message = 'No WebSocket connection and API is unreachable';

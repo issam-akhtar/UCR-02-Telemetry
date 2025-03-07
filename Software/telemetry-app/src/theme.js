@@ -1,70 +1,19 @@
 import { createTheme } from '@mui/material/styles';
 
-// 1. Cyberpunk Neon Theme
-const cyberpunkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#6B00F6', // electric purple
-      contrastText: '#FF00FF',
-    },
-    secondary: {
-      main: '#00F3FF', // cyan
-      contrastText: '#000000',
-    },
-    background: {
-      default: '#0A0A12', // deep space blue
-      paper: '#1A1A2F',
-    },
-    text: {
-      primary: '#E0F2FF',
-      secondary: '#00F3FF',
-    },
-    divider: 'rgba(0, 243, 255, 0.3)',
-  },
-  typography: {
-    fontFamily: '"Orbitron", "sans-serif"',
-    h1: { fontWeight: 900, fontSize: '2.5rem', textShadow: '0 0 10px #6B00F6' },
-    h3: { color: '#00F3FF', fontWeight: 700 },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          border: '1px solid #00F3FF',
-          background: '#6B00F6', // solid color instead of gradient
-          '&:hover': {
-            boxShadow: '0 0 15px #00F3FF',
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          background: 'rgba(10, 10, 18, 0.9)',
-          border: '1px solid rgba(0, 243, 255, 0.3)',
-          boxShadow: '0 0 20px rgba(107, 0, 246, 0.3)',
-        },
-      },
-    },
-  },
-});
-
 // 2. Deep Ocean Theme
 const deepOceanTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#2A9D8F', // teal
+      main: '#2A9D8F',
       contrastText: '#E9F5F4',
     },
     secondary: {
-      main: '#264653', // deep blue-grey
+      main: '#264653',
       contrastText: '#E9F5F4',
     },
     background: {
-      default: '#0B1D26', // deep navy
+      default: '#0B1D26',
       paper: '#17313D',
     },
     text: {
@@ -81,7 +30,7 @@ const deepOceanTheme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          background: '#17313D', // solid color instead of gradient
+          background: '#17313D',
           border: '1px solid rgba(42, 157, 143, 0.3)',
         },
       },
@@ -89,58 +38,9 @@ const deepOceanTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          background: '#2A9D8F', // solid color instead of gradient
+          background: '#2A9D8F',
           '&:hover': {
             boxShadow: '0 0 15px rgba(42, 157, 143, 0.4)',
-          },
-        },
-      },
-    },
-  },
-});
-
-// 3. Solarized Dark Theme (Classic Developer Favorite)
-const solarizedTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#268BD2', // solarized blue
-      contrastText: '#FDF6E3',
-    },
-    secondary: {
-      main: '#DC322F', // solarized red
-      contrastText: '#FDF6E3',
-    },
-    background: {
-      default: '#002B36', // dark teal
-      paper: '#073642',
-    },
-    text: {
-      primary: '#839496',
-      secondary: '#586E75',
-    },
-  },
-  typography: {
-    fontFamily: '"Fira Code", monospace',
-    h1: { color: '#268BD2', fontWeight: 500 },
-    h3: { color: '#DC322F', fontWeight: 500 },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          border: '1px solid #073642',
-          boxShadow: '0 4px 10px rgba(0, 43, 54, 0.5)',
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          border: '1px solid #268BD2',
-          color: '#268BD2',
-          '&:hover': {
-            backgroundColor: '#073642',
           },
         },
       },
@@ -153,15 +53,15 @@ const spaceTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#7C4DFF', // deep space purple
+      main: '#7C4DFF',
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#FF4081', // nebula pink
+      main: '#FF4081',
       contrastText: '#FFFFFF',
     },
     background: {
-      default: '#0A0E14', // space black
+      default: '#0A0E14',
       paper: '#1A2129',
     },
     text: {
@@ -178,7 +78,7 @@ const spaceTheme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          background: '#1A2129', // solid color instead of gradient
+          background: '#1A2129',
           border: '1px solid rgba(124, 77, 255, 0.2)',
         },
       },
@@ -186,7 +86,7 @@ const spaceTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          background: '#7C4DFF', // solid color instead of gradient
+          background: '#7C4DFF',
           '&:hover': {
             boxShadow: '0 0 20px rgba(124, 77, 255, 0.3)',
           },
@@ -244,76 +144,25 @@ const monochromeTheme = createTheme({
   },
 });
 
-// 6. Rustic Ember Theme
-const rusticTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#B22106', // bold red
-      contrastText: '#F7F7F7',
-    },
-    secondary: {
-      main: '#1759D4', // bright blue
-      contrastText: '#F7F7F7',
-    },
-    background: {
-      default: '#121212', // dark background
-      paper: '#1E1E1E',   // slightly lighter panels
-    },
-    text: {
-      primary: '#F7F7F7', // near-white text
-      secondary: '#946338', // warm brown accent
-    },
-    divider: 'rgba(255, 255, 255, 0.12)',
-  },
-  typography: {
-    fontFamily: '"Roboto", "sans-serif"',
-    h1: { fontWeight: 700, fontSize: '2.4rem', color: '#B22106' },
-    h3: { fontWeight: 600, color: '#946338' },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          background: '#B22106',
-          color: '#F7F7F7',
-          '&:hover': {
-            background: '#8E1B05',
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          background: '#1E1E1E',
-          border: '1px solid #946338',
-          boxShadow: '0 0 10px rgba(148, 99, 56, 0.3)',
-        },
-      },
-    },
-  },
-});
-
-// 7. Minimal Red-White-Gold Theme (Simple & Elegant)
+// 7. Minimal Red-White-Gold Theme
 const minimalRedWhiteGoldTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#B22222', // red
-      contrastText: '#FFFFFF', // white text on red
+      main: '#B22222',
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#FFD700', // gold
-      contrastText: '#000000', // black text on gold
+      main: '#FFD700',
+      contrastText: '#000000',
     },
     background: {
-      default: '#121212', // dark background
-      paper: '#1E1E1E',   // slightly lighter panel
+      default: '#121212',
+      paper: '#1E1E1E',
     },
     text: {
-      primary: '#FFFFFF', // white
-      secondary: '#FFD700', // gold
+      primary: '#FFFFFF',
+      secondary: '#FFD700',
     },
     divider: 'rgba(255, 255, 255, 0.12)',
   },
@@ -354,14 +203,443 @@ const minimalRedWhiteGoldTheme = createTheme({
   },
 });
 
+// Light Breeze Theme
+const lightBreezeTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#1976d2',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: '#9c27b0',
+      contrastText: '#ffffff',
+    },
+    background: {
+      default: '#f5f5f5',
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#333333',
+      secondary: '#555555',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2.4rem' },
+    h3: { fontWeight: 500 },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          background: '#ffffff',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          background: '#1976d2',
+          '&:hover': {
+            boxShadow: '0 0 8px rgba(25, 118, 210, 0.4)',
+          },
+        },
+      },
+    },
+  },
+});
+
+// Neutral Slate Theme
+const neutralSlateTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#607D8B', 
+      contrastText: '#ECEFF1',
+    },
+    secondary: {
+      main: '#455A64', 
+      contrastText: '#ECEFF1',
+    },
+    background: {
+      default: '#263238',
+      paper: '#37474F',
+    },
+    text: {
+      primary: '#ECEFF1',
+      secondary: '#90A4AE',
+    },
+  },
+  typography: {
+    fontFamily: '"Open Sans", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2.2rem' },
+    h3: { color: '#90A4AE', fontWeight: 500 },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          background: '#37474F',
+          border: '1px solid rgba(96, 125, 139, 0.2)',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          background: '#607D8B',
+          '&:hover': {
+            boxShadow: '0 0 10px rgba(96, 125, 139, 0.3)',
+          },
+        },
+      },
+    },
+  },
+});
+
+// Calm Dusk Theme
+const calmDuskTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#81A1C1',
+      contrastText: '#ECEFF4',
+    },
+    secondary: {
+      main: '#88C0D0',
+      contrastText: '#ECEFF4',
+    },
+    background: {
+      default: '#2E3440',
+      paper: '#3B4252',
+    },
+    text: {
+      primary: '#ECEFF4',
+      secondary: '#81A1C1',
+    },
+  },
+  typography: {
+    fontFamily: '"Fira Sans", sans-serif',
+    h1: { fontWeight: 700, fontSize: '2.5rem' },
+    h3: { color: '#88C0D0', fontWeight: 600 },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          background: '#3B4252',
+          border: '1px solid rgba(129, 161, 193, 0.2)',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          background: '#81A1C1',
+          '&:hover': {
+            boxShadow: '0 0 12px rgba(129, 161, 193, 0.4)',
+          },
+        },
+      },
+    },
+  },
+});
+
+// Dark Gray with Red Accent Theme
+const darkGrayRedAccentTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#424242',
+      light: '#757575',
+      dark: '#1c1c1c',
+      contrastText: '#f5f5f5',
+    },
+    secondary: {
+      main: '#ff5252',
+      light: '#ffaaaa',
+      dark: '#b20000',
+      contrastText: '#f5f5f5',
+    },
+    background: {
+      default: '#1c1c1c',
+      paper: '#303030',
+    },
+    text: {
+      primary: '#f5f5f5',
+      secondary: '#bdbdbd',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: {
+      fontWeight: 600,
+      fontSize: '2rem',
+    },
+    h3: {
+      fontWeight: 500,
+      color: '#ff5252',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#303030',
+          border: '1px solid #424242',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ff5252',
+          color: '#f5f5f5',
+          border: 'none',
+          '&:hover': {
+            backgroundColor: '#e60000',
+          },
+        },
+      },
+    },
+  },
+});
+
+// ===========================================
+// NEW MONOCHROMATIC THEMES
+// ===========================================
+
+// 1) Ebony Slate Theme: Black/Gray Tones
+const ebonySlateTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#3B3B3B',  // medium gray
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: '#5A5A5A',  // lighter gray
+      contrastText: '#FFFFFF',
+    },
+    background: {
+      default: '#121212', // near-black
+      paper: '#1E1E1E',   // dark gray
+    },
+    text: {
+      primary: '#FFFFFF', // white
+      secondary: '#BDBDBD', // mid-gray
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto Mono", monospace',
+    h1: {
+      fontWeight: 700,
+      fontSize: '2.2rem',
+    },
+    h3: {
+      fontWeight: 500,
+      color: '#BDBDBD',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1E1E1E',
+          border: '1px solid #3B3B3B',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#3B3B3B',
+          '&:hover': {
+            backgroundColor: '#2A2A2A',
+          },
+        },
+      },
+    },
+  },
+});
+
+// 2) Midnight Indigo Theme: Dark Indigo Tones
+const midnightIndigoTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#242857',  // deep indigo
+      contrastText: '#EAEAF0',
+    },
+    secondary: {
+      main: '#393D6E',  // lighter indigo
+      contrastText: '#EAEAF0',
+    },
+    background: {
+      default: '#0D0F25', // near-black with a hint of blue
+      paper: '#16193A',  // darker indigo
+    },
+    text: {
+      primary: '#EAEAF0',
+      secondary: '#B0B0C8',
+    },
+  },
+  typography: {
+    fontFamily: '"Open Sans", sans-serif',
+    h1: {
+      fontWeight: 600,
+      fontSize: '2.2rem',
+    },
+    h3: {
+      fontWeight: 500,
+      color: '#B0B0C8',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#16193A',
+          border: '1px solid rgba(234, 234, 240, 0.1)',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#242857',
+          '&:hover': {
+            backgroundColor: '#1B1F4A',
+          },
+        },
+      },
+    },
+  },
+});
+
+// 3) Pine Forest Theme: Deep Green Tones
+const pineForestTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#1D3B29',  // deep green
+      contrastText: '#E6F1EB',
+    },
+    secondary: {
+      main: '#2A4F3A',  // slightly lighter green
+      contrastText: '#E6F1EB',
+    },
+    background: {
+      default: '#0B1C14',
+      paper: '#11251B',
+    },
+    text: {
+      primary: '#E6F1EB',
+      secondary: '#A8B8AF',
+    },
+  },
+  typography: {
+    fontFamily: '"Fira Sans", sans-serif',
+    h1: {
+      fontWeight: 700,
+      fontSize: '2.3rem',
+    },
+    h3: {
+      fontWeight: 500,
+      color: '#A8B8AF',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#11251B',
+          border: '1px solid rgba(166, 192, 177, 0.2)',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1D3B29',
+          '&:hover': {
+            backgroundColor: '#172F22',
+          },
+        },
+      },
+    },
+  },
+});
+
+// 4) Smoky Purple Theme: Subdued Purple Tones
+const smokyPurpleTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#4B4870', // medium purple
+      contrastText: '#EAE8F5',
+    },
+    secondary: {
+      main: '#706DA0', // lighter purple
+      contrastText: '#EAE8F5',
+    },
+    background: {
+      default: '#1C1A2E', // very dark purple
+      paper: '#2B2840',
+    },
+    text: {
+      primary: '#EAE8F5',
+      secondary: '#B9B7CC',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: {
+      fontWeight: 600,
+      fontSize: '2.3rem',
+    },
+    h3: {
+      fontWeight: 500,
+      color: '#B9B7CC',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#2B2840',
+          border: '1px solid rgba(233, 232, 245, 0.1)',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#4B4870',
+          '&:hover': {
+            backgroundColor: '#3C395B',
+          },
+        },
+      },
+    },
+  },
+});
+
 // Export default theme and named themes
 export default minimalRedWhiteGoldTheme;
 export {
-  cyberpunkTheme,
   deepOceanTheme,
-  solarizedTheme,
   spaceTheme,
   monochromeTheme,
-  rusticTheme,
   minimalRedWhiteGoldTheme,
+  lightBreezeTheme,
+  neutralSlateTheme,
+  calmDuskTheme,
+  darkGrayRedAccentTheme,
+  ebonySlateTheme,
+  midnightIndigoTheme,
+  pineForestTheme,
+  smokyPurpleTheme,
 };

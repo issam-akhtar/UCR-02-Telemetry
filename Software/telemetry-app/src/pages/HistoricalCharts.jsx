@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useEffect, useContext } from 'react';
+import { Box, Typography, IconButton } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import GraphSelector from '../components/charts/GraphSelector';
 import HistoricalChartWrapper from '../components/charts/HistoricalChartWrapper';
+import { ChartSelectionContext } from '../contexts/ChartSelectionContext';
 
 const groupedChartOptions = [
   {
@@ -76,58 +80,85 @@ const groupedChartOptions = [
   },
 ];
 
-const defaultSelected = ['tcuData', 'packCurrentData', 'packVoltageData', 'cellData'];
-
 const HistoricalCharts = () => {
-  const [selectedCharts, setSelectedCharts] = useState(defaultSelected);
-
-  const getTitle = (chartType) => {
-    const found = groupedChartOptions
-      .flatMap((grp) => grp.options)
-      .find((opt) => opt.value === chartType);
-    return found ? found.label : chartType;
+  const theme = useTheme();
+  const scrollbarStyles = {
+    scrollbarWidth: 'thin', // Firefox
+    scrollbarColor: theme.palette.mode === 'dark' ? '#666 #222' : '#aaa #ccc',
+    '&::-webkit-scrollbar': { width: '6px' },
+    '&::-webkit-scrollbar-track': { backgroundColor: theme.palette.mode === 'dark' ? '#222' : '#ccc' },
+    '&::-webkit-scrollbar-thumb': { backgroundColor: theme.palette.mode === 'dark' ? '#666' : '#aaa', borderRadius: '4px' },
   };
 
+  const {
+    historicalSelectedCharts,
+    setHistoricalSelectedCharts,
+    historicalSidebarCollapsed,
+    setHistoricalSidebarCollapsed,
+  } = useContext(ChartSelectionContext);
+
+  const getTitle = (chartType) => {
+    for (const group of groupedChartOptions) {
+      const found = group.options.find((opt) => opt.value === chartType);
+      if (found) return found.label;
+    }
+    return chartType;
+  };
+
+  // Fire resize event after sidebar transitions
+  useEffect(() => {
+    const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 310);
+    return () => clearTimeout(timer);
+  }, [historicalSidebarCollapsed]);
+
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)' }}>
-      {/* LEFT SIDEBAR */}
+    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+      {/* Collapsible LEFT SIDEBAR */}
       <Box
         sx={{
-          width: 300,
+          width: historicalSidebarCollapsed ? 50 : 350,
+          transition: 'width 0.3s',
           borderRight: 1,
           borderColor: 'divider',
-          p: 2,
           bgcolor: 'background.paper',
-
-          // Let the parent handle scrolling; stable gutter so it won't shift
+          display: 'flex',
+          flexDirection: 'column',
           overflowY: 'auto',
           height: '100%',
-          scrollbarGutter: 'stable', // modern browsers
-          scrollbarWidth: 'thin',
-          scrollbarColor: 'grey.700 background.default',
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: 'background.default',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'grey.700',
-            borderRadius: '4px',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: 'grey.600',
-          },
         }}
       >
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Graph Selector
-        </Typography>
-        <GraphSelector
-          groupedOptions={groupedChartOptions}
-          selected={selectedCharts}
-          onChange={setSelectedCharts}
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            justifyContent: historicalSidebarCollapsed ? 'center' : 'space-between',
+          }}
+        >
+          {historicalSidebarCollapsed ? (
+            <IconButton onClick={() => setHistoricalSidebarCollapsed(false)}>
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <>
+              <Typography variant="h6">Graph Selector</Typography>
+              <IconButton onClick={() => setHistoricalSidebarCollapsed(true)}>
+                <CloseIcon />
+              </IconButton>
+            </>
+          )}
+        </Box>
+        {!historicalSidebarCollapsed && (
+          <Box sx={{ p: 2, overflowY: 'auto', ...scrollbarStyles }}>
+            <GraphSelector
+              groupedOptions={groupedChartOptions}
+              selected={historicalSelectedCharts}
+              onChange={setHistoricalSelectedCharts}
+            />
+          </Box>
+        )}
       </Box>
 
       {/* MAIN CONTENT */}
@@ -148,16 +179,18 @@ const HistoricalCharts = () => {
               overflowX: 'auto',
             }}
           >
-            {selectedCharts.map((type) => {
+            {historicalSelectedCharts.map((type) => {
               const endpoint = `/${type}`;
+              const isCellData = type.toLowerCase().includes('cell');
               return (
-                <HistoricalChartWrapper
-                  key={type}
-                  endpoint={endpoint}
-                  title={getTitle(type)}
-                  width="100%"
-                  height={500}
-                />
+                <Box key={type} sx={{ gridColumn: isCellData ? 'span 2' : 'auto' }}>
+                  <HistoricalChartWrapper
+                    endpoint={endpoint}
+                    title={getTitle(type)}
+                    width="100%"
+                    height={isCellData ? 750 : 500}
+                  />
+                </Box>
               );
             })}
           </Box>

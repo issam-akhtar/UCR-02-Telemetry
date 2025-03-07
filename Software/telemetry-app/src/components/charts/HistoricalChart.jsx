@@ -4,6 +4,7 @@ import useHistoricalData from '../../hooks/useHistoricalData';
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 import PropTypes from 'prop-types';
 import CellSliceChart from './CellSliceChart';
+import { Box } from '@mui/material';
 
 const FONT_SIZES = {
   base: 16,
@@ -89,23 +90,24 @@ const HistoricalChart = ({ endpoint, config }) => {
       tooltip: { trigger: 'axis' },
       legend: {
         orient: 'horizontal',
-        top: 60,
+        bottom: 10,
         left: 'center',
         data: legendData,
         textStyle: { fontSize: FONT_SIZES.tick, color: fontColor },
       },
+      // Increase bottom margin so the legend & x-axis label don't overlap
       grid: {
         top: 100,
         left: 80,
         right: 40,
-        bottom: 90,
+        bottom: 140,
       },
       xAxis: {
         type: 'category',
         data: xData,
         name: config?.axisTitles?.x || 'Time',
         nameLocation: 'middle',
-        nameGap: 62,
+        nameGap: 70, // extra space for label
         axisLabel: {
           rotate: 45,
           interval: tickInterval - 1,
@@ -136,6 +138,19 @@ const HistoricalChart = ({ endpoint, config }) => {
     chartInstanceRef.current.setOption(option);
   };
 
+  // Force ECharts to resize with window changes
+  useEffect(() => {
+    const handleResize = () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.resize();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   useEffect(() => {
     if (!isCellSliced && data && data.length > 0) {
       renderStandardChart();
@@ -149,16 +164,17 @@ const HistoricalChart = ({ endpoint, config }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, endpoint, config]);
 
+  // If endpoint is cell data, we show multiple slice charts
   if (isCellSliced) {
-    const numberOfSlices = Math.ceil(128 / groupSize);
-
     return (
-      <div style={{
-        width: config?.dimensions?.width || '700px',
-        position: 'relative',
-        maxHeight: '600px',
-        overflowY: 'auto',
-      }}>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+        }}
+      >
+        {/* Refresh button */}
         <button
           onClick={refresh}
           style={{
@@ -174,6 +190,7 @@ const HistoricalChart = ({ endpoint, config }) => {
           Refresh
         </button>
 
+        {/* Loading overlay */}
         {loading && (
           <div
             style={{
@@ -192,6 +209,7 @@ const HistoricalChart = ({ endpoint, config }) => {
           </div>
         )}
 
+        {/* Error overlay */}
         {error && (
           <div
             style={{
@@ -212,33 +230,66 @@ const HistoricalChart = ({ endpoint, config }) => {
           </div>
         )}
 
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
-          paddingTop: '50px', 
-          paddingBottom: '20px',
-        }}>
-          {data && data.length > 0 && Array.from({ length: numberOfSlices }, (_, i) => (
-            <CellSliceChart
-              key={i}
-              xData={data.map((row) => formatTimeMST(row.time))}
-              data={data}
-              groupIndex={i}
-              groupSize={groupSize}
-              theme={theme}
-            />
-          ))}
-        </div>
+        {/* Scrollable container for multiple slices */}
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            overflowY: 'auto',
+            pt: '50px',
+            pb: '20px',
+            boxSizing: 'border-box',
+
+            // Make the scrollbar skinny:
+            scrollbarWidth: 'thin',           // Firefox
+            scrollbarColor: '#666 #222',       // Firefox (#666 thumb, #222 track)
+            '&::-webkit-scrollbar': {
+              width: '6px',                   // Chrome, Safari
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#222',        // track color
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#666',        // thumb color
+              borderRadius: '4px',
+            },
+          }}
+        >
+          {data && data.length > 0 ? (
+            Array.from({ length: Math.ceil(128 / groupSize) }, (_, i) => (
+              <CellSliceChart
+                key={i}
+                xData={data.map((row) => formatTimeMST(row.time))}
+                data={data}
+                groupIndex={i}
+                groupSize={groupSize}
+                theme={theme}
+              />
+            ))
+          ) : (
+            <div
+              style={{
+                width: '100%',
+                height: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <span>No data</span>
+            </div>
+          )}
+        </Box>
       </div>
     );
   }
 
+  // Otherwise, standard single ECharts
   return (
     <div
       style={{
-        width: config?.dimensions?.width || '600px',
-        height: config?.dimensions?.height || '400px',
+        width: '100%',
+        height: '100%',
         position: 'relative',
       }}
     >

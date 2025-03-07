@@ -9,7 +9,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    port: 9093,  // Frontend development HTTP port
+    port: 9093,  
     open: true,
     fs: {
       allow: ['..'],

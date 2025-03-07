@@ -1,130 +1,140 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js-dist-min';
-import { Box, Typography, Paper } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box } from '@mui/material';
 
-const GaugeContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: theme.spacing(2),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: 'transparent',
-}));
-
-const GaugeTitle = styled(Typography)(({ theme }) => ({
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  marginBottom: theme.spacing(1),
-}));
-
-/**
- * Displays two Plotly "indicator" gauges side by side:
- * 1) Voltage
- * 2) Current
- * Both have single-color arcs, no threshold steps, and
- * dynamic axis ranges (±10 from current values).
- */
 const PackGauge = ({ voltage, current }) => {
   const gaugeRef = useRef(null);
+  const [voltageRange, setVoltageRange] = useState([0, 100]);
+  const [currentRange, setCurrentRange] = useState([-150, 150]);
+  const [power, setPower] = useState(0);
 
-  // We dynamically expand/shrink the axis range so the gauge
-  // always shows the entire measured value comfortably.
-  const [voltageRange, setVoltageRange] = useState([voltage - 10, voltage + 10]);
-  const [currentRange, setCurrentRange] = useState([current - 10, current + 10]);
-
-  // Expand voltage axis if out of bounds
+  // Calculate power
   useEffect(() => {
-    if (voltage < voltageRange[0] || voltage > voltageRange[1]) {
-      setVoltageRange([voltage - 10, voltage + 10]);
-    }
-  }, [voltage, voltageRange]);
+    setPower(voltage * current);
+  }, [voltage, current]);
 
-  // Expand current axis if out of bounds
+  // Dynamically adjust voltage range
   useEffect(() => {
-    if (current < currentRange[0] || current > currentRange[1]) {
-      setCurrentRange([current - 10, current + 10]);
+    if (voltage > 0) {
+      const upperVoltage = Math.max(100, Math.ceil((voltage * 1.3) / 10) * 10);
+      setVoltageRange([0, upperVoltage]);
     }
-  }, [current, currentRange]);
+  }, [voltage]);
+
+  // Dynamically adjust current range
+  useEffect(() => {
+    const absMaxCurrent = Math.max(Math.abs(current) * 1.5, 50);
+    setCurrentRange([-absMaxCurrent, absMaxCurrent]);
+  }, [current]);
 
   useEffect(() => {
     if (!gaugeRef.current) return;
 
-    // We create two "indicator" traces, each with mode: "gauge+number"
     const data = [
       {
         type: 'indicator',
-        mode: 'gauge+number',
+        mode: 'gauge+number+delta',
         value: voltage,
-        title: { text: 'Voltage (V)', font: { size: 14 } },
-        number: {
-          font: { size: 20 },
-          suffix: ' V',
-          valueformat: '.1f',
+        title: {
+          text: 'Voltage',
+          font: { size: 16, color: '#FFFFFF' },
+          pad: { t: 40 }, // Extra top padding
+        },
+        number: { font: { size: 24, color: '#FFFFFF' }, suffix: ' V', valueformat: '.1f' },
+        delta: {
+          reference: 90,
+          increasing: { color: '#5cb85c' },
+          decreasing: { color: '#d9534f' },
+          font: { size: 14, color: '#FFFFFF' },
         },
         gauge: {
           shape: 'angular',
           axis: {
+            tickmode: 'linear',
+            dtick: 100,
             range: voltageRange,
-            tickmode: 'auto',
-            nticks: 5,
-            tickfont: { size: 10 },
+            tickfont: { size: 12, color: '#FFFFFF' },
+            tickcolor: '#FFFFFF',
           },
-          bar: { color: '#007BFF' }, // single color for the voltage gauge
+          bar: { color: '#5bc0de', thickness: 0.6 },
+          bgcolor: 'rgba(0,0,0,0.3)',
+          bordercolor: 'rgba(255,255,255,0.2)',
+          steps: [
+            { range: [0, voltageRange[1] * 0.2], color: '#d9534f' },
+            { range: [voltageRange[1] * 0.2, voltageRange[1] * 0.6], color: '#f0ad4e' },
+            { range: [voltageRange[1] * 0.6, voltageRange[1]], color: '#5cb85c' },
+          ],
+          threshold: {
+            line: { color: 'white', width: 2 },
+            thickness: 0.8,
+            value: voltage,
+          },
         },
-        domain: { x: [0, 0.45], y: [0, 1] },
+        domain: { x: [0, 0.48], y: [0, 1] },
       },
       {
         type: 'indicator',
-        mode: 'gauge+number',
+        mode: 'gauge+number+delta',
         value: current,
-        title: { text: 'Current (A)', font: { size: 14 } },
-        number: {
-          font: { size: 20 },
-          suffix: ' A',
-          valueformat: '.1f',
+        title: {
+          text: 'Current',
+          font: { size: 16, color: '#FFFFFF' },
+          pad: { t: 40 }, // Extra top padding
+        },
+        number: { font: { size: 24, color: '#FFFFFF' }, suffix: ' A', valueformat: '.1f' },
+        delta: {
+          reference: 0,
+          increasing: { color: current > 0 ? '#d9534f' : '#5cb85c' },
+          decreasing: { color: current > 0 ? '#5cb85c' : '#d9534f' },
+          font: { size: 14, color: '#FFFFFF' },
         },
         gauge: {
           shape: 'angular',
           axis: {
             range: currentRange,
             tickmode: 'auto',
-            nticks: 5,
-            tickfont: { size: 10 },
+            nticks: 7,
+            tickfont: { size: 12, color: '#FFFFFF' },
+            tickcolor: '#FFFFFF',
           },
-          bar: { color: '#00CC00' }, // single color for the current gauge
+          bar: { color: current > 0 ? '#d9534f' : '#5cb85c', thickness: 0.6 },
+          bgcolor: 'rgba(0,0,0,0.3)',
+          bordercolor: 'rgba(255,255,255,0.2)',
+          steps: [
+            { range: [currentRange[0], -10], color: 'rgba(92, 184, 92, 0.5)' },
+            { range: [-10, 10], color: 'rgba(240, 173, 78, 0.3)' },
+            { range: [10, currentRange[1]], color: 'rgba(217, 83, 79, 0.5)' },
+          ],
+          threshold: {
+            line: { color: 'white', width: 2 },
+            thickness: 0.8,
+            value: current,
+          },
         },
-        domain: { x: [0.55, 1], y: [0, 1] },
+        domain: { x: [0.52, 1], y: [0, 1] },
       },
     ];
 
     const layout = {
-      margin: { t: 20, b: 20, l: 20, r: 20 },
+      margin: { t: 60, b: 40, l: 40, r: 40 }, // More margin to prevent tick clipping
       paper_bgcolor: 'transparent',
       plot_bgcolor: 'transparent',
+      font: { color: '#FFFFFF' },
+      height: 240, // Slightly taller for more space
     };
 
-    Plotly.react(gaugeRef.current, data, layout, { staticPlot: false });
-  }, [voltage, current, voltageRange, currentRange]);
+    const config = {
+      displayModeBar: false,
+      responsive: true,
+    };
+
+    Plotly.react(gaugeRef.current, data, layout, config);
+  }, [voltage, current, voltageRange, currentRange, power]);
 
   return (
-    <GaugeContainer>
-      {/* Title for the combined gauge card */}
-      <GaugeTitle>Voltage / Current</GaugeTitle>
-
-      <Paper
-        elevation={3}
-        sx={{
-          width: '400px',
-          height: '250px',
-          backgroundColor: 'transparent',
-          overflow: 'hidden',
-        }}
-      >
-        <div ref={gaugeRef} style={{ width: '100%', height: '100%' }} />
-      </Paper>
-    </GaugeContainer>
+    <Box sx={{ width: '100%', height: '100%', p: 1 }}>
+      <Box ref={gaugeRef} sx={{ width: '100%', height: '100%' }} />
+    </Box>
   );
 };
 

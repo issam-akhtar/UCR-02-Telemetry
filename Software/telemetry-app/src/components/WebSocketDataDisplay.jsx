@@ -8,7 +8,7 @@ const WebSocketDataDisplay = () => {
   const itemsPerPage = 20;
 
   useEffect(() => {
-    const unsubscribe = wsService.subscribe('cell', (message) => {
+    const unsubscribe = wsService.subscribe('ins_imu', (message) => {
       setMessages((prev) => [message, ...prev]);
     });
     return () => unsubscribe();

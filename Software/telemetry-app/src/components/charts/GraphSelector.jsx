@@ -81,14 +81,12 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
   return (
     <Box
       sx={{
-        // Make the width fill the parent container
         width: '100%',
         borderRadius: 1,
         bgcolor: 'background.paper',
         p: 1,
       }}
     >
-      {/* SEARCH BAR */}
       <Box sx={{ mb: 1 }}>
         <TextField
           label="Search Charts"
@@ -114,14 +112,11 @@ const GraphSelector = ({ groupedOptions, selected, onChange }) => {
           sx={{ bgcolor: 'action.hover', borderRadius: '6px' }}
         />
       </Box>
-
-      {/* CLEAR SELECTION BUTTON */}
       <Box sx={{ mb: 1, display: 'flex', justifyContent: 'center' }}>
         <Button variant="contained" size="small" onClick={handleClearSelection}>
           Clear Selection
         </Button>
       </Box>
-
       {searchQuery ? (
         <Box>
           {filteredOptions.length === 0 ? (

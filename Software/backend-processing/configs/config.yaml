@@ -3,8 +3,8 @@ database:
 
 websocket:
   # Used by the car (sender) to send raw telemetry data to the receiver.
-  url: "ws://205.206.236.222:9091/telemetry"
-  ip: "205.206.236.222"
+  url: "ws://localhost:9091/telemetry"
+  ip: "localhost"
   port: 9091
 
 mode: "csv"             # Allowed values: "csv" or "live"

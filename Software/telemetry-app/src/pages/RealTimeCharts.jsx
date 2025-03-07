@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import React, { useState, useContext, useEffect } from 'react';
+import { Box, Typography, Button, IconButton } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import GraphSelector from '../components/charts/GraphSelector';
 import RealTimeChartWrapper from '../components/charts/RealTimeChartWrapper';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import { ChartSelectionContext } from '../contexts/ChartSelectionContext';
 
 const groupedChartOptions = [
   {
@@ -81,12 +85,25 @@ const groupedChartOptions = [
   },
 ];
 
-const defaultSelected = ['tcu', 'pack_current', 'cell', 'pack_voltage'];
-
 const RealTimeCharts = () => {
-  const [selectedCharts, setSelectedCharts] = useState(defaultSelected);
-  const [isPaused, setIsPaused] = useState(false);
+  const theme = useTheme();
+  // Define scrollbar styles based on the current theme
+  const scrollbarStyles = {
+    scrollbarWidth: 'thin', // Firefox
+    scrollbarColor: theme.palette.mode === 'dark' ? '#666 #222' : '#aaa #ccc',
+    '&::-webkit-scrollbar': { width: '6px' }, // Chrome, Safari
+    '&::-webkit-scrollbar-track': { backgroundColor: theme.palette.mode === 'dark' ? '#222' : '#ccc' },
+    '&::-webkit-scrollbar-thumb': { backgroundColor: theme.palette.mode === 'dark' ? '#666' : '#aaa', borderRadius: '4px' },
+  };
 
+  const {
+    realTimeSelectedCharts,
+    setRealTimeSelectedCharts,
+    realTimeSidebarCollapsed,
+    setRealTimeSidebarCollapsed,
+  } = useContext(ChartSelectionContext);
+
+  const [isPaused, setIsPaused] = useState(false);
   const togglePause = () => setIsPaused((p) => !p);
 
   const getTitle = (chartType) => {
@@ -97,46 +114,60 @@ const RealTimeCharts = () => {
     return chartType;
   };
 
+  // Fire a resize event after sidebar transitions so charts fill the new space
+  useEffect(() => {
+    const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 310);
+    return () => clearTimeout(timer);
+  }, [realTimeSidebarCollapsed]);
+
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)' }}>
-      {/* LEFT SIDEBAR */}
+    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+      {/* Collapsible LEFT SIDEBAR */}
       <Box
         sx={{
-          width: 350,
+          width: realTimeSidebarCollapsed ? 50 : 350,
+          transition: 'width 0.3s',
           borderRight: 1,
           borderColor: 'divider',
-          p: 2,
           bgcolor: 'background.paper',
+          display: 'flex',
+          flexDirection: 'column',
           overflowY: 'auto',
-          maxHeight: 'calc(100vh - 64px)',
-
-          // Ensure stable scrollbar
-          scrollbarGutter: 'stable',
-          scrollbarWidth: 'thin',
-          scrollbarColor: 'grey.700 background.default',
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: 'background.default',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'grey.700',
-            borderRadius: '4px',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: 'grey.600',
-          },
+          maxHeight: '100%',
         }}
       >
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Graph Selector
-        </Typography>
-        <GraphSelector
-          groupedOptions={groupedChartOptions}
-          selected={selectedCharts}
-          onChange={setSelectedCharts}
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 1,
+            borderBottom: 1,
+            borderColor: 'divider',
+            justifyContent: realTimeSidebarCollapsed ? 'center' : 'space-between',
+          }}
+        >
+          {realTimeSidebarCollapsed ? (
+            <IconButton onClick={() => setRealTimeSidebarCollapsed(false)}>
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <>
+              <Typography variant="h6">Graph Selector</Typography>
+              <IconButton onClick={() => setRealTimeSidebarCollapsed(true)}>
+                <CloseIcon />
+              </IconButton>
+            </>
+          )}
+        </Box>
+        {!realTimeSidebarCollapsed && (
+          <Box sx={{ p: 2, overflowY: 'auto', ...scrollbarStyles }}>
+            <GraphSelector
+              groupedOptions={groupedChartOptions}
+              selected={realTimeSelectedCharts}
+              onChange={setRealTimeSelectedCharts}
+            />
+          </Box>
+        )}
       </Box>
 
       {/* MAIN CONTENT */}
@@ -150,27 +181,35 @@ const RealTimeCharts = () => {
             justifyContent: 'flex-end',
           }}
         >
-          <Button variant="outlined" onClick={togglePause}>
+          <Button variant="outlined" onClick={() => setIsPaused((p) => !p)}>
             {isPaused ? 'Resume' : 'Pause'}
           </Button>
         </Box>
         <Box sx={{ p: 2 }}>
-          <Typography variant="h4" sx={{ mb: 2 }}>
+          <Typography variant="h4" align="center" sx={{ mb: 2 }}>
             Real-Time Graphs
           </Typography>
-          <Box sx={{ p: 2, borderRadius: 2, border: 1, borderColor: 'divider' }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              {selectedCharts.map((type) => (
-                <RealTimeChartWrapper
-                  key={type}
-                  chartType={type}
-                  title={getTitle(type)}
-                  width="100%"
-                  height={500}
-                  isPaused={isPaused}
-                />
-              ))}
-            </Box>
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              border: 1,
+              borderColor: 'divider',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, minmax(600px, 1fr))',
+              gap: 3,
+            }}
+          >
+            {realTimeSelectedCharts.map((type) => (
+              <RealTimeChartWrapper
+                key={type}
+                chartType={type}
+                title={getTitle(type)}
+                width="100%"
+                height={500}
+                isPaused={isPaused}
+              />
+            ))}
           </Box>
         </Box>
       </Box>
