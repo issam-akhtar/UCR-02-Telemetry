@@ -56,13 +56,35 @@ def build_docker():
     """Build Docker using docker-compose."""
     print(" Building Docker containers...")
     run_shell_command(["docker", "compose", "build"])
+    
+def rebuild_docker():
+    """Rebuild Docker with no cache to ensure new dependencies are installed."""
+    print("Rebuilding Docker containers with no cache...\n")
+
+    print("\n--Stopping and removing Docker containers...")
+    run_shell_command(["docker", "compose", "down"])
+
+    print("--Removing existing Docker images...")
+    # Get the list of images
+    images = subprocess.run(
+        ["docker", "images", "-q"],
+        capture_output=True, text=True
+    ).stdout.splitlines()
+
+    # Remove each image
+    for image in images:
+        if image.strip(): 
+            run_shell_command(["docker", "rmi", "-f", image.strip()])
+
+    print("--Old images removed. Rebuilding Docker containers with no cache...\n")
+    run_shell_command(["docker", "compose", "build", "--no-cache"])
 
 def run_docker(detached=False):
     """Run Docker using docker-compose, ensuring the database is running first."""
     if not dbstarted:
         start_database()
-        print("Waiting for the database to start...")
-        time.sleep(5)
+        print("10 seconds for the database to start...")
+        time.sleep(10)
     
     print("Starting Docker containers...")
     command = ["docker", "compose", "up"]
@@ -111,10 +133,11 @@ def main_menu():
         print("1. Start database")
         #print("3 Show database name")
         print("2. Build Docker")
-        print("3. Run Docker")
+        print("3. Rebuild Docker (new dependencies)")
+        print("4. Run Docker")
         #print("6 Run Docker in detached mode")
-        print("4. View Docker logs")
-        print("5. Exit")
+        print("5. View Docker logs")
+        print("6. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -123,10 +146,12 @@ def main_menu():
         elif choice == "2":
             build_docker()
         elif choice == "3":
-            run_docker()
+            rebuild_docker()
         elif choice == "4":
-            view_docker_logs()
+            run_docker()
         elif choice == "5":
+            view_docker_logs()
+        elif choice == "6":
             quit_program()
         else:
             print("Invalid choice, please try again.")
