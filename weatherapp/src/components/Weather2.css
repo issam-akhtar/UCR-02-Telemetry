@@ -4,7 +4,7 @@
     flex-direction: column;
     align-items: flex-start; /* Aligns content to the left */
     width: auto; /* Prevents unnecessary width expansion */
-    padding: 0 10px 0 10px;
+    padding: 0 15px 0 10px;
     border-radius: 15px;
     position: absolute;
     top: 50%;
@@ -26,20 +26,29 @@
 
 .weathericon {
     width: 60px; 
+    margin: 30px 0;
 }
 
-.temperature,
-.location {
+.temperature{
     color: #fff;
     font-size: 30px;
     line-height: 1;
     text-align: left; 
     padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+.location {
+    color: #fff;
+    font-size: 30px;
+    line-height: 1;
+    text-align: left; 
+    padding-right: 5px;;
 }
 
 .menu-icon {
     position: absolute;
-    top: 20px;
+    top: 8px;
     right: 8px;
     cursor: pointer;
     color: white;
@@ -85,8 +94,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    font-size: 22px;
-
+    font-size: 24px;
 }
 
 .weather .weatherdata .col span{

@@ -95,9 +95,9 @@ const Weather = () => {
                 </div>
 
                 <div className="weather-info">
-                    <img src={clearicon} alt="weather icon" className="weathericon" />
+                    <img src={weatherData.icon} alt="weather icon" className="weathericon" />
                     <div className="weather-details">
-                        <p className="temperature">{weatherData.temperature}°c</p>
+                        <p className="temperature">{weatherData.temperature} °c</p>
                         <p className="location">{weatherData.location}</p>
                     </div>
                 </div>
@@ -124,7 +124,16 @@ const Weather = () => {
                     </div>
 
                     <div className="search-bar">
-                        <input ref={inputRef} type="text" placeholder="Search" className="search-input" />
+                        <input ref={inputRef} 
+                        type="text" 
+                        placeholder="Search" 
+                        className="search-input" 
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                            search(inputRef.current.value);
+                            }
+                        }}
+                        />
                         <SearchIcon className="searchicon" onClick={()=>search(inputRef.current.value)}/>
                     </div>
 
