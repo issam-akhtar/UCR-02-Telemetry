@@ -21,7 +21,7 @@ This guide will help you set up and run the development environment for the UCR-
 
 1. Open a terminal and navigate to the `UCR-02-Telemetry/Software/DevEnvSetup` directory.  
 
-2. Run the interaction menu in the terminal:  
+2. Run the interaction menu in the terminal (in sudo):  
    `sudo python3 interaction-menu.py` 
 
 3. Use the menu to:

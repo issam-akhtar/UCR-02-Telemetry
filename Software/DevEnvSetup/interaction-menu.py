@@ -16,18 +16,6 @@ def run_shell_command(command, wait_for_output=True):
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
 
-# def check_postgres_status():
-#     """Check if PostgreSQL is running."""
-#     print("Checking PostgreSQL status...")
-#     result = subprocess.run(["pg_isready"], capture_output=True, text=True)
-    
-#     if result.returncode == 0:
-#         print("PostgreSQL is running.")
-#         return True
-#     else:
-#         print("PostgreSQL is not running.")
-#         return False
-
 def start_database():
     """Run the shell script to start the database."""
     print("Starting the database...")
@@ -36,21 +24,21 @@ def start_database():
     global dbstarted
     dbstarted = True
 
-# def get_database_name():
-#     """Retrieve the current database name."""
-#     try:
-#         print("Retrieving current database name...")
-#         result = subprocess.run(
-#             ["psql", "-U", "your_db_user", "-d", "your_db_name", "-t", "-c", "SELECT current_database();"],
-#             capture_output=True, text=True
-#         )
-#         db_name = result.stdout.strip()
-#         if db_name:
-#             print(f" Current database name: {db_name}")
-#         else:
-#             print(" Could not retrieve the database name.")
-#     except FileNotFoundError:
-#         print(" psql command not found. Make sure PostgreSQL client tools are installed.")
+def local_backend_script():
+    """Run the shell script to download Go, and dependencies locally."""
+    print("Starting the local backend script...\n")
+    # Run the backend script in a new terminal
+    run_shell_command(["bash", "../backend-processing/telemetry_backend_pi_script.sh"], wait_for_output=False)
+    global dbstarted
+    dbstarted = True
+
+def local_frontend_script():
+    """Run the shell script to download react, npm, and dependencies locally."""
+    print("Starting the local frontend script...\n")
+    # Run the backend script in a new terminal
+    run_shell_command(["bash", "../telemetry-app/telemetry_frontend_pi_script.sh"], wait_for_output=False)
+    global dbstarted
+    dbstarted = True
 
 def build_docker():
     """Build Docker using docker-compose."""
@@ -59,7 +47,14 @@ def build_docker():
     
 def rebuild_docker():
     """Rebuild Docker with no cache to ensure new dependencies are installed."""
-    print("Rebuilding Docker containers with no cache...\n")
+    print("\nWARNING: This operation will delete ALL Docker images on your system. This cannot be undone.\n")")
+
+    confirm = input("Are you sure you want to proceed? (yes/no): ").strip().lower()
+    if confirm != "yes":
+        print("Rebuild canceled. No changes were made.\n")
+        return
+
+    print("\nRebuilding Docker containers with no cache...\n")
 
     print("\n--Stopping and removing Docker containers...")
     run_shell_command(["docker", "compose", "down"])
@@ -129,15 +124,14 @@ def quit_program():
 def main_menu():
     while True:
         print("\n UCalgary Racing Telemetry Menu:")
-        #print("1 Check database status")
         print("1. Start database")
-        #print("3 Show database name")
         print("2. Build Docker")
         print("3. Rebuild Docker (new dependencies)")
         print("4. Run Docker")
-        #print("6 Run Docker in detached mode")
         print("5. View Docker logs")
-        print("6. Exit")
+        print("6. Download Go, postgres utils (pg_isready), yq, and backend dependencies locally")
+        print("7. Download React, npm, and frontend dependencies locally")
+        print("8. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -152,6 +146,10 @@ def main_menu():
         elif choice == "5":
             view_docker_logs()
         elif choice == "6":
+            local_backend_script()
+        elif choice == "7":
+            local_frontend_script()
+        elif choice == "8":
             quit_program()
         else:
             print("Invalid choice, please try again.")
