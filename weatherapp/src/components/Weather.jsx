@@ -31,8 +31,8 @@ const Weather = () => {
         "1001": cloudicon, //cloudy
         "2100": cloudicon, //light fog
         "2000": cloudicon, //fog
-        "4000": rainicon, //drizzle
-        "4200": rainicon, //light rain
+        "4000": drizzleicon, //drizzle
+        "4200": drizzleicon, //light rain
         "4001": rainicon, //rain
         "4201": rainicon, //heavy rain
         "5001": snowicon, //flurries
@@ -60,9 +60,6 @@ const Weather = () => {
             }
 
             console.log(data);
-
-        // Clear any previous error message if request is successful
-        setErrorMessage("");
 
             const icon = allIcons[data.data.values.weatherCode] || clearicon;
 
