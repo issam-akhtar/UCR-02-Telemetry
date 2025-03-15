@@ -1,0 +1,480 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : segoe ui;
+			color : black;
+			background-color : #EDE7D9;
+			padding: 0.3em;
+		}
+
+		h1 {
+			font-size: 1.2em;
+		}		
+
+		h2 {
+			font-size: 1.2em;
+		}
+
+		body {
+			font-family : segoe ui;
+		}
+
+		td, th {
+			padding: 0.5em;
+			text-align : left;
+			width: 10em;
+		}
+		th {
+			background-color : #EEEEEE;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+			font-size: 0.9em;
+		}
+
+		.DRC_summary_header {
+			padding-bottom : 0.1em;
+			border : 0px solid black;
+			width: 100%;
+			align: left;
+		}
+
+		.DRC_summary_header_col1,
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3 {
+			color : black;
+			font-size:100%;
+			padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2em;
+			border : 0px solid black;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.DRC_summary_header_col1 {
+			font-weight: bold;
+			width: 9em;
+		}
+
+		.DRC_summary_header_col2 {
+			width: 0.1em;
+		
+		}
+
+		.DRC_summary_header_col3 {
+			width : auto;
+		}
+
+		.header_holder {
+		    Width = 100%;
+		    border = 0px solid green;
+		    padding = 0;
+		}
+
+
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+		{
+			left : 0;
+			top : 0;
+			padding: 0em;
+			padding-top : 0.1em;
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.front_matter_column1 {
+			width : 8em;
+			font-weight: bold;
+		}
+
+		.front_matter_column2 {
+			width: 0.1em;
+		}
+
+		.front_matter_column3 {
+			width : auto;
+		}
+
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : left;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #white;
+		}
+		tr.onmouseout_even { 
+			background-color : #FAFAFA;
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : #EEEEEE;
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #21489e;
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script><title>Design Rule Verification Report</title>
+</head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\Users\Public\Documents\Altium\AD24\Templates\AD_logo.png
+		"><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td class="column1">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">2025-02-10</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">8:36:59 AM</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">00:00:01</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3"><a href="file:///C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc" class="file"><acronym title="C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc">C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td class="column2">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3">0</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">40</td></tr>
+</table>
+</td>
+</table><a name="IDFUOQVQYW52C3OPFXTQEZRLIGTGBLUWAGK22JTBI4IUZE0DUH3CZL"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">0</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDWG3TVV3ZX3RGPRNAVHUVBOWAND3RE0PXHSBTQQEQZUK505GPJOSB">Clearance Constraint (Gap=0.203mm) (OnLayer('Bottom Layer')),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDJGIE1SVC4JWUEMBKJGHM4W2PUCW54W1BU5OO1ALVEJYG5GMUKVTD">Clearance Constraint (Gap=0.203mm) (OnLayer('Top Layer')),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDLMOZA2DTJ342N34ZQDPWMERN4MO3QPGDXIYQLVLZMW1ZE5MQA5NF">Clearance Constraint (Gap=0.2mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDTYANL4BG0AHK0ALS3NDYY0JNCVJKJ5SE4GOWCP4YDCSU1N00FE">Clearance Constraint (Gap=0.2mm) (All),(All)</a></td>
+<td class="column2">32</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID410LQOQIKR0CL3DLMWSIRK2DZO2OZKNWVCLU51ON13GVPV3XILK">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDFSIFVWCPC0SGJWZ3HOUHNVEWPBGVNBBBBUA3RZCGIGF5BXOBBQYN">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">2</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDSPLIFVTBYUF5RN5S4HIFFGTNM22SOZCXPQSTOJ5Z4HZVIGOYGZN">Modified Polygon (Allow modified: No), (Allow shelved: No)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID2C4IQ4OFM4NUBE5Q10F3Q2C31GD2QDKWZ4TKXJJE2ST3MCEASLUP">Width Constraint (Min=0.089mm) (Max=2.54mm) (Preferred=0.381mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDGI5JVQ00ITVPHYDE0KSO2WAWQHW0FPVYWWBIJLGB22OYJ4QUHSNM">Routing Topology Rule(Topology=Shortest) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDEGRDARSGWYFQE55VR54LIVD0RH3AEKOJKDGIMK05VGXAQKPMSE">Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDBRIUKOL0QMLBCGA00L2FBEUYW5RQDJHNX41IUPUEYDRHRGMPYAO">Minimum Annular Ring (Minimum=0.13mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDPORRTQYZHFDVYI1URBNPZBGLFGH2WMT3N10MAKQ43EAORHLQTVE">Hole Size Constraint (Min=0.2mm) (Max=6.3mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDA1OMRYMDL2IEH3GXG1ZTYEALRMOK5ZNI1RYVOQBG4J4TLVNO5HXO">Hole To Hole Clearance (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDGVURFVSRV2AMHGLYYMNKP2O15MSSWMYTULDLQOKSOD3D0IHWETLG">Minimum Solder Mask Sliver (Gap=0.1mm) (HasFootprint('No Footprint')),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDQFPFLSYPKCQZHS1WGIAHME5HREFIKZH52MICY0C0OEOMD0IMWDBO">Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)</a></td>
+<td class="column2">6</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID4KZLNUIYDHDCLXYSKNJUXCJ2OQTFFYJFFFQAIMWMONBFX0QJMLM">Silk to Silk (Clearance=0.1mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID4FAN5ZUKABPFMZGIXRJ14SOXXCUMSSGBAH4E1BKPDQXGTSS4UQ5D">Net Antennae (Tolerance=0mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDGLM5L3DTHVF1HKW2P124IL24ZISE0SIUQYTZVVP520ZUQDMGXOIF">Board Clearance Constraint (Gap=0mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDEIBGRV2FNEF1MCRUG5XGAG4XCCS51TSBRMOG55BGE2O4EZ5KCTBJ">Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">40</td>
+</tr>
+</table><br><a name="IDTYANL4BG0AHK0ALS3NDYY0JNCVJKJ5SE4GOWCP4YDCSU1N00FE"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Clearance Constraint (Gap=0.2mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2231.225mil|Location2.Y=2240.349mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2231.225mil|Location2.Y=2240.349mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D2-1(7.5mm,26.992mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2231.225mil|Location2.Y=2240.349mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2231.225mil|Location2.Y=2240.349mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D2-1(7.5mm,26.992mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2204.225mil|Location2.Y=2213.349mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2204.225mil|Location2.Y=2213.349mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D2-2(7.5mm,25.9mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2204.225mil|Location2.Y=2213.349mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.816mil|Location2.X=1485.94mil|Location1.Y=2204.225mil|Location2.Y=2213.349mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D2-2(7.5mm,25.9mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2131.544mil|Location2.Y=2140.668mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2131.544mil|Location2.Y=2140.668mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D3-1(7.5mm,24.054mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2131.544mil|Location2.Y=2140.668mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2131.544mil|Location2.Y=2140.668mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D3-1(7.5mm,24.054mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2158.544mil|Location2.Y=2167.668mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2158.544mil|Location2.Y=2167.668mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D3-2(7.5mm,25.146mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2158.544mil|Location2.Y=2167.668mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1466.816mil|Location2.X=1475.94mil|Location1.Y=2158.544mil|Location2.Y=2167.668mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D3-2(7.5mm,25.146mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1512.876mil|Location2.X=1521.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1512.876mil|Location2.X=1521.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D4-1(8.746mm,22.6mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1512.876mil|Location2.X=1521.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1512.876mil|Location2.X=1521.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D4-1(8.746mm,22.6mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1485.876mil|Location2.X=1494.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1485.876mil|Location2.X=1494.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D4-2(7.654mm,22.6mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1485.876mil|Location2.X=1494.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1485.876mil|Location2.X=1494.999mil|Location1.Y=2061.304mil|Location2.Y=2070.428mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D4-2(7.654mm,22.6mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2220.726mil|Location2.X=2229.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2220.726mil|Location2.X=2229.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D5-1(26.751mm,43.2mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2220.726mil|Location2.X=2229.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2220.726mil|Location2.X=2229.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D5-1(26.751mm,43.2mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2171.726mil|Location2.X=2180.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2171.726mil|Location2.X=2180.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D5-2(25.049mm,43.2mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2171.726mil|Location2.X=2180.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2171.726mil|Location2.X=2180.85mil|Location1.Y=2870.328mil|Location2.Y=2879.452mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D5-2(25.049mm,43.2mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2655.978mil|Location2.X=2665.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2655.978mil|Location2.X=2665.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D8-1(37.349mm,44.2mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2655.978mil|Location2.X=2665.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2655.978mil|Location2.X=2665.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D8-1(37.349mm,44.2mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2704.978mil|Location2.X=2714.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2704.978mil|Location2.X=2714.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D8-2(39.051mm,44.2mm) on Top Layer And Region (0 hole(s)) Keep-Out Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2704.978mil|Location2.X=2714.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2704.978mil|Location2.X=2714.102mil|Location1.Y=2923.698mil|Location2.Y=2932.822mil|Absolute=True">Clearance Constraint: (0.051mm &lt; 0.2mm) Between Pad D8-2(39.051mm,44.2mm) on Top Layer And Region (0 hole(s)) Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2221.773mil|Location2.X=2230.897mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2221.773mil|Location2.X=2230.897mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True">Clearance Constraint: (0.104mm &lt; 0.2mm) Between Region (0 hole(s)) Keep-Out Layer And Track (26.751mm,43.2mm)(26.776mm,43.2mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2222.273mil|Location2.X=2231.397mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2222.273mil|Location2.X=2231.397mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True">Clearance Constraint: (0.129mm &lt; 0.2mm) Between Region (0 hole(s)) Keep-Out Layer And Track (26.776mm,43.2mm)(26.854mm,43.122mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1483.251mil|Location2.X=1492.374mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1483.251mil|Location2.X=1492.374mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True">Clearance Constraint: (0.184mm &lt; 0.2mm) Between Region (0 hole(s)) Keep-Out Layer And Track (7.571mm,22.517mm)(7.654mm,22.6mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1482.816mil|Location2.X=1491.94mil|Location1.Y=2130.504mil|Location2.Y=2139.628mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1482.816mil|Location2.X=1491.94mil|Location1.Y=2130.504mil|Location2.Y=2139.628mil|Absolute=True">Clearance Constraint: (0.104mm &lt; 0.2mm) Between Region (0 hole(s)) Keep-Out Layer And Track (7.5mm,24.054mm)(8.206mm,24.054mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1471.816mil|Location2.X=1480.94mil|Location1.Y=2233.85mil|Location2.Y=2242.974mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1471.816mil|Location2.X=1480.94mil|Location1.Y=2233.85mil|Location2.Y=2242.974mil|Absolute=True">Clearance Constraint: (0.184mm &lt; 0.2mm) Between Region (0 hole(s)) Keep-Out Layer And Track (7.5mm,26.992mm)(7.5mm,27.089mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1515.501mil|Location2.X=1524.624mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1515.501mil|Location2.X=1524.624mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True">Clearance Constraint: (0.184mm &lt; 0.2mm) Between Region (0 hole(s)) Keep-Out Layer And Track (8.746mm,22.6mm)(8.817mm,22.6mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2221.773mil|Location2.X=2230.897mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2221.773mil|Location2.X=2230.897mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True">Clearance Constraint: (0.104mm &lt; 0.2mm) Between Region (0 hole(s)) Top Layer And Track (26.751mm,43.2mm)(26.776mm,43.2mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2222.273mil|Location2.X=2231.397mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2222.273mil|Location2.X=2231.397mil|Location1.Y=2877.328mil|Location2.Y=2886.452mil|Absolute=True">Clearance Constraint: (0.129mm &lt; 0.2mm) Between Region (0 hole(s)) Top Layer And Track (26.776mm,43.2mm)(26.854mm,43.122mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1483.251mil|Location2.X=1492.374mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1483.251mil|Location2.X=1492.374mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True">Clearance Constraint: (0.184mm &lt; 0.2mm) Between Region (0 hole(s)) Top Layer And Track (7.571mm,22.517mm)(7.654mm,22.6mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1482.816mil|Location2.X=1491.94mil|Location1.Y=2130.504mil|Location2.Y=2139.628mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1482.816mil|Location2.X=1491.94mil|Location1.Y=2130.504mil|Location2.Y=2139.628mil|Absolute=True">Clearance Constraint: (0.104mm &lt; 0.2mm) Between Region (0 hole(s)) Top Layer And Track (7.5mm,24.054mm)(8.206mm,24.054mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1471.816mil|Location2.X=1480.94mil|Location1.Y=2233.85mil|Location2.Y=2242.974mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1471.816mil|Location2.X=1480.94mil|Location1.Y=2233.85mil|Location2.Y=2242.974mil|Absolute=True">Clearance Constraint: (0.184mm &lt; 0.2mm) Between Region (0 hole(s)) Top Layer And Track (7.5mm,26.992mm)(7.5mm,27.089mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1515.501mil|Location2.X=1524.624mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1515.501mil|Location2.X=1524.624mil|Location1.Y=2066.304mil|Location2.Y=2075.428mil|Absolute=True">Clearance Constraint: (0.184mm &lt; 0.2mm) Between Region (0 hole(s)) Top Layer And Track (8.746mm,22.6mm)(8.817mm,22.6mm) on Top Layer </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDFSIFVWCPC0SGJWZ3HOUHNVEWPBGVNBBBBUA3RZCGIGF5BXOBBQYN"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Un-Routed Net Constraint ( (All) )</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1320.276mil|Location2.X=1521.182mil|Location1.Y=2055.512mil|Location2.Y=2293.976mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1320.276mil|Location2.X=1521.182mil|Location1.Y=2055.512mil|Location2.Y=2293.976mil|Absolute=True">Un-Routed Net Constraint: Net USB_D_N Between Pad J1-A7(6.075mm,24.75mm) on Top Layer And Track (6.098mm,25.727mm)(7.927mm,25.727mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1320.276mil|Location2.X=1600.592mil|Location1.Y=2035.826mil|Location2.Y=2276.102mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1320.276mil|Location2.X=1600.592mil|Location1.Y=2035.826mil|Location2.Y=2276.102mil|Absolute=True">Un-Routed Net Constraint: Net USB_D_P Between Pad J1-B6(6.075mm,24.25mm) on Top Layer And Track (6.098mm,25.273mm)(8.115mm,25.273mm) on Top Layer </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDQFPFLSYPKCQZHS1WGIAHME5HREFIKZH52MICY0C0OEOMD0IMWDBO"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2609.016mil|Location2.X=2614.203mil|Location1.Y=1453.43mil|Location2.Y=1458.617mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2609.016mil|Location2.X=2614.203mil|Location1.Y=1453.43mil|Location2.Y=1458.617mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.044mm &lt; 0.1mm) Between Pad U10-1(36.513mm,6.505mm) on Top Layer And Track (36.213mm,6.483mm)(36.213mm,9.483mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.044mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2609.014mil|Location2.X=2614.201mil|Location1.Y=1538.321mil|Location2.Y=1543.508mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2609.014mil|Location2.X=2614.201mil|Location1.Y=1538.321mil|Location2.Y=1543.508mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.044mm &lt; 0.1mm) Between Pad U10-14(36.513mm,9.461mm) on Top Layer And Track (36.213mm,6.483mm)(36.213mm,9.483mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.044mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2608.647mil|Location2.X=2613.834mil|Location1.Y=1459.336mil|Location2.Y=1464.523mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2608.647mil|Location2.X=2613.834mil|Location1.Y=1459.336mil|Location2.Y=1464.523mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.025mm &lt; 0.1mm) Between Pad U10-15(38.463mm,7.983mm) on Top Layer And Track (36.213mm,6.483mm)(36.213mm,9.483mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.025mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2776.954mil|Location2.X=2782.141mil|Location1.Y=1459.336mil|Location2.Y=1464.523mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2776.954mil|Location2.X=2782.141mil|Location1.Y=1459.336mil|Location2.Y=1464.523mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.025mm &lt; 0.1mm) Between Pad U10-15(38.463mm,7.983mm) on Top Layer And Track (40.713mm,6.483mm)(40.713mm,9.483mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.025mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2776.587mil|Location2.X=2781.774mil|Location1.Y=1447.279mil|Location2.Y=1452.466mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2776.587mil|Location2.X=2781.774mil|Location1.Y=1447.279mil|Location2.Y=1452.466mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.044mm &lt; 0.1mm) Between Pad U10-7(40.413mm,6.505mm) on Top Layer And Track (40.713mm,6.483mm)(40.713mm,9.483mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.044mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2776.587mil|Location2.X=2781.774mil|Location1.Y=1538.321mil|Location2.Y=1543.508mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\issam\Documents\Telemetry_Board\Telemetry_Board.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2776.587mil|Location2.X=2781.774mil|Location1.Y=1538.321mil|Location2.Y=1543.508mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.044mm &lt; 0.1mm) Between Pad U10-8(40.413mm,9.461mm) on Top Layer And Track (40.713mm,6.483mm)(40.713mm,9.483mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.044mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br></body>
+</html>
