@@ -1,0 +1,19 @@
+database:
+  connection_string: "postgres://postgres:H1a2m3z4a5%402003@localhost:5432/telem_db?sslmode=disable"
+
+websocket:
+  # Used by the car (sender) to send raw telemetry data to the receiver.
+  url: "ws://localhost:9091/telemetry"
+  ip: "localhost"
+  port: 9091
+
+mode: "csv"             # Allowed values: "csv" or "live"
+apiport: "9092"         # REST API server port
+
+dbc_file: "../../configs/UCR-01.dbc"
+json_file: "../../configs/UCR-01.json"
+
+throttler_interval: 0   # in milliseconds
+
+# Port for the live data WebSocket (from backend to frontend)
+live_ws_port: 9094

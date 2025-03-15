@@ -1,0 +1,104 @@
+/* Dashboard base styling */
+.dashboard-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 64px);
+  background-color: #161A1D;
+  display: flex;
+  flex-direction: column;
+  /* Changed from overflow: hidden to allow scrolling if needed */
+  overflow-y: auto;
+}
+
+/* Scrollbar styling for dashboard */
+.dashboard-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dashboard-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Card styling */
+.dashboard-card {
+  background-color: #1E2329;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin: 0;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Card titles */
+.card-title {
+  color: #FFFFFF;
+  font-weight: 500;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Car model image styling */
+.car-model-image {
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.car-model-image:hover {
+  transform: rotate(90deg) scale(1.05);
+}
+
+/* State of charge indicator styling */
+.soc-indicator-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.soc-value {
+  font-weight: bold;
+  font-size: 1.8rem;
+  transition: color 0.3s ease;
+}
+
+/* Battery level animation */
+.battery-level {
+  transition: height 0.8s ease-in-out, background-color 0.8s ease;
+}
+
+/* Additional responsive adjustments */
+@media (max-width: 960px) {
+  .dashboard-card {
+    margin-bottom: 16px;
+  }
+}
+
+/* Map container */
+.map-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Heatmap container */
+.heatmap-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
