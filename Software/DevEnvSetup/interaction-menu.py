@@ -29,21 +29,23 @@ def local_backend_script():
     print("Starting the local backend script...\n")
     # Run the backend script in a new terminal
     run_shell_command(["bash", "../backend-processing/telemetry_backend_pi_script.sh"], wait_for_output=False)
-    global dbstarted
-    dbstarted = True
 
 def local_frontend_script():
     """Run the shell script to download react, npm, and dependencies locally."""
     print("Starting the local frontend script...\n")
     # Run the backend script in a new terminal
     run_shell_command(["bash", "./frontend_dependency_script.sh"], wait_for_output=False)
-    global dbstarted
-    dbstarted = True
 
 def build_docker():
     """Build Docker using docker-compose."""
     print(" Building Docker containers...")
     run_shell_command(["docker", "compose", "build"])
+
+def install_docker():
+    """Run the shell script to install Docker and Docker Compose."""
+    print("Starting Docker installation...\n")
+    # Run the Docker installation script in a new terminal
+    run_shell_command(["bash", "./docker_setup_script.sh"], wait_for_output=False)
     
 def rebuild_docker():
     """Rebuild Docker with no cache to ensure new dependencies are installed."""
@@ -167,7 +169,8 @@ def main_menu():
         print("6. Download Go, postgres utils (pg_isready), yq, and backend dependencies locally")
         print("7. Download React, npm, and frontend dependencies locally")
         print("8. Simulate Run using CSV file")
-        print("9. Exit")
+        print("9. Install Docker and Docker Compose")
+        print("10. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -188,6 +191,8 @@ def main_menu():
         elif choice == "8":
             simulate_csv()
         elif choice == "9":
+            install_docker()
+        elif choice == "10":
             quit_program()
         else:
             print("Invalid choice, please try again.")
