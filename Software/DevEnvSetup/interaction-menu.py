@@ -36,7 +36,7 @@ def local_frontend_script():
     """Run the shell script to download react, npm, and dependencies locally."""
     print("Starting the local frontend script...\n")
     # Run the backend script in a new terminal
-    run_shell_command(["bash", "../telemetry-app/telemetry_frontend_pi_script.sh"], wait_for_output=False)
+    run_shell_command(["bash", "./frontend_dependency_script.sh"], wait_for_output=False)
     global dbstarted
     dbstarted = True
 
@@ -116,6 +116,41 @@ def view_docker_logs():
         else:
             print("Invalid selection. Please enter 1, 2, or 3.")
 
+def simulate_csv():
+    """Simulate a car run using a CSV file."""
+    print("\nSimulating a car run requires a CSV file and it has to be called 'data.csv' (case sensitive).")
+    print("\nMake sure that you had run step 6 first to install Go and all backend dependencies.")
+    while True:
+        choice = input("Do you have the backend dependencies installed and want to proceed with the simulation? (yes/no): ").strip().lower()
+        if choice == "no":
+            print("Returning to main menu...")
+            return
+        elif choice == "yes":
+            break
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+    
+    print("\nBefore proceeding, rename your CSV file to 'data.csv' and place it in:")
+    print("./Software/backend-processing/testdata/")
+    print("\nIf there exists a csv file in the directory and you need to keep it, move it elsewhere first or rename it.\n")
+    
+    while True:
+        confirm = input("Have you renamed your csv and placed it correctly? (yes/no/cancel): ").strip().lower()
+        if confirm == "yes":
+            break
+        elif confirm == "no":
+            print("Please rename and place the file before proceeding.")
+        elif confirm == "cancel":
+            print("Simulator function canceled. Returning to main menu...")
+            return
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+    
+    print("\nStarting simulation...\n")
+    run_shell_command(["go","run","../backend-processing/simulate_sender.go"], wait_for_output=False)
+    print("Simulation started. Check logs for progress.\n")
+
+
 def quit_program():
     """Exit"""
     print(" Exiting program...")
@@ -131,7 +166,8 @@ def main_menu():
         print("5. View Docker logs")
         print("6. Download Go, postgres utils (pg_isready), yq, and backend dependencies locally")
         print("7. Download React, npm, and frontend dependencies locally")
-        print("8. Exit")
+        print("8. Simulate Run using CSV file")
+        print("9. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -150,6 +186,8 @@ def main_menu():
         elif choice == "7":
             local_frontend_script()
         elif choice == "8":
+            simulate_csv()
+        elif choice == "9":
             quit_program()
         else:
             print("Invalid choice, please try again.")
