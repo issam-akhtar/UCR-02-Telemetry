@@ -18,16 +18,43 @@ const useRealTimeData = (chartType, onNewData) => {
   useEffect(() => {
     // Wrap callback so it always calls the latest onNewDataRef
     const callback = (message) => {
-      onNewDataRef.current({
-        time: message.time,
-        fields: message.payload.fields || {},
-        payload: message.payload,
-      });
+      // Handle both single message and batch of messages
+      if (Array.isArray(message)) {
+        // It's a batch of messages
+        message.forEach(msg => processMessage(msg));
+      } else {
+        // It's a single message
+        processMessage(message);
+      }
     };
 
-    // Subscribe once per chartType
-    const unsubscribe = wsService.subscribe(chartType, callback);
-    return () => unsubscribe();
+    function processMessage(msg) {
+      // Ensure message has all expected properties before passing to callback
+      if (!msg) return;
+      
+      // Safe access pattern for nested properties
+      const payload = msg.payload || {};
+      const fields = payload.fields || {};
+      
+      onNewDataRef.current({
+        time: msg.time || Date.now(),
+        fields: fields,
+        payload: payload
+      });
+    }
+
+    // Check if chartType is valid before subscribing
+    if (chartType) {
+      // Subscribe once per chartType
+      const unsubscribe = wsService.subscribe(chartType, callback);
+      console.log(`Subscribed to ${chartType}`);
+      return () => {
+        unsubscribe();
+        console.log(`Unsubscribed from ${chartType}`); 
+      };
+    }
+    
+    return () => {}; // Return empty function if no subscription was made
   }, [chartType]);
 };
 

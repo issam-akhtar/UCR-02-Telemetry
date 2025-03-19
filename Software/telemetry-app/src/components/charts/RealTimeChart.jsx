@@ -23,18 +23,17 @@ const PLOT_CONFIG = {
   scrollZoom: false,
 };
 
+/**
+ * Converts a timestamp into a valid ISO-like string in MST (UTC-7).
+ * The returned format is "YYYY-MM-DDTHH:mm:ss.sss" (without the trailing "Z").
+ */
 function formatTimeMST(timestamp) {
   const date = new Date(timestamp);
-  const utc = date.getTime() + date.getTimezoneOffset() * 60000;
-  const mstDate = new Date(utc - 7 * 3600000);
-  const year = mstDate.getFullYear();
-  const month = String(mstDate.getMonth() + 1).padStart(2, '0');
-  const day = String(mstDate.getDate()).padStart(2, '0');
-  const hours = String(mstDate.getHours()).padStart(2, '0');
-  const minutes = String(mstDate.getMinutes()).padStart(2, '0');
-  const seconds = String(mstDate.getSeconds()).padStart(2, '0');
-  const ms = String(Math.round(mstDate.getMilliseconds())).padStart(3, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${ms}`;
+  // Convert to MST (subtract 7 hours)
+  const mstTime = date.getTime() - 7 * 3600000;
+  const mstDate = new Date(mstTime);
+  const pad = (num, size = 2) => String(num).padStart(size, '0');
+  return `${mstDate.getFullYear()}-${pad(mstDate.getMonth() + 1)}-${pad(mstDate.getDate())}T${pad(mstDate.getHours())}:${pad(mstDate.getMinutes())}:${pad(mstDate.getSeconds())}.${pad(mstDate.getMilliseconds(), 3)}`;
 }
 
 function getYAxisLabel(chartType) {
@@ -63,14 +62,15 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
   const backgroundColor = theme === 'dark' ? '#161A1D' : '#fff';
   const fontColor = theme === 'dark' ? '#ecf3e8' : '#333';
 
-  // Helper to safely apply layout changes
+  // Helper to safely apply layout changes.
+  // Here we now pass the xaxis.range values as formatted strings.
   const safeRelayout = (updateObj) => {
     if (containerRef.current && containerRef.current._fullLayout) {
       Plotly.relayout(containerRef.current, updateObj);
     }
   };
 
-  // More bottom margin to avoid overlap with legend
+  // Base layout shared by both chart types.
   const baseLayout = {
     autosize: true,
     title: {
@@ -228,6 +228,7 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
   };
 
   const handleLineChartUpdate = (dataPoint) => {
+    // Use the modified formatTimeMST to produce valid date strings.
     const t = formatTimeMST(dataPoint.time);
     const currentTime = Date.now();
     if (currentTime - lastUpdateTimeRef.current < rtSettings.updateInterval) return;
@@ -302,7 +303,10 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
 
       const currentTimeMs = new Date(dataPoint.time).getTime();
       const leftTimeMs = currentTimeMs - rtSettings.window;
-      safeRelayout({ 'xaxis.range': [leftTimeMs, currentTimeMs] });
+      // Convert the numeric timestamps to properly formatted date strings.
+      safeRelayout({ 
+        'xaxis.range': [formatTimeMST(leftTimeMs), formatTimeMST(currentTimeMs)]
+      });
     }
   };
 
@@ -317,7 +321,7 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
 
   useRealTimeData(chartType, handleNewData);
 
-  // Listen for window resize to ensure Plotly updates fully
+  // Listen for window resize to ensure Plotly updates fully.
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
@@ -328,7 +332,7 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Re-apply theme or line width changes if user toggles settings
+  // Re-apply theme or line width changes if user toggles settings.
   useEffect(() => {
     if (!chartInitialized || noData) return;
     if (!containerRef.current) return;
@@ -349,7 +353,9 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
     if (lastTimestampRef.current && chartType !== 'cell') {
       const currentTimeMs = new Date(lastTimestampRef.current).getTime();
       const leftTimeMs = currentTimeMs - rtSettings.window;
-      safeRelayout({ 'xaxis.range': [leftTimeMs, currentTimeMs] });
+      safeRelayout({ 
+        'xaxis.range': [formatTimeMST(leftTimeMs), formatTimeMST(currentTimeMs)]
+      });
     }
   }, [
     chartType,
@@ -372,7 +378,6 @@ const RealTimeChart = ({ chartType, config, isPaused }) => {
   return (
     <div
       style={{
-        // Use 100% so it fills the wrapper from RealTimeChartWrapper
         width: '100%',
         height: '100%',
         position: 'relative',

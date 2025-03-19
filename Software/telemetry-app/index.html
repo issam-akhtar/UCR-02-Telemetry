@@ -1,13 +1,120 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Telemetry Dashboard for real-time data visualization" />
+    <meta name="theme-color" content="#0F1C2E" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    
+    <!-- Preconnect to API domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/src/main.jsx" as="script" type="module" />
+    
+    <!-- Defer non-critical CSS with fallback -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    </noscript>
+    
+    <!-- Inline critical CSS -->
+    <style>
+      :root {
+        --bg-color: #0F1C2E;
+        --text-color: #E0E0E0;
+        --primary-color: #2A6F97;
+      }
+      
+      /* Critical rendering path styles */
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        overscroll-behavior: none;
+      }
+      
+      #root {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      
+      .loading-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--bg-color);
+        z-index: 9999;
+      }
+      
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--primary-color);
+        animation: spin 0.8s linear infinite;
+      }
+      
+      /* Detect Raspberry Pi for performance optimizations */
+      @media (prefers-reduced-motion), (max-width: 800px) {
+        .loading-spinner {
+          animation: none; /* Disable animation for better performance */
+          border: 3px solid var(--primary-color);
+          opacity: 0.8;
+        }
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <!-- Add script to detect Raspberry Pi -->
+    <script type="text/javascript">
+      (function() {
+        // Simple detection of Raspberry Pi or low-power devices
+        if (
+          /Raspberry Pi/i.test(navigator.userAgent) || 
+          /Linux arm/i.test(navigator.userAgent) ||
+          navigator.hardwareConcurrency <= 4 // Low CPU core count
+        ) {
+          // Set flag for optimizations
+          localStorage.setItem('forceRaspberryPiMode', 'true');
+          
+          // Add class to body for CSS optimizations
+          document.documentElement.classList.add('raspberry-pi-mode');
+          console.log('Raspberry Pi mode enabled for performance optimization');
+        }
+      })();
+    </script>
+    
     <title>Telemetry Dashboard</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Initial loading state -->
+      <div class="loading-indicator">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
