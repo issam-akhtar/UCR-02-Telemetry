@@ -62,8 +62,8 @@ fi
 # Step 3: Install Frontend Dependencies
 ####################################
 log_info "Installing frontend dependencies..."
-npm install || error_exit "Failed to install frontend dependencies."
-
+ npm install --legacy-peer-deps || error_exit "Failed to install frontend dependencies."
+ 
 ####################################
 # Step 4: Run the Frontend Automatically
 ####################################

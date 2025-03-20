@@ -36,7 +36,7 @@ log_info "=== Setting up Backend Processing Environment ==="
 
 # --- Install Go Version 1.24.0 (overriding any older apt version) ---
 GO_DESIRED_VERSION="go1.24.0"
-GO_ARCHIVE="${GO_DESIRED_VERSION}.linux-amd64.tar.gz"
+GO_ARCHIVE="${GO_DESIRED_VERSION}.linux-arm64.tar.gz"
 GO_DOWNLOAD_URL="https://go.dev/dl/${GO_ARCHIVE}"
 
 if command -v go &>/dev/null; then
@@ -97,7 +97,7 @@ fi
 ####################################
 # Step 2: Extract DB Info & Verify Connectivity
 ####################################
-CONFIG_FILE="configs/config.yaml"
+CONFIG_FILE="../backend-processing/configs/config.yaml"
 if [ ! -f "$CONFIG_FILE" ]; then
     error_exit "Configuration file '$CONFIG_FILE' not found."
 fi
@@ -135,6 +135,7 @@ fi
 # Step 3: Install Go Dependencies
 ####################################
 log_info "Downloading Go module dependencies..."
+cd ../backend-processing
 go mod download || error_exit "Failed to download Go dependencies."
 
 ####################################

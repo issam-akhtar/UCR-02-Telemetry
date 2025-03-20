@@ -28,18 +28,18 @@ def local_backend_script():
     """Run the shell script to download Go, and dependencies locally."""
     print("Starting the local backend script...\n")
     # Run the backend script in a new terminal
-    run_shell_command(["bash", "../backend-processing/telemetry_backend_pi_script.sh"], wait_for_output=False)
+    run_shell_command(["bash", "../backend-processing/telemetry_backend_pi_script.sh"])
 
 def local_frontend_script():
     """Run the shell script to download react, npm, and dependencies locally."""
     print("Starting the local frontend script...\n")
     # Run the backend script in a new terminal
-    run_shell_command(["bash", "./frontend_dependency_script.sh"], wait_for_output=False)
+    run_shell_command(["bash", "./frontend_dependency_script.sh"])
 
 def build_docker():
     """Build Docker using docker-compose."""
     print(" Building Docker containers...")
-    run_shell_command(["docker", "compose", "build"])
+    run_shell_command(["docker", "compose", "build"], wait_for_output=False)
 
 def install_docker():
     """Run the shell script to install Docker and Docker Compose."""
@@ -49,7 +49,7 @@ def install_docker():
     
 def rebuild_docker():
     """Rebuild Docker with no cache to ensure new dependencies are installed."""
-    print("\nWARNING: This operation will delete ALL Docker images on your system. This cannot be undone.\n")")
+    print("\nWARNING: This operation will delete ALL Docker images on your system. This cannot be undone.\n")
 
     confirm = input("Are you sure you want to proceed? (yes/no): ").strip().lower()
     if confirm != "yes":
@@ -85,8 +85,6 @@ def run_docker(detached=False):
     
     print("Starting Docker containers...")
     command = ["docker", "compose", "up"]
-    if detached:
-        command.append("-d")
     run_shell_command(command, wait_for_output=False)
 
 def view_docker_logs():
@@ -149,7 +147,7 @@ def simulate_csv():
             print("Invalid input. Please enter 'yes' or 'no'.")
     
     print("\nStarting simulation...\n")
-    run_shell_command(["go","run","../backend-processing/simulate_sender.go"], wait_for_output=False)
+    run_shell_command(["bash", "./run_simulator.sh"], wait_for_output=False)
     print("Simulation started. Check logs for progress.\n")
 
 
