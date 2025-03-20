@@ -32,7 +32,7 @@ const NetworkStatusBar = memo(() => {
     message = 'No connection to server. Check your network connection.';
     icon = <WifiOffIcon fontSize="small" />;
   } else if (!isWebSocketConnected) {
-    message = 'WebSocket connection unavailable. Real-time data may be delayed.';
+    message = 'Vehicle Offline: WebSocket connection unavailable. Real-time data may be delayed.';
     severity = 'warning';
     icon = <WifiOffIcon fontSize="small" />;
   } else if (!isApiConnected) {

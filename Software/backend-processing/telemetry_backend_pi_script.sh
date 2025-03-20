@@ -36,7 +36,7 @@ log_info "=== Setting up Backend Processing Environment ==="
 
 # --- Install Go Version 1.24.0 (overriding any older apt version) ---
 GO_DESIRED_VERSION="go1.24.0"
-GO_ARCHIVE="${GO_DESIRED_VERSION}.linux-amd64.tar.gz"
+GO_ARCHIVE="${GO_DESIRED_VERSION}.linux-arm64.tar.gz"
 GO_DOWNLOAD_URL="https://go.dev/dl/${GO_ARCHIVE}"
 
 if command -v go &>/dev/null; then
@@ -80,7 +80,7 @@ fi
 # --- Install yq if missing ---
 if ! command -v yq &>/dev/null; then
     log_info "yq not found. Installing yq..."
-    wget -q "https://github.com/mikefarah/yq/releases/download/v4.30.5/yq_linux_amd64" -O /usr/local/bin/yq || error_exit "Failed to download yq."
+    wget -q "https://github.com/mikefarah/yq/releases/download/v4.30.5/yq_linux_arm64" -O /usr/local/bin/yq || error_exit "Failed to download yq."
     chmod +x /usr/local/bin/yq || error_exit "Failed to set execute permission on yq."
 else
     log_info "yq is already installed."

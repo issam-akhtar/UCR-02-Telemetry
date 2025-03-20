@@ -465,8 +465,8 @@ export class WebSocketService {
 }
 
 // Create WebSocket service instance connecting to port 9094
-const hostname = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
-export const wsService = new WebSocketService(`ws://${hostname}:9094/ws`);
+const hostname = window.location.hostname === 'localhost' ? '0.0.0.0' : window.location.hostname;
+export const wsService = new WebSocketService(`ws://${hostname}:50004/ws`);
 
 // Initialize connection and set up periodic connection health checks
 console.log("Initializing WebSocket service");
