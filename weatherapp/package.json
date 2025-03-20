@@ -14,9 +14,13 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.7",
+    "@react-three/drei": "^10.0.4",
+    "@react-three/fiber": "^9.1.0",
     "axios": "^1.8.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "three": "^0.174.0",
+    "vite-plugin-static-copy": "^2.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
