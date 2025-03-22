@@ -16,12 +16,12 @@ const App = () => {
       {/* <h1> <Weather2/> </h1> */}
       {/* <BatteryPack/> */}
       <CellVoltageScene/>
-      {/* <Segment1/> */}
-      {/* <Segment2/> */}
-      {/* <Segment3/> */}
-      {/* <Segment4/> */}
-      {/* <Segment5/> */}
-      
+      {/* <Segment1/>
+      <Segment2/>
+      <Segment3/>
+      <Segment4/>
+      <Segment5/>
+       */}
     </div>
     
   )
