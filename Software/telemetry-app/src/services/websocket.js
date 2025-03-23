@@ -1,26 +1,47 @@
 import { loadTelemetryProto, decodeTelemetryMessage } from '../utils/protobuf';
 
-// Constants for better performance
-const RECONNECT_INTERVAL = 5000;
-const MAX_QUEUE_SIZE = 125;
-const MAX_RETRIES = 5;
-const RETRY_DELAY = 2000;
-const MAX_BATCH_SIZE = 75; 
-const INACTIVE_THRESHOLD = 30000; 
+// Default configuration values
+const DEFAULT_CONFIG = {
+  RECONNECT_INTERVAL: 5000,
+  MAX_QUEUE_SIZE: 125,
+  MAX_RETRIES: 5,
+  RETRY_DELAY: 2000,
+  MAX_BATCH_SIZE: 10,  // Reduced for real-time dashboard
+  INACTIVE_THRESHOLD: 30000,
+  THROTTLE_TIME_NORMAL: 8,  // ~120fps for smooth dashboard
+  THROTTLE_TIME_LOW_POWER: 33, // 20fps for low-power devices
+  PING_INTERVAL: 25000,
+  HEALTH_CHECK_INTERVAL: 30000,
+  LOW_POWER_HEALTH_CHECK_INTERVAL: 60000,
+  ERROR_THRESHOLD: 5,
+  ENABLE_COMPRESSION: false, // Disabled by default, enable if needed
+};
+
+// Connection state enum
+const CONNECTION_STATES = {
+  DISCONNECTED: 'DISCONNECTED',
+  CONNECTING: 'CONNECTING',
+  CONNECTED: 'CONNECTED',
+  RECONNECTING: 'RECONNECTING',
+  ERROR: 'ERROR'
+};
 
 /**
- * Enhanced WebSocketService with performance optimizations for Raspberry Pi
- * - Message batching with size limits
+ * Enhanced WebSocketService with performance optimizations and resilience
+ * - Message batching with configurable size limits
  * - Queue size limiting
- * - More efficient reconnection with exponential backoff
+ * - Efficient reconnection with exponential backoff
  * - Memory-efficient message handling
  * - Throttled message delivery
+ * - Connection state machine
+ * - Security enhancements
  */
 export class WebSocketService {
-  constructor(url) {
+  constructor(url, options = {}) {
     this.url = url;
+    this.options = { ...DEFAULT_CONFIG, ...options };
     this.socket = null;
-    this.reconnectInterval = RECONNECT_INTERVAL;
+    this.reconnectInterval = this.options.RECONNECT_INTERVAL;
     this.subscribers = new Map();
     this.protoRoot = null;
     this.messageQueue = [];
@@ -32,15 +53,187 @@ export class WebSocketService {
     this.lastProcessTime = 0;
     this.isProtoLoaded = false;
     this.onConnectionChangeCallbacks = new Set();
+    this.connectionState = CONNECTION_STATES.DISCONNECTED;
+    this.errorStats = {};
     
-    // Detect Raspberry Pi mode
-    this.isRaspberryPi = /Raspberry Pi/i.test(navigator.userAgent) || 
-                         /Linux arm/i.test(navigator.userAgent) ||
-                         localStorage.getItem('forceRaspberryPiMode');
+    // Detect device capabilities
+    this.detectDeviceCapabilities();
     
-    // Adjust settings for Raspberry Pi
-    if (this.isRaspberryPi) {
-      console.log('WebSocket: Optimizing for Raspberry Pi');
+    // Start cleanup interval
+    this.startCleanupInterval();
+  }
+
+  /**
+   * Detect device capabilities for better performance adjustments
+   */
+  detectDeviceCapabilities() {
+    // Get memory and CPU information if available
+    const memory = navigator.deviceMemory || 4; // Default to 4GB if not available
+    const cores = navigator.hardwareConcurrency || 2;
+    
+    // Check for Raspberry Pi or other low-power devices
+    this.lowPowerDevice = memory <= 2 || cores <= 2 || 
+                        /Raspberry Pi/i.test(navigator.userAgent) || 
+                        /Linux arm/i.test(navigator.userAgent) ||
+                        localStorage.getItem('forceRaspberryPiMode');
+    
+    // Adjust settings based on device capabilities
+    this.throttleTime = this.lowPowerDevice 
+      ? this.options.THROTTLE_TIME_LOW_POWER 
+      : this.options.THROTTLE_TIME_NORMAL;
+    
+    this.maxBatchSize = this.lowPowerDevice 
+      ? Math.floor(this.options.MAX_BATCH_SIZE / 2) 
+      : this.options.MAX_BATCH_SIZE;
+    
+    if (this.lowPowerDevice) {
+      console.log('WebSocket: Optimizing for low-power device');
+      console.log(`WebSocket: Using throttle time ${this.throttleTime}ms and batch size ${this.maxBatchSize}`);
+    }
+  }
+
+  /**
+   * Start interval to clean up stale subscriptions
+   */
+  startCleanupInterval() {
+    // Clean up every 5 minutes
+    this.cleanupInterval = setInterval(() => this.cleanupSubscriptions(), 300000);
+  }
+
+  /**
+   * Clean up stale subscriptions to prevent memory leaks
+   */
+  cleanupSubscriptions() {
+    let removedCount = 0;
+    
+    this.subscribers.forEach((handlers, type) => {
+      // Filter out undefined or null handlers that might have been
+      // created by garbage-collected components
+      const validHandlers = handlers.filter(h => typeof h === 'function');
+      
+      removedCount += handlers.length - validHandlers.length;
+      
+      if (validHandlers.length === 0) {
+        this.subscribers.delete(type);
+      } else {
+        this.subscribers.set(type, validHandlers);
+      }
+    });
+    
+    if (removedCount > 0) {
+      console.log(`Cleaned up ${removedCount} stale subscriptions`);
+    }
+  }
+
+  /**
+   * Track errors with categorization
+   */
+  trackError(category, error) {
+    if (!this.errorStats[category]) {
+      this.errorStats[category] = { count: 0, lastError: null, firstSeen: Date.now() };
+    }
+    
+    this.errorStats[category].count++;
+    this.errorStats[category].lastError = error;
+    this.errorStats[category].lastSeen = Date.now();
+    
+    // Log error with category
+    console.error(`WebSocket error (${category}):`, error);
+    
+    // Report errors if they exceed thresholds
+    if (this.errorStats[category].count >= this.options.ERROR_THRESHOLD) {
+      this.reportErrors(category);
+    }
+  }
+
+  /**
+   * Report accumulated errors
+   */
+  reportErrors(category) {
+    const stats = category ? { [category]: this.errorStats[category] } : this.errorStats;
+    console.warn('WebSocket error report:', stats);
+    
+    // Could send to monitoring service
+    // if (typeof window.errorReporter === 'function') {
+    //   window.errorReporter('websocket', stats);
+    // }
+  }
+
+  /**
+   * Set connection state and trigger notifications
+   */
+  setConnectionState(newState) {
+    const prevState = this.connectionState;
+    this.connectionState = newState;
+    
+    if (prevState !== newState) {
+      console.log(`WebSocket state changed: ${prevState} -> ${newState}`);
+      this.notifyConnectionChange(newState === CONNECTION_STATES.CONNECTED);
+      
+      // Handle state transitions
+      if (newState === CONNECTION_STATES.DISCONNECTED && 
+          prevState === CONNECTION_STATES.CONNECTED) {
+        // Just disconnected - attempt reconnect
+        this.handleDisconnection();
+      }
+    }
+  }
+
+  /**
+   * Handle disconnection event
+   */
+  handleDisconnection() {
+    // Set up reconnection with backoff
+    const backoff = Math.min(
+      30000, 
+      this.reconnectInterval * Math.pow(1.5, this.connectionAttempts)
+    );
+    
+    console.log(`Will attempt reconnect in ${Math.round(backoff / 1000)} seconds`);
+    
+    setTimeout(() => {
+      if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
+        this.setConnectionState(CONNECTION_STATES.RECONNECTING);
+        this.connect();
+      }
+    }, backoff);
+  }
+
+  /**
+   * Compress message data if supported and enabled
+   */
+  async compressMessage(data) {
+    if (!this.options.ENABLE_COMPRESSION || !window.CompressionStream) {
+      return data; // Return original data if compression not available
+    }
+    
+    try {
+      const blob = new Blob([data]);
+      const stream = blob.stream();
+      const compressedStream = stream.pipeThrough(new CompressionStream('gzip'));
+      return new Uint8Array(await new Response(compressedStream).arrayBuffer());
+    } catch (error) {
+      this.trackError('compression', error);
+      return data; // Return original data if compression fails
+    }
+  }
+
+  /**
+   * Decompress message data if needed
+   */
+  async decompressMessage(data, isCompressed) {
+    if (!isCompressed || !window.DecompressionStream) {
+      return data;
+    }
+    
+    try {
+      const blob = new Blob([data]);
+      const stream = blob.stream();
+      const decompressedStream = stream.pipeThrough(new DecompressionStream('gzip'));
+      return new Uint8Array(await new Response(decompressedStream).arrayBuffer());
+    } catch (error) {
+      this.trackError('decompression', error);
+      return data;
     }
   }
 
@@ -51,9 +244,9 @@ export class WebSocketService {
     this.onConnectionChangeCallbacks.add(callback);
     // Call immediately with current status to initialize
     try {
-      callback(this.isConnected());
+      callback(this.connectionState === CONNECTION_STATES.CONNECTED);
     } catch (error) {
-      console.error("Error in connection callback initialization:", error);
+      this.trackError('callback_init', error);
     }
     return () => this.onConnectionChangeCallbacks.delete(callback);
   }
@@ -66,7 +259,7 @@ export class WebSocketService {
       try {
         callback(isConnected);
       } catch (error) {
-        console.error("Error in connection change callback:", error);
+        this.trackError('connection_callback', error);
       }
     });
   }
@@ -74,7 +267,7 @@ export class WebSocketService {
   /**
    * Load protocol buffers with retry logic
    */
-  async loadProto(retries = MAX_RETRIES) {
+  async loadProto(retries = this.options.MAX_RETRIES) {
     try {
       console.log("Attempting to load protocol buffers...");
       this.protoRoot = await loadTelemetryProto();
@@ -82,10 +275,10 @@ export class WebSocketService {
       this.isProtoLoaded = true;
       return true;
     } catch (error) {
-      console.error("Failed to load protocol buffers:", error);
+      this.trackError('proto_load', error);
       if (retries > 0) {
         console.log(`Retrying protocol buffer load... (${retries} attempts left)`);
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+        await new Promise((resolve) => setTimeout(resolve, this.options.RETRY_DELAY));
         return this.loadProto(retries - 1);
       }
       console.error("Failed to load proto after multiple attempts");
@@ -100,6 +293,7 @@ export class WebSocketService {
     if (this.isConnecting) return;
     
     this.isConnecting = true;
+    this.setConnectionState(CONNECTION_STATES.CONNECTING);
     
     try {
       // Load proto first
@@ -118,7 +312,8 @@ export class WebSocketService {
         this.connect();
       }
     } catch (error) {
-      console.error("WebSocket initialization failed:", error);
+      this.trackError('initialization', error);
+      this.setConnectionState(CONNECTION_STATES.ERROR);
       setTimeout(() => {
         this.isConnecting = false;
         this.initialize();
@@ -129,16 +324,16 @@ export class WebSocketService {
   }
 
   /**
-   * Process queued messages
+   * Process the message queue
    */
   processQueue() {
     // Limit queue size to prevent memory issues
-    if (this.messageQueue.length > MAX_QUEUE_SIZE) {
-      this.messageQueue = this.messageQueue.slice(-MAX_QUEUE_SIZE);
+    if (this.messageQueue.length > this.options.MAX_QUEUE_SIZE) {
+      this.messageQueue = this.messageQueue.slice(-this.options.MAX_QUEUE_SIZE);
     }
 
     // Process messages in batches for better performance
-    const batchSize = Math.min(this.messageQueue.length, this.isRaspberryPi ? 10 : 20);
+    const batchSize = Math.min(this.messageQueue.length, this.maxBatchSize);
     const batch = this.messageQueue.splice(0, batchSize);
     
     if (batch.length > 0) {
@@ -156,7 +351,7 @@ export class WebSocketService {
           this.scheduleMessageDelivery(rawMessage);
         }
       } catch (error) {
-        console.error("Error processing queued message:", error);
+        this.trackError('queue_processing', error);
       }
     }
     
@@ -168,10 +363,13 @@ export class WebSocketService {
   }
 
   /**
-   * Schedule message delivery with batching and throttling for better performance
+   * Schedule message delivery with batching and throttling
    */
   scheduleMessageDelivery(message) {
-    
+    if (!message || !message.type) {
+      this.trackError('invalid_message', new Error('Invalid message format'));
+      return;
+    }
     
     const { type } = message;
     
@@ -197,8 +395,10 @@ export class WebSocketService {
     messages.push(sanitizedMessage);
     
     // Limit batch size to prevent memory issues
-    if (messages.length > MAX_BATCH_SIZE) {
-      messages.splice(0, messages.length - MAX_BATCH_SIZE);
+    if (messages.length > this.maxBatchSize) {
+      // Remove oldest messages and keep newest ones
+      const toKeep = messages.slice(-this.maxBatchSize);
+      this.pendingMessages.set(type, toKeep);
     }
     
     // Clear any existing batch processing timeout
@@ -209,9 +409,7 @@ export class WebSocketService {
     // Throttle updates based on device capabilities
     const now = performance.now();
     const timeSinceLastProcess = now - this.lastProcessTime;
-    const throttleTime = this.isRaspberryPi ? 100 : 16; // ~60fps or ~10fps
-    
-    const delay = Math.max(0, throttleTime - timeSinceLastProcess);
+    const delay = Math.max(0, this.throttleTime - timeSinceLastProcess);
     
     // Process batched messages with throttling
     this.batchProcessTimeout = setTimeout(() => {
@@ -255,26 +453,27 @@ export class WebSocketService {
     this.pendingMessages.forEach((messages, type) => {
       const handlers = this.subscribers.get(type) || [];
       
-      
-      handlers.forEach(handler => {
-        try {
-          // For single message, send it directly, otherwise send the batch
-          const batch = messages.length === 1 ? messages[0] : [...messages];
-          
-          // Use requestAnimationFrame to align with browser rendering
-          requestAnimationFrame(() => {
-            try {
-              handler(batch);
-            } catch (err) {
-              // Truncate error message for console readability
-              const errMsg = err.toString().substring(0, 100);
-              console.error(`Error in message handler for type ${type}:`, errMsg);
-            }
-          });
-        } catch (err) {
-          console.error(`Error preparing message batch for type ${type}:`, err);
-        }
-      });
+      if (handlers.length > 0) {
+        handlers.forEach(handler => {
+          try {
+            // For single message, send it directly, otherwise send the batch
+            const batch = messages.length === 1 ? messages[0] : [...messages];
+            
+            // Use requestAnimationFrame to align with browser rendering
+            requestAnimationFrame(() => {
+              try {
+                handler(batch);
+              } catch (err) {
+                // Truncate error message for console readability
+                const errMsg = err.toString().substring(0, 100);
+                this.trackError('message_handler', new Error(`Handler error for type ${type}: ${errMsg}`));
+              }
+            });
+          } catch (err) {
+            this.trackError('message_prep', err);
+          }
+        });
+      }
     });
     
     // Clear pending messages
@@ -300,13 +499,16 @@ export class WebSocketService {
 
       this.socket.onopen = () => {
         console.log("WebSocket connected successfully");
-        this.reconnectInterval = RECONNECT_INTERVAL;
+        this.reconnectInterval = this.options.RECONNECT_INTERVAL;
         this.connectionAttempts = 0;
         this.lastMessageTime = Date.now();
-        this.notifyConnectionChange(true);
+        this.setConnectionState(CONNECTION_STATES.CONNECTED);
+        
+        // Reset error stats on successful connection
+        this.errorStats = {};
       };
 
-      this.socket.onmessage = (event) => {
+      this.socket.onmessage = async (event) => {
         this.lastMessageTime = Date.now();
         
         // Try to parse as JSON first in case it's not binary
@@ -322,7 +524,7 @@ export class WebSocketService {
         
         if (!this.protoRoot || !this.isProtoLoaded) {
           // Queue the message if proto isn't loaded yet
-          if (this.messageQueue.length < MAX_QUEUE_SIZE) {
+          if (this.messageQueue.length < this.options.MAX_QUEUE_SIZE) {
             // Try to parse as JSON first
             try {
               const text = new TextDecoder().decode(event.data);
@@ -338,47 +540,39 @@ export class WebSocketService {
         
         try {
           const buffer = new Uint8Array(event.data);
-          const message = decodeTelemetryMessage(this.protoRoot, buffer);
           
-          // Occasionally log message types for debugging (reduce frequency on Pi)
-          const logFrequency = this.isRaspberryPi ? 0.001 : 0.01; // 0.1% or 1%
+          // Check if message is compressed (could add a header to indicate this)
+          const isCompressed = false; // Implement logic to detect compression
+          const decompressedBuffer = isCompressed ? 
+            await this.decompressMessage(buffer, true) : buffer;
           
+          const message = decodeTelemetryMessage(this.protoRoot, decompressedBuffer);
           this.scheduleMessageDelivery(message);
         } catch (error) {
-          console.error("Error decoding message:", error);
+          this.trackError('message_decode', error);
           // Try to parse as JSON as fallback
           try {
             const text = new TextDecoder().decode(event.data);
             const jsonMessage = JSON.parse(text);
             this.scheduleMessageDelivery(jsonMessage);
           } catch (e) {
-            console.error("Failed to parse message as JSON:", e);
+            this.trackError('json_fallback', e);
           }
         }
       };
 
       this.socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        this.notifyConnectionChange(false);
+        this.trackError('socket_error', error);
+        this.setConnectionState(CONNECTION_STATES.ERROR);
       };
 
       this.socket.onclose = (event) => {
         console.log(`WebSocket closed (code: ${event.code}, reason: ${event.reason})`);
-        this.notifyConnectionChange(false);
-        
-        // Exponential backoff for reconnection attempts
-        const backoff = Math.min(30000, this.reconnectInterval * Math.pow(1.5, this.connectionAttempts));
-        console.log(`Will attempt reconnect in ${Math.round(backoff / 1000)} seconds`);
-        
-        setTimeout(() => {
-          if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-            this.connect();
-          }
-        }, backoff);
+        this.setConnectionState(CONNECTION_STATES.DISCONNECTED);
       };
     } catch (error) {
-      console.error("Error creating WebSocket:", error);
-      this.notifyConnectionChange(false);
+      this.trackError('socket_creation', error);
+      this.setConnectionState(CONNECTION_STATES.ERROR);
       setTimeout(() => this.connect(), this.reconnectInterval);
     }
   }
@@ -430,7 +624,7 @@ export class WebSocketService {
    * Get connection status
    */
   isConnected() {
-    return this.socket && this.socket.readyState === WebSocket.OPEN;
+    return this.connectionState === CONNECTION_STATES.CONNECTED;
   }
   
   /**
@@ -442,9 +636,9 @@ export class WebSocketService {
     
     // If no messages for over INACTIVE_THRESHOLD ms and we're supposed to be connected, reconnect
     if (this.lastMessageTime > 0 && 
-        inactiveTime > INACTIVE_THRESHOLD && 
-        this.socket && 
-        this.socket.readyState === WebSocket.OPEN) {
+        inactiveTime > this.options.INACTIVE_THRESHOLD && 
+        this.connectionState === CONNECTION_STATES.CONNECTED) {
+      console.log(`No messages received for ${inactiveTime}ms, reconnecting`);
       this.socket.close();
       this.connect();
     }
@@ -458,28 +652,61 @@ export class WebSocketService {
       try {
         this.socket.send(JSON.stringify({ type: "ping", timestamp: Date.now() }));
       } catch (error) {
-        console.error("Error sending ping:", error);
+        this.trackError('ping', error);
       }
     }
   }
+  
+  /**
+   * Destroy the WebSocket service
+   */
+  destroy() {
+    if (this.socket) {
+      this.socket.close();
+    }
+    
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+    
+    this.subscribers.clear();
+    this.onConnectionChangeCallbacks.clear();
+    this.pendingMessages.clear();
+    this.messageQueue = [];
+    
+    console.log("WebSocket service destroyed");
+  }
 }
 
-// Create WebSocket service instance connecting to port 9094
+// Create WebSocket service instance with secure connection if appropriate
 const hostname = window.location.hostname === 'localhost' ? '0.0.0.0' : window.location.hostname;
-export const wsService = new WebSocketService(`ws://${hostname}:50004/ws`);
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+export const wsService = new WebSocketService(`${protocol}//${hostname}:9094/ws`, {
+  MAX_BATCH_SIZE: 10, // Small batch size for real-time dashboard
+  THROTTLE_TIME_NORMAL: 8, // ~120fps for smooth updates
+  THROTTLE_TIME_LOW_POWER: 33 // 20fps for low-power devices
+});
 
-// Initialize connection and set up periodic connection health checks
+// Initialize connection
 console.log("Initializing WebSocket service");
 wsService.initialize();
 
-// Check connection health less frequently on Raspberry Pi
-const healthCheckInterval = (/Raspberry Pi/i.test(navigator.userAgent) || 
-                            /Linux arm/i.test(navigator.userAgent) || 
-                            localStorage.getItem('forceRaspberryPiMode')) ? 60000 : 30000;
+// Setup health check interval based on device capabilities
+const healthCheckInterval = wsService.lowPowerDevice ? 
+  wsService.options.LOW_POWER_HEALTH_CHECK_INTERVAL : 
+  wsService.options.HEALTH_CHECK_INTERVAL;
 
-setInterval(() => wsService.checkConnection(), healthCheckInterval);
+// Health check interval
+const healthCheckTimer = setInterval(() => wsService.checkConnection(), healthCheckInterval);
 
 // Send periodic pings to keep the connection alive
-setInterval(() => wsService.sendPing(), 25000);
+const pingTimer = setInterval(() => wsService.sendPing(), wsService.options.PING_INTERVAL);
+
+// Add proper cleanup for SPA navigation
+window.addEventListener('beforeunload', () => {
+  clearInterval(healthCheckTimer);
+  clearInterval(pingTimer);
+  wsService.destroy();
+});
 
 export default wsService;

@@ -15,7 +15,7 @@ import (
 
 // RemoveEmptyFields filters out empty strings from a slice.
 func RemoveEmptyFields(fields []string) []string {
-	var out []string
+	out := make([]string, 0, len(fields))
 	for _, f := range fields {
 		if f != "" {
 			out = append(out, f)
@@ -79,8 +79,8 @@ func ParseCSVLine(line string) []string {
 
 // RemoveDuplicates returns a slice with duplicate integers removed.
 func RemoveDuplicates(ids []int) []int {
-	seen := make(map[int]struct{})
-	var result []int
+	seen := make(map[int]struct{}, len(ids))
+	result := make([]int, 0, len(ids))
 	for _, id := range ids {
 		if _, ok := seen[id]; !ok {
 			seen[id] = struct{}{}

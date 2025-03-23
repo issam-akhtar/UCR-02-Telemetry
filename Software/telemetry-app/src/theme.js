@@ -159,6 +159,346 @@ const PALETTE_TOKENS = {
     },
     divider: 'rgba(255, 255, 255, 0.12)',
   },
+  
+  // ===========================================
+  // THEME PALETTE VARIATIONS
+  // ===========================================
+  
+  // Deep Ocean Theme
+  deepOcean: {
+    mode: 'dark',
+    primary: {
+      main: '#2A9D8F',
+      light: '#4DBCAF',
+      dark: '#1D6E64',
+      contrastText: '#E9F5F4',
+    },
+    secondary: {
+      main: '#264653',
+      light: '#3A677A',
+      dark: '#18303A',
+      contrastText: '#E9F5F4',
+    },
+    background: {
+      default: '#0B1D26',
+      paper: '#17313D',
+      subtle: '#1E3945',
+    },
+    text: {
+      primary: '#E9F5F4',
+      secondary: '#2A9D8F',
+      disabled: '#80A9A5',
+    },
+    divider: 'rgba(42, 157, 143, 0.3)',
+  },
+  
+  // Space Horizon Theme
+  spaceHorizon: {
+    mode: 'dark',
+    primary: {
+      main: '#7C4DFF',
+      light: '#9E7CFF',
+      dark: '#5835B0',
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: '#FF4081',
+      light: '#FF6FA3',
+      dark: '#C60055',
+      contrastText: '#FFFFFF',
+    },
+    background: {
+      default: '#0A0E14',
+      paper: '#1A2129',
+      subtle: '#232B36',
+    },
+    text: {
+      primary: '#B2BECD',
+      secondary: '#7C4DFF',
+      disabled: '#6C7A8A',
+    },
+    divider: 'rgba(124, 77, 255, 0.2)',
+  },
+  
+  // Modern Monochrome Theme
+  monochrome: {
+    mode: 'dark',
+    primary: {
+      main: '#FFFFFF',
+      light: '#FFFFFF',
+      dark: '#CCCCCC',
+      contrastText: '#000000',
+    },
+    secondary: {
+      main: '#666666',
+      light: '#888888',
+      dark: '#444444',
+      contrastText: '#FFFFFF',
+    },
+    background: {
+      default: '#121212',
+      paper: '#1E1E1E',
+      subtle: '#2A2A2A',
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#CCCCCC',
+      disabled: '#888888',
+    },
+    divider: 'rgba(255, 255, 255, 0.12)',
+  },
+  
+  // Minimal Red-White-Gold Theme
+  minimalRedWhiteGold: {
+    mode: 'dark',
+    primary: {
+      main: '#B22222',
+      light: '#D42C2C',
+      dark: '#8B1A1A',
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: '#FFD700',
+      light: '#FFDF33',
+      dark: '#CCAC00',
+      contrastText: '#000000',
+    },
+    background: {
+      default: '#121212',
+      paper: '#1E1E1E',
+      subtle: '#2A2A2A',
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#FFD700',
+      disabled: '#888888',
+    },
+    divider: 'rgba(255, 255, 255, 0.12)',
+  },
+  
+  // Light Breeze Theme
+  lightBreeze: {
+    mode: 'light',
+    primary: {
+      main: '#1976d2',
+      light: '#4791db',
+      dark: '#115293',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      main: '#9c27b0',
+      light: '#ba68c8',
+      dark: '#7b1fa2',
+      contrastText: '#ffffff',
+    },
+    background: {
+      default: '#f5f5f5',
+      paper: '#ffffff',
+      subtle: '#f0f0f0',
+    },
+    text: {
+      primary: '#333333',
+      secondary: '#555555',
+      disabled: '#999999',
+    },
+    divider: 'rgba(0, 0, 0, 0.1)',
+  },
+  
+  // Neutral Slate Theme
+  neutralSlate: {
+    mode: 'dark',
+    primary: {
+      main: '#607D8B',
+      light: '#78909C',
+      dark: '#455A64',
+      contrastText: '#ECEFF1',
+    },
+    secondary: {
+      main: '#455A64',
+      light: '#607D8B',
+      dark: '#263238',
+      contrastText: '#ECEFF1',
+    },
+    background: {
+      default: '#263238',
+      paper: '#37474F',
+      subtle: '#455A64',
+    },
+    text: {
+      primary: '#ECEFF1',
+      secondary: '#90A4AE',
+      disabled: '#78909C',
+    },
+    divider: 'rgba(96, 125, 139, 0.2)',
+  },
+  
+  // Calm Dusk Theme
+  calmDusk: {
+    mode: 'dark',
+    primary: {
+      main: '#81A1C1',
+      light: '#A3C1DB',
+      dark: '#5E8AAD',
+      contrastText: '#ECEFF4',
+    },
+    secondary: {
+      main: '#88C0D0',
+      light: '#A6D5E2',
+      dark: '#69A7B9',
+      contrastText: '#ECEFF4',
+    },
+    background: {
+      default: '#2E3440',
+      paper: '#3B4252',
+      subtle: '#434C5E',
+    },
+    text: {
+      primary: '#ECEFF4',
+      secondary: '#81A1C1',
+      disabled: '#7D8896',
+    },
+    divider: 'rgba(129, 161, 193, 0.2)',
+  },
+  
+  // Dark Gray with Red Accent Theme
+  darkGrayRedAccent: {
+    mode: 'dark',
+    primary: {
+      main: '#424242',
+      light: '#757575',
+      dark: '#1c1c1c',
+      contrastText: '#f5f5f5',
+    },
+    secondary: {
+      main: '#ff5252',
+      light: '#ff8a80',
+      dark: '#c50e29',
+      contrastText: '#f5f5f5',
+    },
+    background: {
+      default: '#1c1c1c',
+      paper: '#303030',
+      subtle: '#404040',
+    },
+    text: {
+      primary: '#f5f5f5',
+      secondary: '#bdbdbd',
+      disabled: '#757575',
+    },
+    divider: 'rgba(255, 255, 255, 0.12)',
+  },
+  
+  // Ebony Slate Theme
+  ebonySlate: {
+    mode: 'dark',
+    primary: {
+      main: '#3B3B3B',
+      light: '#5A5A5A',
+      dark: '#292929',
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: '#5A5A5A',
+      light: '#787878',
+      dark: '#3B3B3B',
+      contrastText: '#FFFFFF',
+    },
+    background: {
+      default: '#121212',
+      paper: '#1E1E1E',
+      subtle: '#2A2A2A',
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#BDBDBD',
+      disabled: '#757575',
+    },
+    divider: 'rgba(255, 255, 255, 0.12)',
+  },
+  
+  // Midnight Indigo Theme
+  midnightIndigo: {
+    mode: 'dark',
+    primary: {
+      main: '#242857',
+      light: '#393D6E',
+      dark: '#161938',
+      contrastText: '#EAEAF0',
+    },
+    secondary: {
+      main: '#393D6E',
+      light: '#575C99',
+      dark: '#1F2347',
+      contrastText: '#EAEAF0',
+    },
+    background: {
+      default: '#0D0F25',
+      paper: '#16193A',
+      subtle: '#1E224D',
+    },
+    text: {
+      primary: '#EAEAF0',
+      secondary: '#B0B0C8',
+      disabled: '#7F7F9A',
+    },
+    divider: 'rgba(234, 234, 240, 0.1)',
+  },
+  
+  // Pine Forest Theme
+  pineForest: {
+    mode: 'dark',
+    primary: {
+      main: '#1D3B29',
+      light: '#2A4F3A',
+      dark: '#112218',
+      contrastText: '#E6F1EB',
+    },
+    secondary: {
+      main: '#2A4F3A',
+      light: '#39684D',
+      dark: '#1A3625',
+      contrastText: '#E6F1EB',
+    },
+    background: {
+      default: '#0B1C14',
+      paper: '#11251B',
+      subtle: '#172F22',
+    },
+    text: {
+      primary: '#E6F1EB',
+      secondary: '#A8B8AF',
+      disabled: '#697A70',
+    },
+    divider: 'rgba(166, 192, 177, 0.2)',
+  },
+  
+  // Smoky Purple Theme
+  smokyPurple: {
+    mode: 'dark',
+    primary: {
+      main: '#4B4870',
+      light: '#706DA0',
+      dark: '#393557',
+      contrastText: '#EAE8F5',
+    },
+    secondary: {
+      main: '#706DA0',
+      light: '#8F8CB8',
+      dark: '#524E7A',
+      contrastText: '#EAE8F5',
+    },
+    background: {
+      default: '#1C1A2E',
+      paper: '#2B2840',
+      subtle: '#36325A',
+    },
+    text: {
+      primary: '#EAE8F5',
+      secondary: '#B9B7CC',
+      disabled: '#807E9F',
+    },
+    divider: 'rgba(233, 232, 245, 0.1)',
+  },
 };
 
 /**
@@ -177,10 +517,28 @@ const createOptimizedTheme = (options = {}) => {
     dense = false,
     borderRadius,
     spacing,
+    palette: customPalette = {},
   } = options;
   
-  // Use the palette based on the selected mode
-  const palette = mode === 'light' ? PALETTE_TOKENS.light : PALETTE_TOKENS.dark;
+  // Select the appropriate palette based on mode or use a named palette
+  let palette;
+  
+  if (customPalette.type) {
+    // If a named palette is specified, use it
+    palette = PALETTE_TOKENS[customPalette.type];
+  } else {
+    // Otherwise, use the default light/dark palette
+    palette = mode === 'light' ? PALETTE_TOKENS.light : PALETTE_TOKENS.dark;
+  }
+  
+  // Apply custom palette if provided
+  if (customPalette && Object.keys(customPalette).length > 0) {
+    palette = {
+      mode,
+      ...palette,
+      ...customPalette,
+    };
+  }
   
   // Override with custom colors if provided
   if (primaryColor) {
@@ -1040,18 +1398,142 @@ const createLightweightTheme = (options = {}) => {
   return baseTheme;
 };
 
+// Create all theme variations
+const darkTheme = createOptimizedTheme({ mode: 'dark' });
+const lightTheme = createOptimizedTheme({ mode: 'light' });
+const lightweightTheme = createLightweightTheme({ mode: 'dark' });
+
+// Theme variations based on old themes
+const deepOceanTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.deepOcean,
+  typography: {
+    fontFamily: '"Inter", "sans-serif"',
+    h1: { fontWeight: 800, fontSize: '2.4rem' },
+    h3: { color: PALETTE_TOKENS.deepOcean.secondary.main, fontWeight: 600 }
+  }
+});
+
+const spaceTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.spaceHorizon,
+  typography: {
+    fontFamily: '"Space Mono", monospace',
+    h1: { fontWeight: 700, letterSpacing: '-0.05em' },
+    h3: { color: PALETTE_TOKENS.spaceHorizon.primary.main, textTransform: 'uppercase' }
+  }
+});
+
+const monochromeTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.monochrome,
+  typography: {
+    fontFamily: '"Roboto Mono", monospace',
+    h1: { fontWeight: 300, letterSpacing: '-0.05em' },
+    h3: { color: PALETTE_TOKENS.monochrome.text.secondary, fontWeight: 400 }
+  }
+});
+
+const minimalRedWhiteGoldTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.minimalRedWhiteGold,
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2rem', color: '#FFFFFF' },
+    h3: { fontWeight: 500, color: '#FFD700' }
+  }
+});
+
+const lightBreezeTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.lightBreeze,
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2.4rem' },
+    h3: { fontWeight: 500 }
+  }
+});
+
+const neutralSlateTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.neutralSlate,
+  typography: {
+    fontFamily: '"Open Sans", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2.2rem' },
+    h3: { color: PALETTE_TOKENS.neutralSlate.text.secondary, fontWeight: 500 }
+  }
+});
+
+const calmDuskTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.calmDusk,
+  typography: {
+    fontFamily: '"Fira Sans", sans-serif',
+    h1: { fontWeight: 700, fontSize: '2.5rem' },
+    h3: { color: PALETTE_TOKENS.calmDusk.secondary.main, fontWeight: 600 }
+  }
+});
+
+const darkGrayRedAccentTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.darkGrayRedAccent,
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2rem' },
+    h3: { fontWeight: 500, color: PALETTE_TOKENS.darkGrayRedAccent.secondary.main }
+  }
+});
+
+const ebonySlateTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.ebonySlate,
+  typography: {
+    fontFamily: '"Roboto Mono", monospace',
+    h1: { fontWeight: 700, fontSize: '2.2rem' },
+    h3: { fontWeight: 500, color: PALETTE_TOKENS.ebonySlate.text.secondary }
+  }
+});
+
+const midnightIndigoTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.midnightIndigo,
+  typography: {
+    fontFamily: '"Open Sans", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2.2rem' },
+    h3: { fontWeight: 500, color: PALETTE_TOKENS.midnightIndigo.text.secondary }
+  }
+});
+
+const pineForestTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.pineForest,
+  typography: {
+    fontFamily: '"Fira Sans", sans-serif',
+    h1: { fontWeight: 700, fontSize: '2.3rem' },
+    h3: { fontWeight: 500, color: PALETTE_TOKENS.pineForest.text.secondary }
+  }
+});
+
+const smokyPurpleTheme = createOptimizedTheme({ 
+  palette: PALETTE_TOKENS.smokyPurple,
+  typography: {
+    fontFamily: '"Roboto", sans-serif',
+    h1: { fontWeight: 600, fontSize: '2.3rem' },
+    h3: { fontWeight: 500, color: PALETTE_TOKENS.smokyPurple.text.secondary }
+  }
+});
+
 // Export themed configurations
 export {
   createOptimizedTheme,
   createLightweightTheme,
   DESIGN_TOKENS,
   PALETTE_TOKENS,
+  lightTheme,
+  darkTheme,
+  lightweightTheme,
+  deepOceanTheme,
+  spaceTheme,
+  monochromeTheme,
+  minimalRedWhiteGoldTheme,
+  lightBreezeTheme,
+  neutralSlateTheme,
+  calmDuskTheme,
+  darkGrayRedAccentTheme,
+  ebonySlateTheme,
+  midnightIndigoTheme,
+  pineForestTheme,
+  smokyPurpleTheme,
 };
 
-// Create default themes
-const lightTheme = createOptimizedTheme({ mode: 'light' });
-const darkTheme = createOptimizedTheme({ mode: 'dark' });
-const lightweightTheme = createLightweightTheme({ mode: 'dark' });
-
-// Export default theme (dark mode)
-export default darkTheme;
+// Export default theme as minimalRedWhiteGoldTheme (matching your previous default)
+export default minimalRedWhiteGoldTheme;
