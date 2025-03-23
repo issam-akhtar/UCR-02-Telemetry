@@ -256,13 +256,13 @@ const SoCIndicator = () => {
   const theme = useTheme();
   const { settings } = useContext(ChartSettingsContext);
 
-  // Use InView for visibility detection
+  // Visibility detection using InView
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
     triggerOnce: false
   });
 
-  // Use ResizeObserver to detect container size
+  // ResizeObserver for container dimensions
   const { ref: resizeRef, width = 0, height = 0 } = useResizeObserver();
 
   // Pack gauge state
@@ -285,18 +285,18 @@ const SoCIndicator = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Refs
+  // Refs for animation and timestamp tracking
   const lastTimestampRef = useRef(null);
   const animationFrameRef = useRef(null);
 
-  // Get update interval from settings
+  // Get update interval from dashboard settings (memoized)
   const updateInterval = useMemo(() => (
     settings?.dashboard?.updateInterval
   ), [settings?.dashboard?.updateInterval]);
 
   // Get change threshold from settings
   const changeThreshold = useMemo(() => (
-    settings?.dashboard?.significantChangeThreshold || 0.5
+    settings?.dashboard?.significantChangeThreshold
   ), [settings?.dashboard?.significantChangeThreshold]);
 
   // Check animation settings
@@ -327,7 +327,7 @@ const SoCIndicator = () => {
     }
   }, [voltage, current, minVoltage, maxVoltage, maxCurrent, inView]);
 
-  // Subscribe to pack voltage data
+  // Subscribe to pack voltage data using updateInterval
   const { ref: voltageRef } = useRealTimeData('pack_voltage', (msg) => {
     if (!inView) return; // Skip updates when not visible
 
@@ -354,7 +354,7 @@ const SoCIndicator = () => {
     }
   }, { customInterval: updateInterval });
 
-  // Subscribe to pack current data
+  // Subscribe to pack current data using updateInterval
   const { ref: currentRef } = useRealTimeData('pack_current', (msg) => {
     if (!inView) return; // Skip updates when not visible
 
@@ -377,7 +377,7 @@ const SoCIndicator = () => {
     }
   }, { customInterval: updateInterval });
 
-  // Update SoC stats (without displaying current or time remaining)
+  // Function to update SoC stats (excluding current/time remaining display)
   const updateStats = useCallback((newSoC, newCurrent) => {
     if (!inView) return; // Skip updates when not visible
 
@@ -418,7 +418,7 @@ const SoCIndicator = () => {
     }
   }, [isLoading, inView]);
 
-  // Subscribe to SoC data
+  // Subscribe to SoC data using updateInterval
   const { ref: socRef } = useRealTimeData('aculv_fd_1', (msg) => {
     if (!inView) return; // Skip updates when not visible
 
@@ -465,10 +465,9 @@ const SoCIndicator = () => {
   const socColors = useSoCColors();
   const statusColor = useMemo(() => getSoCColor(soc, socColors), [soc, socColors]);
 
-  // Combine refs
+  // Combine refs for resize, visibility, and real-time data subscriptions
   const setRefs = useCallback(
     (node) => {
-      // Add all refs that need to be attached to the same element
       resizeRef(node);
       inViewRef(node);
       if (voltageRef) voltageRef(node);
@@ -574,7 +573,7 @@ const SoCIndicator = () => {
           {/* SoC bar */}
           <LinearProgress
             variant="determinate"
-            value={Math.min(soc, 100)} // Cap at 100% for the visual bar
+            value={Math.min(soc, 100)}
             sx={{
               height: theme.spacing(0.5),
               borderRadius: theme.shape.borderRadius / 2,
@@ -779,7 +778,7 @@ const SoCIndicator = () => {
               </Box>
               <LinearProgress
                 variant="determinate"
-                value={Math.min(soc, 100)} // Cap at 100% for the visual bar
+                value={Math.min(soc, 100)}
                 sx={{
                   height: theme.spacing(1),
                   borderRadius: theme.shape.borderRadius / 2,
@@ -795,7 +794,7 @@ const SoCIndicator = () => {
           </Paper>
         )}
 
-        {/* If SoC indicator doesn't fit, still show the battery percentage in a compact way */}
+        {/* Compact SoC display for smaller height */}
         {height < 350 && (
           <Box sx={{
             display: 'flex',
@@ -823,7 +822,7 @@ const SoCIndicator = () => {
             <Box sx={{ flex: 1, ml: theme.spacing(1) }}>
               <LinearProgress
                 variant="determinate"
-                value={Math.min(soc, 100)} // Cap at 100% for the visual bar
+                value={Math.min(soc, 100)}
                 sx={{
                   height: theme.spacing(0.5),
                   borderRadius: theme.shape.borderRadius / 2,
@@ -914,17 +913,17 @@ const SoCIndicator = () => {
 
       <Divider />
 
-      {/* Content - Made scrollable but hidden scrollbar when not needed */}
+      {/* Content - Scrollable container */}
       <CardContent
         sx={{
           p: theme.spacing(1.5),
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 0, // Important for proper flex behavior
-          maxHeight: '100%', // Ensure it doesn't overflow
-          overflow: 'auto', // Allow scrolling if needed
-          scrollbarWidth: 'thin', // Firefox
+          minHeight: 0,
+          maxHeight: '100%',
+          overflow: 'auto',
+          scrollbarWidth: 'thin',
           '&::-webkit-scrollbar': {
             width: '4px',
             height: '4px',
@@ -945,7 +944,6 @@ const SoCIndicator = () => {
         }}
       >
         {!inView ? (
-          // Minimal content when not in view
           <Box
             sx={{
               flex: 1,

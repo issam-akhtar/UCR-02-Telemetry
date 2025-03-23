@@ -6,6 +6,7 @@
 package processdata
 
 import (
+	"log"
 	"telem-system/internal/wsserver"
 
 	"go.uber.org/ratelimit"
@@ -20,11 +21,17 @@ var limiter ratelimit.Limiter
 func InitThrottler(intervalMs int) {
 	if intervalMs <= 0 {
 		limiter = nil
-	} else {
-		// Calculate the allowed number of messages per second.
-		rate := 1000 / intervalMs
-		limiter = ratelimit.New(rate)
+		log.Println("Rate limiting disabled")
+		return
 	}
+
+	// Calculate the allowed number of messages per second.
+	rate := 1000 / intervalMs
+	if rate < 1 {
+		rate = 1
+	}
+	limiter = ratelimit.New(rate)
+	log.Printf("Rate limiting enabled: %d messages per second", rate)
 }
 
 // ThrottledBroadcast sends the given message to the WebSocket hub while enforcing

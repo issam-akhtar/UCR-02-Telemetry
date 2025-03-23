@@ -10,12 +10,17 @@ import (
 	"context"
 	"net/http"
 	"strconv"
-
 	"telem-system/pkg/db"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/go-playground/validator/v10"
+)
+
+const (
+	defaultPage     = 1
+	defaultPageSize = 2000
+	maxPageSize     = 35000
 )
 
 // ErrResponse is used to render error responses.
@@ -52,34 +57,52 @@ func ErrRender(err error) render.Renderer {
 // PaginationParams holds pagination parameters.
 type PaginationParams struct {
 	Page     int `validate:"min=1"`
-	PageSize int `validate:"min=1,max=25000"`
+	PageSize int `validate:"min=1,max=35000"`
 }
 
 var validate = validator.New()
 
+// getQueryInt is a helper to parse an integer query parameter with a default value.
+func getQueryInt(q map[string][]string, key string, defaultVal int) (int, error) {
+	if values, ok := q[key]; ok && len(values) > 0 && values[0] != "" {
+		return strconv.Atoi(values[0])
+	}
+	return defaultVal, nil
+}
+
 // parsePaginationParams extracts and validates pagination parameters from the URL.
 func parsePaginationParams(r *http.Request) (limit, offset int, err error) {
 	q := r.URL.Query()
-	params := PaginationParams{Page: 1, PageSize: 15000}
+	params := PaginationParams{
+		Page:     defaultPage,
+		PageSize: defaultPageSize,
+	}
 
-	if pageSizeStr := q.Get("pageSize"); pageSizeStr != "" {
-		params.PageSize, err = strconv.Atoi(pageSizeStr)
-		if err != nil {
-			return
-		}
+	// Use "limit" (preferred) or fall back to "pageSize" for backwards compatibility.
+	if val, errConv := getQueryInt(q, "limit", 0); errConv == nil && val != 0 {
+		params.PageSize = val
+	} else if val, errConv := getQueryInt(q, "pageSize", 0); errConv == nil && val != 0 {
+		params.PageSize = val
+	} else if errConv != nil {
+		return 0, 0, errConv
 	}
-	if pageStr := q.Get("page"); pageStr != "" {
-		params.Page, err = strconv.Atoi(pageStr)
-		if err != nil {
-			return
-		}
+
+	// Parse "page" parameter.
+	if val, errConv := getQueryInt(q, "page", defaultPage); errConv == nil {
+		params.Page = val
+	} else {
+		return 0, 0, errConv
 	}
-	if params.PageSize > 25000 {
-		params.PageSize = 25000
+
+	// Cap maximum page size.
+	if params.PageSize > maxPageSize {
+		params.PageSize = maxPageSize
 	}
+
 	if err = validate.Struct(params); err != nil {
 		return
 	}
+
 	limit = params.PageSize
 	offset = (params.Page - 1) * params.PageSize
 	return
@@ -90,7 +113,6 @@ func makePaginatedHandler[T any](fetchFunc func(ctx context.Context, limit, offs
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS header (adjust in production as needed).
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-
 		limit, offset, err := parsePaginationParams(r)
 		if err != nil {
 			render.Render(w, r, ErrInvalidRequest(err))

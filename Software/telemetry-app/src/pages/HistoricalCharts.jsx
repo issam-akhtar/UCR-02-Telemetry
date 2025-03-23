@@ -1,12 +1,22 @@
-import React, { useEffect, useContext } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
+import React, { useEffect, useContext, useState, useMemo } from 'react';
+import { Box, Typography, IconButton, Paper, Grid, 
+  Badge, Alert, Button, Tooltip, useMediaQuery, alpha, 
+  FormControl, InputLabel, Select, MenuItem, Divider } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { DESIGN_TOKENS } from '../theme';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import GridViewIcon from '@mui/icons-material/GridView';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import GraphSelector from '../components/charts/GraphSelector';
 import HistoricalChartWrapper from '../components/charts/HistoricalChartWrapper';
 import { ChartSelectionContext } from '../contexts/ChartSelectionContext';
+import { ChartSettingsContext } from '../contexts/ChartSettingsContext';
+import { useInView } from 'react-intersection-observer';
 
+// Chart type options from HistoricalCharts.jsx
 const groupedChartOptions = [
   {
     category: "Battery History",
@@ -82,21 +92,47 @@ const groupedChartOptions = [
 
 const HistoricalCharts = () => {
   const theme = useTheme();
-  const scrollbarStyles = {
-    scrollbarWidth: 'thin', // Firefox
-    scrollbarColor: theme.palette.mode === 'dark' ? '#666 #222' : '#aaa #ccc',
-    '&::-webkit-scrollbar': { width: '6px' },
-    '&::-webkit-scrollbar-track': { backgroundColor: theme.palette.mode === 'dark' ? '#222' : '#ccc' },
-    '&::-webkit-scrollbar-thumb': { backgroundColor: theme.palette.mode === 'dark' ? '#666' : '#aaa', borderRadius: '4px' },
-  };
-
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  
+  // Access context data
   const {
     historicalSelectedCharts,
-    setHistoricalSelectedCharts,
     historicalSidebarCollapsed,
     setHistoricalSidebarCollapsed,
   } = useContext(ChartSelectionContext);
 
+  const { settings, updateSettings } = useContext(ChartSettingsContext);
+  
+  // Local state for UI functionality
+  const [globalRefreshTrigger, setGlobalRefreshTrigger] = useState(0);
+  const [refreshingAll, setRefreshingAll] = useState(false);
+  const [gridMode, setGridMode] = useState(settings.dashboard?.chartLayout || 'grid');
+  const [chartSize, setChartSize] = useState(settings.dashboard?.chartSize || 'medium');
+  const [rootRef, rootInView] = useInView();
+
+  // Effect to handle layout modes
+  useEffect(() => {
+    // Update settings when layout changes
+    if (gridMode !== settings.dashboard?.chartLayout) {
+      updateSettings('dashboard', 'chartLayout', gridMode);
+    }
+    
+    // Update settings when chart size changes
+    if (chartSize !== settings.dashboard?.chartSize) {
+      updateSettings('dashboard', 'chartSize', chartSize);
+    }
+    
+    // Force resize event after state changes to ensure charts adjust
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  }, [gridMode, chartSize, settings.dashboard, updateSettings]);
+
+  // Compute chart heights based on size setting
+  const chartHeight = useMemo(() => {
+    return chartSize === 'large' ? 700 : 480; // Medium is 480px
+  }, [chartSize]);
+
+  // Helper to get chart title from chart type
   const getTitle = (chartType) => {
     for (const group of groupedChartOptions) {
       const found = group.options.find((opt) => opt.value === chartType);
@@ -105,19 +141,49 @@ const HistoricalCharts = () => {
     return chartType;
   };
 
-  // Fire resize event after sidebar transitions
+  // Helper to check if a chart is for cell data
+  const isCellData = (chartType) => {
+    return chartType.toLowerCase().includes('cell');
+  };
+
+  // Function to refresh all charts
+  const refreshAllCharts = () => {
+    setRefreshingAll(true);
+    setGlobalRefreshTrigger(prev => prev + 1);
+    setTimeout(() => setRefreshingAll(false), 1000);
+  };
+
+  // Handle chart size change
+  const handleChartSizeChange = (event) => {
+    setChartSize(event.target.value);
+    
+    // Force charts to redraw after size change
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+      setGlobalRefreshTrigger(prev => prev + 0.1); // Partial increment to trigger refresh without full reload
+    }, 150);
+  };
+
+  // Handle toggle layout
+  const handleToggleLayout = () => {
+    setGridMode(prev => prev === 'grid' ? 'list' : 'grid');
+  };
+
+  // Fire resize event after sidebar transitions to ensure charts resize correctly
   useEffect(() => {
-    const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 310);
+    // Use timing from theme transition settings
+    const transitionDuration = theme.transitions.duration.standard;
+    const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), transitionDuration + 10);
     return () => clearTimeout(timer);
-  }, [historicalSidebarCollapsed]);
+  }, [historicalSidebarCollapsed, theme.transitions.duration.standard]);
 
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+    <Box ref={rootRef} sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
       {/* Collapsible LEFT SIDEBAR */}
       <Box
         sx={{
           width: historicalSidebarCollapsed ? 50 : 350,
-          transition: 'width 0.3s',
+          transition: theme.transitions.create('width'),
           borderRight: 1,
           borderColor: 'divider',
           bgcolor: 'background.paper',
@@ -125,13 +191,14 @@ const HistoricalCharts = () => {
           flexDirection: 'column',
           overflowY: 'auto',
           height: '100%',
+          zIndex: DESIGN_TOKENS.zIndex.drawer,
         }}
       >
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            p: 1,
+            p: theme.spacing(1.5),
             borderBottom: 1,
             borderColor: 'divider',
             justifyContent: historicalSidebarCollapsed ? 'center' : 'space-between',
@@ -151,50 +218,209 @@ const HistoricalCharts = () => {
           )}
         </Box>
         {!historicalSidebarCollapsed && (
-          <Box sx={{ p: 2, overflowY: 'auto', ...scrollbarStyles }}>
+          <Box sx={{ p: theme.spacing(2), overflowY: 'auto' }}>
             <GraphSelector
               groupedOptions={groupedChartOptions}
-              selected={historicalSelectedCharts}
-              onChange={setHistoricalSelectedCharts}
+              viewType="historical"
             />
           </Box>
         )}
       </Box>
 
       {/* MAIN CONTENT */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h4" sx={{ mb: 2 }}>
-            Historical Graphs
-          </Typography>
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              border: 1,
-              borderColor: 'divider',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, minmax(600px, 1fr))',
-              gap: 3,
-              overflowX: 'auto',
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        bgcolor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.02)',
+      }}>
+        {/* Top toolbar with controls */}
+        <Box 
+          sx={{ 
+            borderBottom: 1,
+            borderColor: 'divider',
+            p: 1,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 1,
+            backgroundColor: theme.palette.background.paper,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {isMobile && (
+              <IconButton onClick={() => setHistoricalSidebarCollapsed(false)}>
+                <MenuIcon />
+              </IconButton>
+            )}
+
+            <Badge badgeContent={historicalSelectedCharts.length} color="primary">
+              <Typography variant="h6" sx={{ mr: 1 }}>
+                Historical Graphs
+              </Typography>
+            </Badge>
+          </Box>
+          
+          <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 1,
             }}
           >
-            {historicalSelectedCharts.map((type) => {
-              const endpoint = `/${type}`;
-              const isCellData = type.toLowerCase().includes('cell');
-              return (
-                <Box key={type} sx={{ gridColumn: isCellData ? 'span 2' : 'auto' }}>
-                  <HistoricalChartWrapper
-                    endpoint={endpoint}
-                    title={getTitle(type)}
-                    width="100%"
-                    height={isCellData ? 750 : 500}
-                  />
-                </Box>
-              );
-            })}
+            {/* Layout controls - Grid icon and Fullscreen icon */}
+            <Tooltip title="Toggle Layout">
+              <IconButton onClick={handleToggleLayout} color="primary" sx={{ color: theme.palette.error.main }}>
+                <GridViewIcon />
+              </IconButton>
+            </Tooltip>
+            
+            
+            {/* Chart size dropdown */}
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel id="historical-chart-size-label">Chart Size</InputLabel>
+              <Select
+                labelId="historical-chart-size-label"
+                id="historical-chart-size-select"
+                value={chartSize}
+                label="Chart Size"
+                onChange={handleChartSizeChange}
+                sx={{ height: 40 }}
+              >
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="large">Large</MenuItem>
+              </Select>
+            </FormControl>
+            
+            <Divider orientation="vertical" flexItem />
+            
+            {/* Refresh all button */}
+            <Button 
+              variant="contained"
+              color="primary" 
+              startIcon={<RefreshIcon />}
+              size="small"
+              onClick={refreshAllCharts}
+              disabled={refreshingAll}
+            >
+              Refresh All
+            </Button>
           </Box>
         </Box>
+        
+        {/* No charts selected message */}
+        {historicalSelectedCharts.length === 0 && !refreshingAll && (
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            gap: 2,
+            p: 2
+          }}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 4,
+                textAlign: 'center',
+                maxWidth: 600,
+                borderRadius: 2
+              }}
+            >
+              <AutoAwesomeIcon sx={{ fontSize: 50, color: 'primary.main', mb: 2 }} />
+              <Typography variant="h5" gutterBottom>No Charts Selected</Typography>
+              <Typography variant="body1" color="text.secondary" paragraph>
+                Use the sidebar to select historical charts you want to display.
+              </Typography>
+              <Button
+                variant="contained"
+                startIcon={<MenuIcon />}
+                onClick={() => setHistoricalSidebarCollapsed(false)}
+              >
+                Open Chart Selector
+              </Button>
+            </Paper>
+          </Box>
+        )}
+        
+        {/* Charts grid */}
+        {historicalSelectedCharts.length > 0 && (
+          <Box sx={{ p: 2 }}>
+            <Grid 
+              container 
+              spacing={3}  // Increased spacing between charts
+              sx={{ 
+                width: '100%',
+                margin: '0 auto'
+              }}
+            >
+              {historicalSelectedCharts.map((chartType) => {
+                const endpoint = `/${chartType}`;
+                const isCellChart = isCellData(chartType);
+                
+                // In list view, all charts take full width
+                // In grid view, cell charts always take full width, others take one column based on size
+                let colSpan;
+                if (gridMode === 'list') {
+                  colSpan = 12; // Full width in list view
+                } else {
+                  // Grid mode logic
+                  if (isCellChart) {
+                    colSpan = 12; // Cell charts always take full width
+                  } else {
+                    colSpan = chartSize === 'large' ? 12 : 6;
+                  }
+                }
+                
+                // Dynamic height calculation
+                let height;
+                if (isCellChart) {
+                  height = chartHeight * 1.5;
+                } else if (gridMode === 'list') {
+                  height = Math.floor(chartHeight * 1.1); // Slightly taller in list view
+                } else {
+                  height = chartHeight;
+                }
+                
+                return (
+                  <Grid 
+                    item 
+                    xs={12}           // Full width on extra small devices
+                    sm={colSpan === 6 ? 6 : 12}  // On small devices, maintain sizing
+                    md={colSpan}      // Regular sizing for medium+ devices
+                    key={chartType}
+                    sx={{ 
+                      height: `${height}px`,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'all 0.3s ease-in-out',
+                    }}
+                  >
+                    <HistoricalChartWrapper
+                      endpoint={endpoint}
+                      title={getTitle(chartType)}
+                      height="100%" 
+                      refreshTrigger={globalRefreshTrigger}
+                      pageSize={settings.historical.pageSize}
+                      rootInView={rootInView}
+                      key={`${chartType}-${chartSize}-${gridMode}`}
+                      customStyles={{ 
+                        flex: 1, 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        minHeight: isCellChart ? '400px' : '300px' 
+                      }}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
+        )}
       </Box>
     </Box>
   );

@@ -18,9 +18,7 @@ import (
 )
 
 var seq uint64 = 0
-//350.csv start at 700000
-var filePath string = "../../testdata/Data/350.csv"
-var start int = 700000
+
 func main() {
 	// Load configuration
 	cfg, err := config.LoadConfig("../../configs/", "config", "yaml")
@@ -52,7 +50,7 @@ func main() {
 
 // sendCSV reads a CSV file and streams its lines over the WebSocket connection.
 func sendCSV(conn *websocket.Conn) {
-	//filePath := "../../testdata/data.csv"
+	filePath := "../../testdata/data.csv"
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Printf("Error opening CSV file: %v", err)
@@ -66,10 +64,9 @@ func sendCSV(conn *websocket.Conn) {
 		line := scanner.Text()
 		lineCount++
 		// Skip header lines if needed (e.g., first 8 lines)
-		if lineCount <= start {
+		if lineCount <= 8 {
 			continue
 		}
-		fmt.Printf("\rSending line number: %d", lineCount)
 		if err := conn.WriteMessage(websocket.TextMessage, []byte(line)); err != nil {
 			log.Printf("Error sending CSV line: %v", err)
 			return

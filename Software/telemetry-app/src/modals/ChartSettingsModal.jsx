@@ -309,69 +309,6 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                   }}
                 />
               </SettingField>
-              
-              <SettingField 
-                label="Max Data Points" 
-                tooltip="Maximum number of data points to show. Lower values improve performance."
-              >
-                <Slider
-                  value={localSettings.realTime.maxDataPoints || 500}
-                  onChange={(_, value) => handleChange('realTime', 'maxDataPoints', value)}
-                  min={50}
-                  max={2000}
-                  step={50}
-                  marks={[
-                    { value: 100, label: '100' },
-                    { value: 500, label: '500' },
-                    { value: 2000, label: '2000' },
-                  ]}
-                  valueLabelDisplay="auto"
-                  sx={{
-                    '& .MuiSlider-thumb': {
-                      transition: 'all 0.1s ease-in-out',
-                      '&:hover, &.Mui-focusVisible': {
-                        boxShadow: `0 0 0 8px ${alpha(theme.palette.primary.main, 0.16)}`
-                      }
-                    }
-                  }}
-                />
-              </SettingField>
-              
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: 1, 
-                mt: 1,
-                p: 2.5,
-                borderRadius: 2,
-                backgroundColor: alpha(theme.palette.background.default, 0.5), 
-              }}>
-                <Typography variant="subtitle2" fontWeight="medium" sx={{ mb: 1 }}>
-                  Performance Options
-                </Typography>
-                
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={localSettings.realTime.downsample || false}
-                      onChange={(e) => 
-                        handleChange('realTime', 'downsample', e.target.checked)
-                      }
-                      size="small"
-                    />
-                  }
-                  label={
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography variant="body2">Enable Downsampling</Typography>
-                      <Tooltip title="Reduces the number of points displayed to improve performance" arrow>
-                        <IconButton size="small" sx={{ p: 0, ml: 0.5 }}>
-                          <InfoIcon fontSize="small" color="action" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  }
-                />
-              </Box>
             </Stack>
           )}
 
