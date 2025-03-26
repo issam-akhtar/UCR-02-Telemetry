@@ -681,7 +681,7 @@ export class WebSocketService {
 // Create WebSocket service instance with secure connection if appropriate
 const hostname = window.location.hostname === 'localhost' ? '0.0.0.0' : window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-export const wsService = new WebSocketService(`${protocol}//${hostname}:9094/ws`, {
+export const wsService = new WebSocketService(`${protocol}//${hostname}:50004/ws`, {
   MAX_BATCH_SIZE: 10, // Small batch size for real-time dashboard
   THROTTLE_TIME_NORMAL: 8, // ~120fps for smooth updates
   THROTTLE_TIME_LOW_POWER: 33 // 20fps for low-power devices
