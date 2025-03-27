@@ -16,18 +16,6 @@ def run_shell_command(command, wait_for_output=True):
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
 
-# def check_postgres_status():
-#     """Check if PostgreSQL is running."""
-#     print("Checking PostgreSQL status...")
-#     result = subprocess.run(["pg_isready"], capture_output=True, text=True)
-    
-#     if result.returncode == 0:
-#         print("PostgreSQL is running.")
-#         return True
-#     else:
-#         print("PostgreSQL is not running.")
-#         return False
-
 def start_database():
     """Run the shell script to start the database."""
     print("Starting the database...")
@@ -36,38 +24,67 @@ def start_database():
     global dbstarted
     dbstarted = True
 
-# def get_database_name():
-#     """Retrieve the current database name."""
-#     try:
-#         print("Retrieving current database name...")
-#         result = subprocess.run(
-#             ["psql", "-U", "your_db_user", "-d", "your_db_name", "-t", "-c", "SELECT current_database();"],
-#             capture_output=True, text=True
-#         )
-#         db_name = result.stdout.strip()
-#         if db_name:
-#             print(f" Current database name: {db_name}")
-#         else:
-#             print(" Could not retrieve the database name.")
-#     except FileNotFoundError:
-#         print(" psql command not found. Make sure PostgreSQL client tools are installed.")
+def local_backend_script():
+    """Run the shell script to download Go, and dependencies locally."""
+    print("Starting the local backend script...\n")
+    # Run the backend script in a new terminal
+    run_shell_command(["bash", "../backend-processing/telemetry_backend_pi_script.sh"])
+
+def local_frontend_script():
+    """Run the shell script to download react, npm, and dependencies locally."""
+    print("Starting the local frontend script...\n")
+    # Run the backend script in a new terminal
+    run_shell_command(["bash", "./frontend_dependency_script.sh"])
 
 def build_docker():
     """Build Docker using docker-compose."""
     print(" Building Docker containers...")
-    run_shell_command(["docker", "compose", "build"])
+    run_shell_command(["docker", "compose", "build"], wait_for_output=False)
+
+def install_docker():
+    """Run the shell script to install Docker and Docker Compose."""
+    print("Starting Docker installation...\n")
+    # Run the Docker installation script in a new terminal
+    run_shell_command(["bash", "./docker_setup_script.sh"], wait_for_output=False)
+    
+def rebuild_docker():
+    """Rebuild Docker with no cache to ensure new dependencies are installed."""
+    print("\nWARNING: This operation will delete ALL Docker images on your system. This cannot be undone.\n")
+
+    confirm = input("Are you sure you want to proceed? (yes/no): ").strip().lower()
+    if confirm != "yes":
+        print("Rebuild canceled. No changes were made.\n")
+        return
+
+    print("\nRebuilding Docker containers with no cache...\n")
+
+    print("\n--Stopping and removing Docker containers...")
+    run_shell_command(["docker", "compose", "down"])
+
+    print("--Removing existing Docker images...")
+    # Get the list of images
+    images = subprocess.run(
+        ["docker", "images", "-q"],
+        capture_output=True, text=True
+    ).stdout.splitlines()
+
+    # Remove each image
+    for image in images:
+        if image.strip(): 
+            run_shell_command(["docker", "rmi", "-f", image.strip()])
+
+    print("--Old images removed. Rebuilding Docker containers with no cache...\n")
+    run_shell_command(["docker", "compose", "build", "--no-cache"])
 
 def run_docker(detached=False):
     """Run Docker using docker-compose, ensuring the database is running first."""
     if not dbstarted:
         start_database()
-        print("Waiting for the database to start...")
-        time.sleep(5)
+        print("10 seconds for the database to start...")
+        time.sleep(10)
     
     print("Starting Docker containers...")
     command = ["docker", "compose", "up"]
-    if detached:
-        command.append("-d")
     run_shell_command(command, wait_for_output=False)
 
 def view_docker_logs():
@@ -99,6 +116,41 @@ def view_docker_logs():
         else:
             print("Invalid selection. Please enter 1, 2, or 3.")
 
+def simulate_csv():
+    """Simulate a car run using a CSV file."""
+    print("\nSimulating a car run requires a CSV file and it has to be called 'data.csv' (case sensitive).")
+    print("\nMake sure that you had run step 6 first to install Go and all backend dependencies.")
+    while True:
+        choice = input("Do you have the backend dependencies installed and want to proceed with the simulation? (yes/no): ").strip().lower()
+        if choice == "no":
+            print("Returning to main menu...")
+            return
+        elif choice == "yes":
+            break
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+    
+    print("\nBefore proceeding, rename your CSV file to 'data.csv' and place it in:")
+    print("./Software/backend-processing/testdata/")
+    print("\nIf there exists a csv file in the directory and you need to keep it, move it elsewhere first or rename it.\n")
+    
+    while True:
+        confirm = input("Have you renamed your csv and placed it correctly? (yes/no/cancel): ").strip().lower()
+        if confirm == "yes":
+            break
+        elif confirm == "no":
+            print("Please rename and place the file before proceeding.")
+        elif confirm == "cancel":
+            print("Simulator function canceled. Returning to main menu...")
+            return
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+    
+    print("\nStarting simulation...\n")
+    run_shell_command(["bash", "./run_simulator.sh"], wait_for_output=False)
+    print("Simulation started. Check logs for progress.\n")
+
+
 def quit_program():
     """Exit"""
     print(" Exiting program...")
@@ -107,14 +159,16 @@ def quit_program():
 def main_menu():
     while True:
         print("\n UCalgary Racing Telemetry Menu:")
-        #print("1 Check database status")
         print("1. Start database")
-        #print("3 Show database name")
         print("2. Build Docker")
-        print("3. Run Docker")
-        #print("6 Run Docker in detached mode")
-        print("4. View Docker logs")
-        print("5. Exit")
+        print("3. Rebuild Docker (new dependencies)")
+        print("4. Run Docker")
+        print("5. View Docker logs")
+        print("6. Download Go, postgres utils (pg_isready), yq, and backend dependencies locally")
+        print("7. Download React, npm, and frontend dependencies locally")
+        print("8. Simulate Run using CSV file")
+        print("9. Install Docker and Docker Compose")
+        print("10. Exit")
         
         choice = input("Enter your choice: ").strip()
         
@@ -123,10 +177,20 @@ def main_menu():
         elif choice == "2":
             build_docker()
         elif choice == "3":
-            run_docker()
+            rebuild_docker()
         elif choice == "4":
-            view_docker_logs()
+            run_docker()
         elif choice == "5":
+            view_docker_logs()
+        elif choice == "6":
+            local_backend_script()
+        elif choice == "7":
+            local_frontend_script()
+        elif choice == "8":
+            simulate_csv()
+        elif choice == "9":
+            install_docker()
+        elif choice == "10":
             quit_program()
         else:
             print("Invalid choice, please try again.")
