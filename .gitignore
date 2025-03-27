@@ -14,7 +14,9 @@
 # Build directories
 **/build/
 **/build*
+**/components/
 **/managed_components/
+**/Data/
 # CMake generated files
 CMakeLists.txt.user
 CMakeCache.txt

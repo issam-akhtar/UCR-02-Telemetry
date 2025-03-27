@@ -1,0 +1,4 @@
+Record=TopLevelDocument|FileName=Telemetry_Board.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=Telemetry_Board.SchDoc|Designator=CAN Controllers|SchDesignator=CAN Controllers|FileName=CAN_Controller.SchDoc|SheetNumber=4|SymbolType=Normal|RawFileName=CAN_Controller.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=Telemetry_Board.SchDoc|Designator=ESP32|SchDesignator=ESP32|FileName=ESP32.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=ESP32.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=Telemetry_Board.SchDoc|Designator=FTDI USB to JTAG/UART|SchDesignator=FTDI USB to JTAG/UART|FileName=FTDI_USB.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=FTDI_USB.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
