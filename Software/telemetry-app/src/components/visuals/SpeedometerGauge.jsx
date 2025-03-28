@@ -37,10 +37,10 @@ import useResizeObserver from 'use-resize-observer';
 
 // Speed thresholds in km/h
 const SPEED_THRESHOLDS = {
-  LOW: 40,
-  MEDIUM: 80,
-  HIGH: 120,
-  MAX: 240
+  LOW: 20,
+  MEDIUM: 45,
+  HIGH: 50,
+  MAX: 100
 };
 
 /**
