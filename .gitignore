@@ -12,9 +12,12 @@
 .csv
 
 # Build directories
+**/components/*
+**/components/
 **/build/
 **/build*
 **/managed_components/
+**/Data/
 # CMake generated files
 CMakeLists.txt.user
 CMakeCache.txt
@@ -22,8 +25,8 @@ CMakeFiles/
 cmake_install.cmake
 
 # Project specific
-# sdkconfig
-# sdkconfig.old
+sdkconfig
+sdkconfig.old
 
 # Compiled source files
 *.o

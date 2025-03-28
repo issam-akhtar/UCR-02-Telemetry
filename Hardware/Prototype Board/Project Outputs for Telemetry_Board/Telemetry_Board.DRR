@@ -1,0 +1,22 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: Telemetry_Board.PcbDoc   2025-02-10  8:36:39 AM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Telemetry_Board-RoundHoles.TXT
+ASCII SlotHoles File : Telemetry_Board-SlotHoles.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      8mil (0.201mm)                                            Round             99        PTH        13.67inch (347.33mm)
+T2      10mil (0.249mm)                                           Round             90        PTH        15.10inch (383.47mm)
+T3      12mil (0.3mm)                                             Round             184       PTH        24.13inch (612.84mm)
+T4      26mil (0.65mm)                                            Slot              4         PTH        1.41inch (35.69mm)
+T5      30mil (0.762mm)                                           Round             1         PTH        0.00inch (0.00mm)
+T6      40mil (1.021mm)                                           Round             8         PTH        0.83inch (21.00mm)
+T7      43mil (1.1mm)                                             Round             2         PTH        0.10inch (2.54mm)
+T8      118mil (3mm)                                              Round             2         NPTH       0.19inch (4.70mm)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              390
+
+Total Processing Time (hh:mm:ss) : 00:00:00

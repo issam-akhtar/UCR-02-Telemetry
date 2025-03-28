@@ -1,0 +1,13 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [Telemetry_Board.PrjPcb]
+   Generated File[Telemetry_Board-RoundHoles.TXT]
+   Generated File[Telemetry_Board-SlotHoles.TXT]
+   Generated File[Telemetry_Board.LDP]
+   Generated File[Telemetry_Board.DRR]
+
+
+Files Generated   : 4
+Documents Printed : 0
+
+Finished Output Generation At 8:36:39 AM On 2025-02-10
