@@ -1,0 +1,7 @@
+go run simulate_sender.go 
+2025/03/29 17:47:13 Simulated data sender connecting to ws://localhost:9091/telemetry in mode: csv
+2025/03/29 17:47:13 Message delay: 1 ms
+2025/03/29 18:21:53 Sent all 1986033 lines from CSV. Closing connection.
+2025/03/29 18:21:53 Sender terminated cleanly
+
+2100 sec

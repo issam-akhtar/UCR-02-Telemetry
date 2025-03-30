@@ -17,7 +17,8 @@
 #
 # Run as root.
 set -euo pipefail
-
+# Ensure PATH includes PostgreSQL binaries
+export PATH=$PATH:/usr/lib/postgresql/16/bin:/usr/bin:/bin
 # Color codes for output
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -180,7 +181,13 @@ systemctl start postgresql || error_exit "Failed to start PostgreSQL service."
 ###############################################
 if [ "$USERNAME" == "postgres" ]; then
     log_info "Updating 'postgres' user password as per config..."
-    su - postgres -c "psql -c \"ALTER USER postgres WITH PASSWORD '$PASSWORD';\"" || error_exit "Failed to update postgres user password."
+    # Make sure PATH includes PostgreSQL binaries
+    export PATH=$PATH:/usr/lib/postgresql/16/bin
+    # Try different approaches to set password
+    systemctl restart postgresql || error_exit "Failed to restart PostgreSQL service."
+    su - postgres -c "psql -c \"ALTER USER postgres WITH PASSWORD '$PASSWORD';\"" || \
+    sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$PASSWORD';" || \
+    error_exit "Failed to update postgres user password."
 fi
 
 ###############################################

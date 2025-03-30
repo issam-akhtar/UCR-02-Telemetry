@@ -57,9 +57,21 @@ func ParseFloatSignal(decoded map[string]string, key string) float64 {
 // ParseIntSignal extracts an integer value from a map given a key.
 // If the value is missing or cannot be parsed, it returns 0.
 func ParseIntSignal(decoded map[string]string, key string) int {
+	// Try direct lookup first
 	if val, ok := decoded[key]; ok && val != "" {
 		if i, err := strconv.Atoi(val); err == nil {
 			return i
+		}
+	}
+
+	// If not found, try case-insensitive lookup
+	lowerKey := strings.ToLower(key)
+	for k, val := range decoded {
+		if strings.ToLower(k) == lowerKey && val != "" {
+			if i, err := strconv.Atoi(val); err == nil {
+				return i
+			}
+			break
 		}
 	}
 	return 0
@@ -67,6 +79,9 @@ func ParseIntSignal(decoded map[string]string, key string) int {
 
 // ParseCSVLine reads a CSV line and returns a slice of non-empty fields.
 func ParseCSVLine(line string) []string {
+	if line == "" {
+		return nil
+	}
 	r := csv.NewReader(strings.NewReader(line))
 	// Allow a variable number of fields per record.
 	r.FieldsPerRecord = -1

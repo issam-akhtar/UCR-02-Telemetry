@@ -10,13 +10,12 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/spf13/viper v1.19.0
-	go.uber.org/ratelimit v0.3.1
+	golang.org/x/time v0.11.0
 	google.golang.org/protobuf v1.36.5
 )
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
-	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect

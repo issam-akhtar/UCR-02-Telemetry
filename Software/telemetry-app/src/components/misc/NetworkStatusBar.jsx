@@ -1,22 +1,54 @@
-import React, { useContext, memo } from 'react';
+import React, { useContext, memo, useState, useEffect } from 'react';
 import { NetworkStatusContext } from '../../contexts/NetworkStatusContext';
-import { Box, Typography, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, CircularProgress } from '@mui/material';
 import WifiOffIcon from '@mui/icons-material/WifiOff';
 import StorageIcon from '@mui/icons-material/Storage';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { wsService } from '../../services/websocket';
+import { axiosInstance } from '../../services/api';
 
 /**
  * Performance-optimized network status bar component
  * Only renders when there's an issue with connectivity
  */
 const NetworkStatusBar = memo(() => {
-  const { 
-    isWebSocketConnected, 
-    isApiConnected, 
-    lastWebSocketActivity, 
-    lastApiActivity,
-    checkApiConnection 
-  } = useContext(NetworkStatusContext);
+  const { isWebSocketConnected, isApiConnected } = useContext(NetworkStatusContext);
+  const [isCheckingConnection, setIsCheckingConnection] = useState(false);
+  const [lastWebSocketActivity, setLastWebSocketActivity] = useState(null);
+  const [lastApiActivity, setLastApiActivity] = useState(null);
+
+  // Check WebSocket status on mount
+  useEffect(() => {
+    if (wsService.lastMessageTime) {
+      setLastWebSocketActivity(wsService.lastMessageTime);
+    }
+  }, [isWebSocketConnected]);
+
+  // Manual connection check handler
+  const checkConnections = async () => {
+    setIsCheckingConnection(true);
+    
+    // Try to reconnect WebSocket
+    try {
+      wsService.forceConnect();
+    } catch (err) {
+      console.error("Error forcing WebSocket connection:", err);
+    }
+    
+    // Try to check API connectivity
+    try {
+      const resp = await axiosInstance.get('/tcuData?limit=1');
+      if (resp.status === 200) {
+        setLastApiActivity(Date.now());
+      }
+    } catch (err) {
+      console.error("Error checking API connection:", err);
+    }
+    
+    setTimeout(() => {
+      setIsCheckingConnection(false);
+    }, 1500);
+  };
 
   // Hide if all connections are working
   if (isWebSocketConnected && isApiConnected) {
@@ -78,9 +110,14 @@ const NetworkStatusBar = memo(() => {
             color: 'inherit',
             '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' }
           }} 
-          onClick={checkApiConnection}
+          onClick={checkConnections}
+          disabled={isCheckingConnection}
         >
-          <RefreshIcon fontSize="small" />
+          {isCheckingConnection ? (
+            <CircularProgress size={16} color="inherit" />
+          ) : (
+            <RefreshIcon fontSize="small" />
+          )}
         </IconButton>
       </Box>
     </Tooltip>

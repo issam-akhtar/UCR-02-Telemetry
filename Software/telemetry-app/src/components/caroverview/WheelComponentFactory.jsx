@@ -3,291 +3,267 @@ import { useTheme } from '@mui/material';
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 
 /**
- * Redesigned factory functions for creating wheel component overlays
- * with improved styling and modern UI elements that respect theme and settings
+ * Performance-optimized factory functions for creating wheel component overlays
+ * Simplified implementation focusing on speed and minimal re-rendering
  */
 
-export const createSuspensionComponent = (Component, position, value, customSettings = {}) => {
+/**
+ * Creates common settings once to avoid recalculation in each factory function
+ */
+const useCommonSettings = (customSettings = {}) => {
   const theme = useTheme();
   const { settings } = useContext(ChartSettingsContext);
   
-  // Animation settings based on context
-  const animationsEnabled = useMemo(() => 
-    customSettings.animationsEnabled !== undefined 
-      ? customSettings.animationsEnabled 
-      : (settings.global.animationDuration > 0 && settings.global.enableTransitions),
-  [customSettings.animationsEnabled, settings.global.animationDuration, settings.global.enableTransitions]);
-
-  const animationDuration = useMemo(() => 
-    customSettings.animationDuration || `${settings.global.animationDuration}ms`,
-  [customSettings.animationDuration, settings.global.animationDuration]);
-
-  // Hardware acceleration
-  const enableHardwareAcceleration = useMemo(() =>
-    customSettings.enableHardwareAcceleration !== undefined
-      ? customSettings.enableHardwareAcceleration
-      : settings.global.enableHardwareAcceleration,
-  [customSettings.enableHardwareAcceleration, settings.global.enableHardwareAcceleration]);
-  
-  const suspensionValues = useMemo(() => ({
-    FL: position === 'FL' ? value : null,
-    FR: position === 'FR' ? value : null,
-    RL: position === 'RL' ? value : null,
-    RR: position === 'RR' ? value : null,
-  }), [position, value]);
-  
-  const componentSettings = useMemo(() => ({
-    transformForCard: true,
-    compact: true,
-    // Pass animation and hardware acceleration settings
-    animationsEnabled,
-    animationDuration,
-    enableHardwareAcceleration,
-    // Pass other settings
-    significantChangeThreshold: settings.dashboard.significantChangeThreshold,
-    sx: {
-      height: '100%', 
+  return useMemo(() => {
+    // Extract global settings with fallbacks
+    const {
+      animationDuration = 0,
+      enableTransitions = false,
+      enableHardwareAcceleration = true
+    } = settings.global || {};
+    
+    // Extract dashboard settings with fallbacks
+    const {
+      chartSize = 'medium',
+      significantChangeThreshold = 1.5,
+      updateInterval = 300,
+      useImperialUnits = false,
+      showTempInF = false
+    } = settings.dashboard || {};
+    
+    // Animation settings - using simple defaults and overrides
+    const animationsEnabled = customSettings.animationsEnabled ?? 
+      (animationDuration > 0 && enableTransitions);
+    
+    const animDuration = customSettings.animationDuration ?? 
+      (typeof animationDuration === 'string' ? animationDuration : `${animationDuration}ms`);
+    
+    const animEasing = customSettings.animationEasing ?? 'ease-out';
+    
+    const hwAcceleration = customSettings.enableHardwareAcceleration ?? 
+      enableHardwareAcceleration;
+    
+    // Calculate size scale once
+    const sizeScale = chartSize === 'large' ? 1.2 : 
+                      chartSize === 'small' ? 0.8 : 1.0;
+    
+    // Base styles for all components
+    const baseStyles = {
+      height: '100%',
       padding: 0,
       margin: 0,
       boxSizing: 'border-box',
       minHeight: 'auto',
-      // Modern styling using theme
       borderRadius: theme.shape.borderRadius / 4,
-      '& .MuiLinearProgress-root': {
-        height: 3,
-        borderRadius: theme.shape.borderRadius / 2,
-      },
+      // SVG styling
       '& svg': {
-        fontSize: '0.7rem',
+        fontSize: `${0.7 * sizeScale}rem`,
         filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))',
-        willChange: enableHardwareAcceleration ? 'transform, filter' : 'auto',
+        ...(hwAcceleration ? { willChange: 'transform' } : {})
       },
-      ...(customSettings?.sx || {}),
+      // Typography styles pre-computed for all components
+      '& .MuiTypography-body2': {
+        fontSize: `${0.65 * sizeScale}rem`
+      },
+      '& .MuiTypography-caption': {
+        fontSize: `${0.6 * sizeScale}rem`
+      }
+    };
+    
+    return {
+      theme,
+      settings,
+      animationsEnabled,
+      animationDuration: animDuration,
+      animationEasing: animEasing,
+      enableHardwareAcceleration: hwAcceleration,
+      significantChangeThreshold,
+      updateInterval,
+      useImperialUnits,
+      showTempInF,
+      sizeScale,
+      baseStyles
+    };
+  }, [theme, settings, customSettings]);
+};
+
+/**
+ * Creates a suspension component with optimized settings
+ */
+export const createSuspensionComponent = (Component, position, value, customSettings = {}) => {
+  // Get common settings - only recalculated when dependencies change
+  const commonSettings = useCommonSettings(customSettings);
+  
+  // Create suspension values object - only recreated when position or value changes
+  const suspensionValues = {
+    FL: position === 'FL' ? value : null,
+    FR: position === 'FR' ? value : null,
+    RL: position === 'RL' ? value : null,
+    RR: position === 'RR' ? value : null
+  };
+  
+  // Component-specific styles
+  const componentStyles = {
+    ...commonSettings.baseStyles,
+    '& .MuiLinearProgress-root': {
+      height: 3 * commonSettings.sizeScale,
+      borderRadius: commonSettings.theme.shape.borderRadius / 2
     },
-    ...customSettings,
-  }), [theme, animationsEnabled, animationDuration, enableHardwareAcceleration, 
-      settings.dashboard.significantChangeThreshold, customSettings]);
+    ...(customSettings.sx || {})
+  };
   
   return (
     <Component 
       wheelFilter={position} 
       suspensionValues={suspensionValues}
-      {...componentSettings}
+      transformForCard={true}
+      compact={true}
+      animationsEnabled={commonSettings.animationsEnabled}
+      animationDuration={commonSettings.animationDuration}
+      animationEasing={commonSettings.animationEasing}
+      enableHardwareAcceleration={commonSettings.enableHardwareAcceleration}
+      significantChangeThreshold={commonSettings.significantChangeThreshold}
+      updateInterval={commonSettings.updateInterval}
+      useImperialUnits={commonSettings.useImperialUnits}
+      sx={componentStyles}
+      {...customSettings}
     />
   );
 };
 
-export const createWheelSpeedComponent = (Component, position, frequency, customSettings = {}) => {
-  const theme = useTheme();
-  const { settings } = useContext(ChartSettingsContext);
+/**
+ * Creates a wheel speed component with optimized settings
+ */
+export const createWheelSpeedComponent = (Component, position, frequency, tireSize, customSettings = {}) => {
+  // Get common settings
+  const commonSettings = useCommonSettings(customSettings);
   
-  // Animation settings based on context
-  const animationsEnabled = useMemo(() => 
-    customSettings.animationsEnabled !== undefined 
-      ? customSettings.animationsEnabled 
-      : (settings.global.animationDuration > 0 && settings.global.enableTransitions),
-  [customSettings.animationsEnabled, settings.global.animationDuration, settings.global.enableTransitions]);
-
-  const animationDuration = useMemo(() => 
-    customSettings.animationDuration || `${settings.global.animationDuration}ms`,
-  [customSettings.animationDuration, settings.global.animationDuration]);
-
-  // Hardware acceleration
-  const enableHardwareAcceleration = useMemo(() =>
-    customSettings.enableHardwareAcceleration !== undefined
-      ? customSettings.enableHardwareAcceleration
-      : settings.global.enableHardwareAcceleration,
-  [customSettings.enableHardwareAcceleration, settings.global.enableHardwareAcceleration]);
-  
-  const speedValues = useMemo(() => ({
+  // Create speed values object
+  const speedValues = {
     FL: position === 'FL' ? frequency : null,
     FR: position === 'FR' ? frequency : null,
     RL: position === 'RL' ? frequency : null,
-    RR: position === 'RR' ? frequency : null,
-  }), [position, frequency]);
+    RR: position === 'RR' ? frequency : null
+  };
   
-  const componentSettings = useMemo(() => ({
-    transformForCard: true,
-    compact: true,
-    // Pass animation and hardware acceleration settings
-    animationsEnabled,
-    animationDuration,
-    enableHardwareAcceleration,
-    // Pass unit conversion settings
-    useImperialUnits: settings.dashboard.useImperialUnits,
-    significantChangeThreshold: settings.dashboard.significantChangeThreshold,
-    sx: {
-      height: '100%',
-      padding: 0,
-      margin: 0,
-      boxSizing: 'border-box',
-      minHeight: 'auto',
-      // Modern styling using theme
-      borderRadius: theme.shape.borderRadius / 4,
-      '& svg': {
-        fontSize: '0.7rem',
-        filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))',
-        willChange: enableHardwareAcceleration ? 'transform, filter' : 'auto',
-      },
-      ...(customSettings?.sx || {}),
-    },
-    ...customSettings,
-  }), [theme, animationsEnabled, animationDuration, enableHardwareAcceleration, 
-      settings.dashboard.useImperialUnits, settings.dashboard.significantChangeThreshold, 
-      customSettings]);
+  // Component-specific styles
+  const componentStyles = {
+    ...commonSettings.baseStyles,
+    ...(customSettings.sx || {})
+  };
   
   return (
     <Component 
       wheelFilter={position}
       speedValues={speedValues}
-      {...componentSettings}
+      transformForCard={true}
+      compact={true}
+      animationsEnabled={commonSettings.animationsEnabled}
+      animationDuration={commonSettings.animationDuration}
+      animationEasing={commonSettings.animationEasing}
+      enableHardwareAcceleration={commonSettings.enableHardwareAcceleration}
+      significantChangeThreshold={commonSettings.significantChangeThreshold}
+      updateInterval={commonSettings.updateInterval}
+      useImperialUnits={commonSettings.useImperialUnits}
+      tireSize={tireSize}
+      sx={componentStyles}
+      {...customSettings}
     />
   );
 };
 
+/**
+ * Creates a strain component with optimized settings
+ */
 export const createStrainComponent = (Component, position, strain, customSettings = {}) => {
-  const theme = useTheme();
-  const { settings } = useContext(ChartSettingsContext);
+  // Get common settings
+  const commonSettings = useCommonSettings(customSettings);
   
-  // Animation settings based on context
-  const animationsEnabled = useMemo(() => 
-    customSettings.animationsEnabled !== undefined 
-      ? customSettings.animationsEnabled 
-      : (settings.global.animationDuration > 0 && settings.global.enableTransitions),
-  [customSettings.animationsEnabled, settings.global.animationDuration, settings.global.enableTransitions]);
-
-  const animationDuration = useMemo(() => 
-    customSettings.animationDuration || `${settings.global.animationDuration}ms`,
-  [customSettings.animationDuration, settings.global.animationDuration]);
-
-  // Hardware acceleration
-  const enableHardwareAcceleration = useMemo(() =>
-    customSettings.enableHardwareAcceleration !== undefined
-      ? customSettings.enableHardwareAcceleration
-      : settings.global.enableHardwareAcceleration,
-  [customSettings.enableHardwareAcceleration, settings.global.enableHardwareAcceleration]);
-  
-  const strainValues = useMemo(() => ({
+  // Create strain values object
+  const strainValues = {
     FL: position === 'FL' ? strain : null,
     FR: position === 'FR' ? strain : null,
     RL: position === 'RL' ? strain : null,
-    RR: position === 'RR' ? strain : null,
-  }), [position, strain]);
+    RR: position === 'RR' ? strain : null
+  };
   
-  const componentSettings = useMemo(() => ({
-    transformForCard: true,
-    compact: true,
-    // Pass animation and hardware acceleration settings
-    animationsEnabled,
-    animationDuration,
-    enableHardwareAcceleration,
-    significantChangeThreshold: settings.dashboard.significantChangeThreshold,
-    sx: {
-      height: '100%',
-      padding: 0,
-      margin: 0,
-      boxSizing: 'border-box',
-      minHeight: 'auto',
-      // Modern styling using theme
-      borderRadius: theme.shape.borderRadius / 4,
-      '&::after': {
-        inset: -2,
-      },
-      '& svg': {
-        fontSize: '0.7rem',
-        filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))',
-        willChange: enableHardwareAcceleration ? 'transform, filter' : 'auto',
-      },
-      ...(customSettings?.sx || {}),
+  // Component-specific styles
+  const componentStyles = {
+    ...commonSettings.baseStyles,
+    '&::after': {
+      inset: -2
     },
-    ...customSettings,
-  }), [theme, animationsEnabled, animationDuration, enableHardwareAcceleration, 
-      settings.dashboard.significantChangeThreshold, customSettings]);
+    '& .MuiTypography-caption': {
+      padding: `${0.2 * commonSettings.sizeScale}px ${0.5 * commonSettings.sizeScale}px`
+    },
+    ...(customSettings.sx || {})
+  };
   
   return (
     <Component 
       wheelFilter={position}
       strainValues={strainValues}
-      {...componentSettings}
+      transformForCard={true}
+      compact={true}
+      animationsEnabled={commonSettings.animationsEnabled}
+      animationDuration={commonSettings.animationDuration}
+      animationEasing={commonSettings.animationEasing}
+      enableHardwareAcceleration={commonSettings.enableHardwareAcceleration}
+      significantChangeThreshold={commonSettings.significantChangeThreshold}
+      updateInterval={commonSettings.updateInterval}
+      sx={componentStyles}
+      {...customSettings}
     />
   );
 };
 
+/**
+ * Creates an aero component with optimized settings
+ */
 export const createAeroComponent = (Component, position, data, customSettings = {}) => {
-  const theme = useTheme();
-  const { settings } = useContext(ChartSettingsContext);
+  // Get common settings
+  const commonSettings = useCommonSettings(customSettings);
   
-  // Animation settings based on context
-  const animationsEnabled = useMemo(() => 
-    customSettings.animationsEnabled !== undefined 
-      ? customSettings.animationsEnabled 
-      : (settings.global.animationDuration > 0 && settings.global.enableTransitions),
-  [customSettings.animationsEnabled, settings.global.animationDuration, settings.global.enableTransitions]);
-
-  const animationDuration = useMemo(() => 
-    customSettings.animationDuration || `${settings.global.animationDuration}ms`,
-  [customSettings.animationDuration, settings.global.animationDuration]);
-
-  // Hardware acceleration
-  const enableHardwareAcceleration = useMemo(() =>
-    customSettings.enableHardwareAcceleration !== undefined
-      ? customSettings.enableHardwareAcceleration
-      : settings.global.enableHardwareAcceleration,
-  [customSettings.enableHardwareAcceleration, settings.global.enableHardwareAcceleration]);
+  // Create aero values object with null safety
+  const aeroValues = {
+    FL: position === 'FL' ? { pressure: data?.pressure ?? 0, temperature: data?.temperature ?? 0 } : null,
+    FR: position === 'FR' ? { pressure: data?.pressure ?? 0, temperature: data?.temperature ?? 0 } : null,
+    RL: position === 'RL' ? { pressure: data?.pressure ?? 0, temperature: data?.temperature ?? 0 } : null,
+    RR: position === 'RR' ? { pressure: data?.pressure ?? 0, temperature: data?.temperature ?? 0 } : null
+  };
   
-  const aeroValues = useMemo(() => {
-    const pressure = data?.pressure;
-    const temperature = data?.temperature;
-    return {
-      FL: position === 'FL' ? { pressure, temperature } : null,
-      FR: position === 'FR' ? { pressure, temperature } : null,
-      RL: position === 'RL' ? { pressure, temperature } : null,
-      RR: position === 'RR' ? { pressure, temperature } : null,
-    };
-  }, [position, data]);
-  
-  const componentSettings = useMemo(() => ({
-    transformForCard: true,
-    compact: true,
-    // Pass animation and hardware acceleration settings
-    animationsEnabled,
-    animationDuration,
-    enableHardwareAcceleration,
-    // Pass temperature unit setting
-    showTempInF: settings.dashboard.showTempInF,
-    significantChangeThreshold: settings.dashboard.significantChangeThreshold,
-    sx: {
-      height: '100%',
-      padding: 0,
-      margin: 0,
-      boxSizing: 'border-box',
-      minHeight: 'auto',
-      // Modern styling using theme
-      borderRadius: theme.shape.borderRadius / 4,
-      '& > .MuiBox-root': {
-        py: 0.3,
-        borderRadius: theme.shape.borderRadius / 4,
-      },
-      '& .MuiBox-root + .MuiBox-root': {
-        mt: 0.2,
-      },
-      '& svg': {
-        fontSize: '0.7rem',
-        filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))',
-        willChange: enableHardwareAcceleration ? 'transform, filter' : 'auto',
-      },
-      ...(customSettings?.sx || {}),
+  // Component-specific styles
+  const componentStyles = {
+    ...commonSettings.baseStyles,
+    '& > .MuiBox-root': {
+      py: 0.3 * commonSettings.sizeScale,
+      borderRadius: commonSettings.theme.shape.borderRadius / 4
     },
-    ...customSettings,
-  }), [theme, animationsEnabled, animationDuration, enableHardwareAcceleration, 
-      settings.dashboard.showTempInF, settings.dashboard.significantChangeThreshold, 
-      customSettings]);
+    '& .MuiBox-root + .MuiBox-root': {
+      mt: 0.2 * commonSettings.sizeScale
+    },
+    '& .MuiTypography-caption': {
+      padding: `${0.2 * commonSettings.sizeScale}px ${0.5 * commonSettings.sizeScale}px`
+    },
+    ...(customSettings.sx || {})
+  };
   
   return (
     <Component 
       wheelFilter={position}
       aeroValues={aeroValues}
-      {...componentSettings}
+      transformForCard={true}
+      compact={true}
+      animationsEnabled={commonSettings.animationsEnabled}
+      animationDuration={commonSettings.animationDuration}
+      animationEasing={commonSettings.animationEasing}
+      enableHardwareAcceleration={commonSettings.enableHardwareAcceleration}
+      significantChangeThreshold={commonSettings.significantChangeThreshold}
+      updateInterval={commonSettings.updateInterval}
+      useImperialUnits={commonSettings.useImperialUnits}
+      showTempInF={commonSettings.showTempInF}
+      sx={componentStyles}
+      {...customSettings}
     />
   );
 };

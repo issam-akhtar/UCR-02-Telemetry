@@ -9,7 +9,6 @@ package db
 import (
 	"context"
 	"database/sql"
-
 	"telem-system/pkg/types"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -37,6 +36,11 @@ func Connect(connStr string) (*sql.DB, error) {
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
+
+	// Set connection pool settings for better performance
+	db.SetMaxOpenConns(15)
+	db.SetMaxIdleConns(5)
+
 	DB = db
 	return db, nil
 }
@@ -54,7 +58,6 @@ func (q *Queries) FetchTCUDataPaginated(ctx context.Context, limit, offset int) 
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.TCU_Data
 	for rows.Next() {
 		var rec types.TCU_Data
@@ -96,7 +99,6 @@ func (q *Queries) FetchCellDataPaginated(ctx context.Context, limit, offset int)
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.Cell_Data
 	for rows.Next() {
 		var rec types.Cell_Data
@@ -139,7 +141,6 @@ func (q *Queries) FetchRearAnalogDataPaginated(ctx context.Context, limit, offse
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.RearAnalog_Data
 	for rows.Next() {
 		var rec types.RearAnalog_Data
@@ -174,7 +175,6 @@ func (q *Queries) FetchRearAeroDataPaginated(ctx context.Context, limit, offset 
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.RearAero_Data
 	for rows.Next() {
 		var rec types.RearAero_Data
@@ -207,7 +207,6 @@ func (q *Queries) FetchFrontAeroDataPaginated(ctx context.Context, limit, offset
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.FrontAero_Data
 	for rows.Next() {
 		var rec types.FrontAero_Data
@@ -240,7 +239,6 @@ func (q *Queries) FetchGPSBestPosDataPaginated(ctx context.Context, limit, offse
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.GPSBestPos_Data
 	for rows.Next() {
 		var rec types.GPSBestPos_Data
@@ -274,7 +272,6 @@ func (q *Queries) FetchRearFrequencyDataPaginated(ctx context.Context, limit, of
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.RearFrequency_Data
 	for rows.Next() {
 		var rec types.RearFrequency_Data
@@ -305,7 +302,6 @@ func (q *Queries) FetchBamocarRxDataPaginated(ctx context.Context, limit, offset
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.BamocarRxData_Data
 	for rows.Next() {
 		var rec types.BamocarRxData_Data
@@ -338,7 +334,6 @@ func (q *Queries) FetchACULVFD2DataPaginated(ctx context.Context, limit, offset 
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.ACULV_FD_2_Data
 	for rows.Next() {
 		var rec types.ACULV_FD_2_Data
@@ -367,7 +362,6 @@ func (q *Queries) FetchACULV1DataPaginated(ctx context.Context, limit, offset in
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.ACULV1_Data
 	for rows.Next() {
 		var rec types.ACULV1_Data
@@ -396,7 +390,6 @@ func (q *Queries) FetchACULV2DataPaginated(ctx context.Context, limit, offset in
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.ACULV2_Data
 	for rows.Next() {
 		var rec types.ACULV2_Data
@@ -424,7 +417,6 @@ func (q *Queries) FetchPDM1DataPaginated(ctx context.Context, limit, offset int)
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.PDM1_Data
 	for rows.Next() {
 		var rec types.PDM1_Data
@@ -457,7 +449,6 @@ func (q *Queries) FetchRearStrainGauges2DataPaginated(ctx context.Context, limit
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.RearStrainGauges2_Data
 	for rows.Next() {
 		var rec types.RearStrainGauges2_Data
@@ -489,7 +480,6 @@ func (q *Queries) FetchRearStrainGauges1DataPaginated(ctx context.Context, limit
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.RearStrainGauges1_Data
 	for rows.Next() {
 		var rec types.RearStrainGauges1_Data
@@ -509,38 +499,6 @@ func (q *Queries) FetchRearStrainGauges1DataPaginated(ctx context.Context, limit
 	return data, nil
 }
 
-// FetchThermDataPaginated returns paginated Thermistor data.
-func (q *Queries) FetchThermDataPaginated(ctx context.Context, limit, offset int) ([]types.Therm_Data, error) {
-	query := `
-		SELECT timestamp, thermistor_id, therm1, therm2, therm3, therm4, therm5, therm6, therm7, therm8, 
-		       therm9, therm10, therm11, therm12, therm13, therm14, therm15, therm16
-		FROM therm_data
-		ORDER BY timestamp ASC
-		LIMIT $1 OFFSET $2
-	`
-	rows, err := q.db.QueryContext(ctx, query, limit, offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var data []types.Therm_Data
-	for rows.Next() {
-		var rec types.Therm_Data
-		if err := rows.Scan(
-			&rec.Timestamp,
-			&rec.ThermistorID, &rec.Therm1, &rec.Therm2, &rec.Therm3, &rec.Therm4,
-			&rec.Therm5, &rec.Therm6, &rec.Therm7, &rec.Therm8, &rec.Therm9, &rec.Therm10,
-			&rec.Therm11, &rec.Therm12, &rec.Therm13, &rec.Therm14, &rec.Therm15, &rec.Therm16,
-		); err != nil {
-			return nil, err
-		}
-		data = append(data, rec)
-	}
-	return data, nil
-}
-
-// FetchBamocarDataPaginated returns paginated Bamocar data.
 func (q *Queries) FetchBamocarDataPaginated(ctx context.Context, limit, offset int) ([]types.TCU2_data, error) {
 	query := `
 		SELECT timestamp, bamocar_frg, bamocar_rfe, brake_light
@@ -565,6 +523,60 @@ func (q *Queries) FetchBamocarDataPaginated(ctx context.Context, limit, offset i
 	return data, nil
 }
 
+// FetchThermDataPaginated returns paginated Thermistor data.
+func (q *Queries) FetchThermDataPaginated(ctx context.Context, limit, offset int) ([]types.Therm_Data, error) {
+	query := `
+		SELECT timestamp, thermistor_id, therm1, therm2, therm3, therm4, therm5, therm6, therm7, therm8, 
+		       therm9, therm10, therm11, therm12, therm13, therm14, therm15, therm16
+		FROM therm_data
+		ORDER BY timestamp ASC
+		LIMIT $1 OFFSET $2
+	`
+	rows, err := q.db.QueryContext(ctx, query, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var data []types.Therm_Data
+	for rows.Next() {
+		var rec types.Therm_Data
+		if err := rows.Scan(
+			&rec.Timestamp,
+			&rec.ThermistorID, &rec.Therm1, &rec.Therm2, &rec.Therm3, &rec.Therm4,
+			&rec.Therm5, &rec.Therm6, &rec.Therm7, &rec.Therm8, &rec.Therm9, &rec.Therm10,
+			&rec.Therm11, &rec.Therm12, &rec.Therm13, &rec.Therm14, &rec.Therm15, &rec.Therm16,
+		); err != nil {
+			return nil, err
+		}
+		data = append(data, rec)
+	}
+	return data, nil
+}
+
+// FetchTCU2DataPaginated returns paginated TCU2 data.
+func (q *Queries) FetchTCU2DataPaginated(ctx context.Context, limit, offset int) ([]types.TCU2_data, error) {
+	query := `
+		SELECT timestamp, brake_light, bamocar_rfe, bamocar_frg
+		FROM tcu2
+		ORDER BY timestamp ASC
+		LIMIT $1 OFFSET $2
+	`
+	rows, err := q.db.QueryContext(ctx, query, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var data []types.TCU2_data
+	for rows.Next() {
+		var rec types.TCU2_data
+		if err := rows.Scan(&rec.Timestamp, &rec.BrakeLight, &rec.BamocarRFE, &rec.BamocarFRG); err != nil {
+			return nil, err
+		}
+		data = append(data, rec)
+	}
+	return data, nil
+}
+
 // FetchBamocarTxDataPaginated returns paginated Bamocar Tx data.
 func (q *Queries) FetchBamocarTxDataPaginated(ctx context.Context, limit, offset int) ([]types.BamocarTxData_Data, error) {
 	query := `
@@ -578,7 +590,6 @@ func (q *Queries) FetchBamocarTxDataPaginated(ctx context.Context, limit, offset
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.BamocarTxData_Data
 	for rows.Next() {
 		var rec types.BamocarTxData_Data
@@ -603,7 +614,6 @@ func (q *Queries) FetchBamoCarReTransmitDataPaginated(ctx context.Context, limit
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.BamoCarReTransmit_Data
 	for rows.Next() {
 		var rec types.BamoCarReTransmit_Data
@@ -628,7 +638,6 @@ func (q *Queries) FetchEncoderDataPaginated(ctx context.Context, limit, offset i
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.Encoder_Data
 	for rows.Next() {
 		var rec types.Encoder_Data
@@ -653,7 +662,6 @@ func (q *Queries) FetchPackCurrentDataPaginated(ctx context.Context, limit, offs
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.PackCurrent_Data
 	for rows.Next() {
 		var rec types.PackCurrent_Data
@@ -678,7 +686,6 @@ func (q *Queries) FetchPackVoltageDataPaginated(ctx context.Context, limit, offs
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.PackVoltage_Data
 	for rows.Next() {
 		var rec types.PackVoltage_Data
@@ -703,7 +710,6 @@ func (q *Queries) FetchPDMCurrentDataPaginated(ctx context.Context, limit, offse
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.PDMCurrent_Data
 	for rows.Next() {
 		var rec types.PDMCurrent_Data
@@ -738,7 +744,6 @@ func (q *Queries) FetchPDMReTransmitDataPaginated(ctx context.Context, limit, of
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.PDMReTransmit_Data
 	for rows.Next() {
 		var rec types.PDMReTransmit_Data
@@ -771,7 +776,6 @@ func (q *Queries) FetchINSGPSDataPaginated(ctx context.Context, limit, offset in
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.INS_GPS_Data
 	for rows.Next() {
 		var rec types.INS_GPS_Data
@@ -803,7 +807,6 @@ func (q *Queries) FetchINSIMUDataPaginated(ctx context.Context, limit, offset in
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.INS_IMU_Data
 	for rows.Next() {
 		var rec types.INS_IMU_Data
@@ -837,7 +840,6 @@ func (q *Queries) FetchFrontFrequencyDataPaginated(ctx context.Context, limit, o
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.FrontFrequency_Data
 	for rows.Next() {
 		var rec types.FrontFrequency_Data
@@ -862,7 +864,6 @@ func (q *Queries) FetchFrontStrainGauges1DataPaginated(ctx context.Context, limi
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.FrontStrainGauges1_Data
 	for rows.Next() {
 		var rec types.FrontStrainGauges1_Data
@@ -887,7 +888,6 @@ func (q *Queries) FetchFrontStrainGauges2DataPaginated(ctx context.Context, limi
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.FrontStrainGauges2_Data
 	for rows.Next() {
 		var rec types.FrontStrainGauges2_Data
@@ -912,7 +912,6 @@ func (q *Queries) FetchFrontAnalogDataPaginated(ctx context.Context, limit, offs
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.FrontAnalog_Data
 	for rows.Next() {
 		var rec types.FrontAnalog_Data
@@ -937,7 +936,6 @@ func (q *Queries) FetchACULVFD1DataPaginated(ctx context.Context, limit, offset 
 		return nil, err
 	}
 	defer rows.Close()
-
 	var data []types.ACULV_FD_1_Data
 	for rows.Next() {
 		var rec types.ACULV_FD_1_Data
@@ -960,149 +958,654 @@ func (q *Queries) FetchACULVFD1DataPaginated(ctx context.Context, limit, offset 
 }
 
 //
-// --- INSERT FUNCTIONS ---
+// --- BATCH INSERT FUNCTIONS ---
 //
 
-func (q *Queries) InsertRearStrainGauges2Data(ctx context.Context, data types.RearStrainGauges2_Data) error {
-	query := `
-        INSERT INTO rear_strain_gauges_2 (
-            timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6,
-	)
-	return err
+// InsertCellDataBatch inserts multiple cell data records in a single transaction
+func InsertCellDataBatch(ctx context.Context, batch []types.Cell_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO cell_data (
+			timestamp,
+			cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8,
+			cell9, cell10, cell11, cell12, cell13, cell14, cell15, cell16,
+			cell17, cell18, cell19, cell20, cell21, cell22, cell23, cell24,
+			cell25, cell26, cell27, cell28, cell29, cell30, cell31, cell32,
+			cell33, cell34, cell35, cell36, cell37, cell38, cell39, cell40,
+			cell41, cell42, cell43, cell44, cell45, cell46, cell47, cell48,
+			cell49, cell50, cell51, cell52, cell53, cell54, cell55, cell56,
+			cell57, cell58, cell59, cell60, cell61, cell62, cell63, cell64,
+			cell65, cell66, cell67, cell68, cell69, cell70, cell71, cell72,
+			cell73, cell74, cell75, cell76, cell77, cell78, cell79, cell80,
+			cell81, cell82, cell83, cell84, cell85, cell86, cell87, cell88,
+			cell89, cell90, cell91, cell92, cell93, cell94, cell95, cell96,
+			cell97, cell98, cell99, cell100, cell101, cell102, cell103, cell104,
+			cell105, cell106, cell107, cell108, cell109, cell110, cell111, cell112,
+			cell113, cell114, cell115, cell116, cell117, cell118, cell119, cell120,
+			cell121, cell122, cell123, cell124, cell125, cell126, cell127, cell128
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+			$11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
+			$21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
+			$31, $32, $33, $34, $35, $36, $37, $38, $39, $40,
+			$41, $42, $43, $44, $45, $46, $47, $48, $49, $50,
+			$51, $52, $53, $54, $55, $56, $57, $58, $59, $60,
+			$61, $62, $63, $64, $65, $66, $67, $68, $69, $70,
+			$71, $72, $73, $74, $75, $76, $77, $78, $79, $80,
+			$81, $82, $83, $84, $85, $86, $87, $88, $89, $90,
+			$91, $92, $93, $94, $95, $96, $97, $98, $99, $100,
+			$101, $102, $103, $104, $105, $106, $107, $108, $109, $110,
+			$111, $112, $113, $114, $115, $116, $117, $118, $119, $120,
+			$121, $122, $123, $124, $125, $126, $127, $128, $129
+		)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		args := []interface{}{
+			data.Timestamp,
+			data.Cell1, data.Cell2, data.Cell3, data.Cell4, data.Cell5, data.Cell6, data.Cell7, data.Cell8,
+			data.Cell9, data.Cell10, data.Cell11, data.Cell12, data.Cell13, data.Cell14, data.Cell15, data.Cell16,
+			data.Cell17, data.Cell18, data.Cell19, data.Cell20, data.Cell21, data.Cell22, data.Cell23, data.Cell24,
+			data.Cell25, data.Cell26, data.Cell27, data.Cell28, data.Cell29, data.Cell30, data.Cell31, data.Cell32,
+			data.Cell33, data.Cell34, data.Cell35, data.Cell36, data.Cell37, data.Cell38, data.Cell39, data.Cell40,
+			data.Cell41, data.Cell42, data.Cell43, data.Cell44, data.Cell45, data.Cell46, data.Cell47, data.Cell48,
+			data.Cell49, data.Cell50, data.Cell51, data.Cell52, data.Cell53, data.Cell54, data.Cell55, data.Cell56,
+			data.Cell57, data.Cell58, data.Cell59, data.Cell60, data.Cell61, data.Cell62, data.Cell63, data.Cell64,
+			data.Cell65, data.Cell66, data.Cell67, data.Cell68, data.Cell69, data.Cell70, data.Cell71, data.Cell72,
+			data.Cell73, data.Cell74, data.Cell75, data.Cell76, data.Cell77, data.Cell78, data.Cell79, data.Cell80,
+			data.Cell81, data.Cell82, data.Cell83, data.Cell84, data.Cell85, data.Cell86, data.Cell87, data.Cell88,
+			data.Cell89, data.Cell90, data.Cell91, data.Cell92, data.Cell93, data.Cell94, data.Cell95, data.Cell96,
+			data.Cell97, data.Cell98, data.Cell99, data.Cell100, data.Cell101, data.Cell102, data.Cell103, data.Cell104,
+			data.Cell105, data.Cell106, data.Cell107, data.Cell108, data.Cell109, data.Cell110, data.Cell111, data.Cell112,
+			data.Cell113, data.Cell114, data.Cell115, data.Cell116, data.Cell117, data.Cell118, data.Cell119, data.Cell120,
+			data.Cell121, data.Cell122, data.Cell123, data.Cell124, data.Cell125, data.Cell126, data.Cell127, data.Cell128,
+		}
+		_, err := stmt.ExecContext(ctx, args...)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertRearStrainGauges1Data(ctx context.Context, data types.RearStrainGauges1_Data) error {
-	query := `
-        INSERT INTO rear_strain_gauges_1 (
-            timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6,
-	)
-	return err
+// InsertThermDataBatch inserts multiple thermistor data records in a single transaction
+func InsertThermDataBatch(ctx context.Context, batch []types.Therm_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO therm_data (
+			timestamp, thermistor_id, therm1, therm2, therm3, therm4, 
+			therm5, therm6, therm7, therm8, therm9, therm10, 
+			therm11, therm12, therm13, therm14, therm15, therm16
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.ThermistorID, data.Therm1, data.Therm2, data.Therm3, data.Therm4,
+			data.Therm5, data.Therm6, data.Therm7, data.Therm8, data.Therm9, data.Therm10,
+			data.Therm11, data.Therm12, data.Therm13, data.Therm14, data.Therm15, data.Therm16,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertBamocarRxData(ctx context.Context, data types.BamocarRxData_Data) error {
-	query := `
-        INSERT INTO bamocar_rx_data (
-            timestamp, regid, byte1, byte2, byte3, byte4, byte5
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.REGID, data.Byte1, data.Byte2, data.Byte3, data.Byte4, data.Byte5,
-	)
-	return err
+// InsertPackCurrentDataBatch inserts multiple pack current data records in a single transaction
+func InsertPackCurrentDataBatch(ctx context.Context, batch []types.PackCurrent_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `INSERT INTO pack_current (timestamp, current) VALUES ($1, $2)`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.Current)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertRearAnalogData(ctx context.Context, data types.RearAnalog_Data) error {
-	query := `
-        INSERT INTO rear_analog (
-            timestamp, analog1, analog2, analog3, analog4, analog5, analog6, analog7, analog8
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.Analog1, data.Analog2, data.Analog3, data.Analog4,
-		data.Analog5, data.Analog6, data.Analog7, data.Analog8,
-	)
-	return err
+// InsertPackVoltageDataBatch inserts multiple pack voltage data records in a single transaction
+func InsertPackVoltageDataBatch(ctx context.Context, batch []types.PackVoltage_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `INSERT INTO pack_voltage (timestamp, voltage) VALUES ($1, $2)`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.Voltage)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertRearAeroData(ctx context.Context, data types.RearAero_Data) error {
-	query := `
-        INSERT INTO rear_aero (
-            timestamp, pressure1, pressure2, pressure3, temperature1, temperature2, temperature3
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.Pressure1, data.Pressure2, data.Pressure3,
-		data.Temperature1, data.Temperature2, data.Temperature3,
-	)
-	return err
+// InsertTCU2DataBatch inserts multiple TCU2 data records in a single transaction
+func InsertTCU2DataBatch(ctx context.Context, batch []types.TCU2_data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO tcu2 (timestamp, brake_light, bamocar_rfe, bamocar_frg) 
+		VALUES ($1, $2, $3, $4)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.BrakeLight, data.BamocarRFE, data.BamocarFRG)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertFrontAeroData(ctx context.Context, data types.FrontAero_Data) error {
-	query := `
-        INSERT INTO front_aero (
-            timestamp, pressure1, pressure2, pressure3, temperature1, temperature2, temperature3
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.Pressure1, data.Pressure2, data.Pressure3,
-		data.Temperature1, data.Temperature2, data.Temperature3,
-	)
-	return err
+// InsertTCUDataBatch inserts multiple TCU data records in a single transaction
+func InsertTCUDataBatch(ctx context.Context, batch []types.TCU_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO tcu1 (timestamp, apps1, apps2, bse, status) 
+		VALUES ($1, $2, $3, $4, $5)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.APPS1, data.APPS2, data.BSE, data.Status)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertPDM1Data(ctx context.Context, data types.PDM1_Data) error {
-	query := `
-        INSERT INTO pdm1 (
-            timestamp, compound_id, pdm_int_temperature, pdm_batt_voltage,
-            global_error_flag, total_current, internal_rail_voltage, reset_source
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.CompoundID, data.PDMIntTemperature, data.PDMBattVoltage,
-		data.GlobalErrorFlag, data.TotalCurrent, data.InternalRailVoltage, data.ResetSource,
-	)
-	return err
+// InsertFrontAnalogDataBatch inserts multiple front analog data records in a single transaction
+func InsertFrontAnalogDataBatch(ctx context.Context, batch []types.FrontAnalog_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO front_analog (
+			timestamp, left_rad, right_rad, front_right_pot, front_left_pot, 
+			rear_right_pot, rear_left_pot, steering_angle, analog8
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.LeftRad, data.RightRad, data.FrontRightPot,
+			data.FrontLeftPot, data.RearRightPot, data.RearLeftPot, data.SteeringAngle, data.Analog8)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertRearFrequencyData(ctx context.Context, data types.RearFrequency_Data) error {
-	query := `
-        INSERT INTO rear_frequency (timestamp, freq1, freq2, freq3, freq4)
-        VALUES ($1, $2, $3, $4, $5)
-    `
-	_, err := q.db.ExecContext(ctx, query, data.Timestamp, data.Freq1, data.Freq2, data.Freq3, data.Freq4)
-	return err
+// InsertRearStrainGauges1DataBatch inserts multiple rear strain gauges 1 data records in a single transaction
+func InsertRearStrainGauges1DataBatch(ctx context.Context, batch []types.RearStrainGauges1_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO rear_strain_gauges_1 (
+			timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertGPSBestPosData(ctx context.Context, data types.GPSBestPos_Data) error {
-	query := `
-        INSERT INTO gps_best_pos (
-            timestamp, latitude, longitude, altitude, 
-            std_latitude, std_longitude, std_altitude, gps_status
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.Latitude, data.Longitude, data.Altitude,
-		data.StdLatitude, data.StdLongitude, data.StdAltitude, data.GPSStatus,
-	)
-	return err
+// InsertRearStrainGauges2DataBatch inserts multiple rear strain gauges 2 data records in a single transaction
+func InsertRearStrainGauges2DataBatch(ctx context.Context, batch []types.RearStrainGauges2_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO rear_strain_gauges_2 (
+			timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
+
+// InsertFrontStrainGauges1DataBatch inserts multiple front strain gauges 1 data records in a single transaction
+func InsertFrontStrainGauges1DataBatch(ctx context.Context, batch []types.FrontStrainGauges1_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO front_strain_gauges_1 (
+			timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// InsertFrontStrainGauges2DataBatch inserts multiple front strain gauges 2 data records in a single transaction
+func InsertFrontStrainGauges2DataBatch(ctx context.Context, batch []types.FrontStrainGauges2_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO front_strain_gauges_2 (
+			timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// InsertRearAnalogDataBatch inserts multiple rear analog data records in a single transaction
+func InsertRearAnalogDataBatch(ctx context.Context, batch []types.RearAnalog_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO rear_analog (
+			timestamp, analog1, analog2, analog3, analog4, analog5, analog6, analog7, analog8
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Analog1, data.Analog2, data.Analog3, data.Analog4,
+			data.Analog5, data.Analog6, data.Analog7, data.Analog8)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// InsertRearAeroDataBatch inserts multiple rear aero data records in a single transaction
+func InsertRearAeroDataBatch(ctx context.Context, batch []types.RearAero_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO rear_aero (
+			timestamp, pressure1, pressure2, pressure3, temperature1, temperature2, temperature3
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Pressure1, data.Pressure2, data.Pressure3,
+			data.Temperature1, data.Temperature2, data.Temperature3)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// InsertFrontAeroDataBatch inserts multiple front aero data records in a single transaction
+func InsertFrontAeroDataBatch(ctx context.Context, batch []types.FrontAero_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO front_aero (
+			timestamp, pressure1, pressure2, pressure3, temperature1, temperature2, temperature3
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Pressure1, data.Pressure2, data.Pressure3,
+			data.Temperature1, data.Temperature2, data.Temperature3)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// InsertBamocarRxDataBatch inserts multiple bamocar rx data records in a single transaction
+func InsertBamocarRxDataBatch(ctx context.Context, batch []types.BamocarRxData_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO bamocar_rx_data (
+			timestamp, regid, byte1, byte2, byte3, byte4, byte5
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.REGID, data.Byte1, data.Byte2, data.Byte3, data.Byte4, data.Byte5)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// InsertBamocarTxDataBatch inserts multiple bamocar tx data records in a single transaction
+func InsertBamocarTxDataBatch(ctx context.Context, batch []types.BamocarTxData_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO bamocar_tx_data (timestamp, regid, data) 
+		VALUES ($1, $2, $3)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.REGID, data.Data)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
+}
+
+// Individual legacy insert functions - These remain for compatibility
+// Each should create a single item batch and call the corresponding batch function
 
 // InsertTCUData inserts a TCU_Data record.
 func (q *Queries) InsertTCUData(ctx context.Context, data types.TCU_Data) error {
-	query := `INSERT INTO tcu1 (timestamp, apps1, apps2, bse, status) VALUES ($1, $2, $3, $4, $5)`
-	_, err := q.db.ExecContext(ctx, query, data.Timestamp, data.APPS1, data.APPS2, data.BSE, data.Status)
-	return err
+	// Create a batch of 1 item and use the batch function
+	return InsertTCUDataBatch(ctx, []types.TCU_Data{data})
 }
 
 func (q *Queries) InsertThermData(ctx context.Context, data types.Therm_Data) error {
-	query := `
-        INSERT INTO therm_data (
-            timestamp, thermistor_id, therm1, therm2, therm3, therm4, 
-            therm5, therm6, therm7, therm8, therm9, therm10, 
-            therm11, therm12, therm13, therm14, therm15, therm16
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
-    `
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.ThermistorID, data.Therm1, data.Therm2, data.Therm3, data.Therm4,
-		data.Therm5, data.Therm6, data.Therm7, data.Therm8, data.Therm9, data.Therm10,
-		data.Therm11, data.Therm12, data.Therm13, data.Therm14, data.Therm15, data.Therm16,
-	)
-	return err
+	return InsertThermDataBatch(ctx, []types.Therm_Data{data})
 }
 
 func (q *Queries) InsertACULV2Data(ctx context.Context, data types.ACULV2_Data) error {
@@ -1124,191 +1627,559 @@ func (q *Queries) InsertACULV_FD_2_Data(ctx context.Context, data types.ACULV_FD
 }
 
 func InsertCellData(ctx context.Context, data types.Cell_Data) error {
-	query := `
-INSERT INTO cell_data (
-    timestamp,
-    cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8,
-    cell9, cell10, cell11, cell12, cell13, cell14, cell15, cell16,
-    cell17, cell18, cell19, cell20, cell21, cell22, cell23, cell24,
-    cell25, cell26, cell27, cell28, cell29, cell30, cell31, cell32,
-    cell33, cell34, cell35, cell36, cell37, cell38, cell39, cell40,
-    cell41, cell42, cell43, cell44, cell45, cell46, cell47, cell48,
-    cell49, cell50, cell51, cell52, cell53, cell54, cell55, cell56,
-    cell57, cell58, cell59, cell60, cell61, cell62, cell63, cell64,
-    cell65, cell66, cell67, cell68, cell69, cell70, cell71, cell72,
-    cell73, cell74, cell75, cell76, cell77, cell78, cell79, cell80,
-    cell81, cell82, cell83, cell84, cell85, cell86, cell87, cell88,
-    cell89, cell90, cell91, cell92, cell93, cell94, cell95, cell96,
-    cell97, cell98, cell99, cell100, cell101, cell102, cell103, cell104,
-    cell105, cell106, cell107, cell108, cell109, cell110, cell111, cell112,
-    cell113, cell114, cell115, cell116, cell117, cell118, cell119, cell120,
-    cell121, cell122, cell123, cell124, cell125, cell126, cell127, cell128
-) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8,
-    $9, $10, $11, $12, $13, $14, $15, $16,
-    $17, $18, $19, $20, $21, $22, $23, $24,
-    $25, $26, $27, $28, $29, $30, $31, $32,
-    $33, $34, $35, $36, $37, $38, $39, $40,
-    $41, $42, $43, $44, $45, $46, $47, $48,
-    $49, $50, $51, $52, $53, $54, $55, $56,
-    $57, $58, $59, $60, $61, $62, $63, $64,
-    $65, $66, $67, $68, $69, $70, $71, $72,
-    $73, $74, $75, $76, $77, $78, $79, $80,
-    $81, $82, $83, $84, $85, $86, $87, $88,
-    $89, $90, $91, $92, $93, $94, $95, $96,
-    $97, $98, $99, $100, $101, $102, $103, $104,
-    $105, $106, $107, $108, $109, $110, $111, $112,
-    $113, $114, $115, $116, $117, $118, $119, $120,
-    $121, $122, $123, $124, $125, $126, $127, $128, $129
-)`
-	args := []interface{}{
-		data.Timestamp,
-		data.Cell1, data.Cell2, data.Cell3, data.Cell4, data.Cell5, data.Cell6, data.Cell7, data.Cell8,
-		data.Cell9, data.Cell10, data.Cell11, data.Cell12, data.Cell13, data.Cell14, data.Cell15, data.Cell16,
-		data.Cell17, data.Cell18, data.Cell19, data.Cell20, data.Cell21, data.Cell22, data.Cell23, data.Cell24,
-		data.Cell25, data.Cell26, data.Cell27, data.Cell28, data.Cell29, data.Cell30, data.Cell31, data.Cell32,
-		data.Cell33, data.Cell34, data.Cell35, data.Cell36, data.Cell37, data.Cell38, data.Cell39, data.Cell40,
-		data.Cell41, data.Cell42, data.Cell43, data.Cell44, data.Cell45, data.Cell46, data.Cell47, data.Cell48,
-		data.Cell49, data.Cell50, data.Cell51, data.Cell52, data.Cell53, data.Cell54, data.Cell55, data.Cell56,
-		data.Cell57, data.Cell58, data.Cell59, data.Cell60, data.Cell61, data.Cell62, data.Cell63, data.Cell64,
-		data.Cell65, data.Cell66, data.Cell67, data.Cell68, data.Cell69, data.Cell70, data.Cell71, data.Cell72,
-		data.Cell73, data.Cell74, data.Cell75, data.Cell76, data.Cell77, data.Cell78, data.Cell79, data.Cell80,
-		data.Cell81, data.Cell82, data.Cell83, data.Cell84, data.Cell85, data.Cell86, data.Cell87, data.Cell88,
-		data.Cell89, data.Cell90, data.Cell91, data.Cell92, data.Cell93, data.Cell94, data.Cell95, data.Cell96,
-		data.Cell97, data.Cell98, data.Cell99, data.Cell100, data.Cell101, data.Cell102, data.Cell103, data.Cell104,
-		data.Cell105, data.Cell106, data.Cell107, data.Cell108, data.Cell109, data.Cell110, data.Cell111, data.Cell112,
-		data.Cell113, data.Cell114, data.Cell115, data.Cell116, data.Cell117, data.Cell118, data.Cell119, data.Cell120,
-		data.Cell121, data.Cell122, data.Cell123, data.Cell124, data.Cell125, data.Cell126, data.Cell127, data.Cell128,
+	return InsertCellDataBatch(ctx, []types.Cell_Data{data})
+}
+
+// Additional batch insert functions for db.go to support the new batch processors
+
+// InsertACULVFD1DataBatch inserts multiple ACULV FD 1 data records in a single transaction
+func InsertACULVFD1DataBatch(ctx context.Context, batch []types.ACULV_FD_1_Data) error {
+	if len(batch) == 0 {
+		return nil
 	}
-	_, err := DB.ExecContext(ctx, query, args...)
-	return err
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO aculv_fd_1 (
+			timestamp, ams_status, fld, state_of_charge, accumulator_voltage, 
+			tractive_voltage, cell_current, isolation_monitoring, isolation_monitoring1
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.AMSStatus, data.FLD, data.StateOfCharge,
+			data.AccumulatorVoltage, data.TractiveVoltage, data.CellCurrent,
+			data.IsolationMonitoring, data.IsolationMonitoring1)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func (q *Queries) InsertACULV1Data(ctx context.Context, data types.ACULV1_Data) error {
-	query := `
-        INSERT INTO aculv1 (timestamp, charge_status1, charge_status2)
-        VALUES ($1, $2, $3)
-    `
-	_, err := q.db.ExecContext(ctx, query, data.Timestamp, data.ChargeStatus1, data.ChargeStatus2)
-	return err
+// InsertACULVFD2DataBatch inserts multiple ACULV FD 2 data records in a single transaction
+func InsertACULVFD2DataBatch(ctx context.Context, batch []types.ACULV_FD_2_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO aculv_fd_2 (timestamp, fan_set_point, rpm)
+		VALUES ($1, $2, $3)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.FanSetPoint, data.RPM)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertACULV_FD_1_Data inserts an ACULV_FD_1_Data record.
-func (q *Queries) InsertACULV_FD_1_Data(ctx context.Context, data types.ACULV_FD_1_Data) error {
-	query := `
-    INSERT INTO aculv_fd_1 (
-        timestamp, ams_status, fld, state_of_charge, accumulator_voltage, 
-        tractive_voltage, cell_current, isolation_monitoring, isolation_monitoring1
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-	_, err := q.db.ExecContext(ctx, query,
-		data.Timestamp, data.AMSStatus, data.FLD, data.StateOfCharge,
-		data.AccumulatorVoltage, data.TractiveVoltage, data.CellCurrent,
-		data.IsolationMonitoring, data.IsolationMonitoring1)
-	return err
+// InsertACULV1DataBatch inserts multiple ACULV1 data records in a single transaction
+func InsertACULV1DataBatch(ctx context.Context, batch []types.ACULV1_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO aculv1 (timestamp, charge_status1, charge_status2)
+		VALUES ($1, $2, $3)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.ChargeStatus1, data.ChargeStatus2)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertPackCurrentData inserts a PackCurrent_Data record.
-func InsertPackCurrentData(ctx context.Context, data types.PackCurrent_Data) error {
-	query := `INSERT INTO pack_current (timestamp, current) VALUES ($1, $2)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.Current)
-	return err
+// InsertACULV2DataBatch inserts multiple ACULV2 data records in a single transaction
+func InsertACULV2DataBatch(ctx context.Context, batch []types.ACULV2_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO aculv2 (timestamp, charge_request)
+		VALUES ($1, $2)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx, data.Timestamp, data.ChargeRequest)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertPackVoltageData inserts a PackVoltage_Data record.
-func InsertPackVoltageData(ctx context.Context, data types.PackVoltage_Data) error {
-	query := `INSERT INTO pack_voltage (timestamp, voltage) VALUES ($1, $2)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.Voltage)
-	return err
+// InsertGPSBestPosDataBatch inserts multiple GPS Best Pos data records in a single transaction
+func InsertGPSBestPosDataBatch(ctx context.Context, batch []types.GPSBestPos_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO gps_best_pos (
+			timestamp, latitude, longitude, altitude, std_latitude, std_longitude, std_altitude, gps_status
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Latitude, data.Longitude, data.Altitude,
+			data.StdLatitude, data.StdLongitude, data.StdAltitude, data.GPSStatus)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertBamocarData inserts a Bamocar_Data record.
-func InsertBamocarData(ctx context.Context, data types.TCU2_data) error {
-	// Insert into tcu2 with correct column names.
-	query := `INSERT INTO tcu2 (timestamp, brake_light, bamocar_rfe, bamocar_frg) VALUES ($1, $2, $3, $4)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.BrakeLight, data.BamocarRFE, data.BamocarFRG)
-	return err
+// InsertINSGPSDataBatch inserts multiple INS GPS data records in a single transaction
+func InsertINSGPSDataBatch(ctx context.Context, batch []types.INS_GPS_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO ins_gps (timestamp, gnss_week, gnss_seconds, gnss_lat, gnss_long, gnss_height)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.GNSSWeek, data.GNSSSeconds, data.GNSSLat, data.GNSSLong, data.GNSSHeight)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertBamocarTxData inserts a BamocarTxData_Data record.
-func InsertBamocarTxData(ctx context.Context, data types.BamocarTxData_Data) error {
-	query := `INSERT INTO bamocar_tx_data (timestamp, regid, data) VALUES ($1, $2, $3)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.REGID, data.Data)
-	return err
+// InsertINSIMUDataBatch inserts multiple INS IMU data records in a single transaction
+func InsertINSIMUDataBatch(ctx context.Context, batch []types.INS_IMU_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO ins_imu (timestamp, north_vel, east_vel, up_vel, roll, pitch, azimuth, status)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.NorthVel, data.EastVel, data.UpVel, data.Roll, data.Pitch, data.Azimuth, data.Status)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertBamoCarReTransmitData inserts a BamoCarReTransmit_Data record.
-func InsertBamoCarReTransmitData(ctx context.Context, data types.BamoCarReTransmit_Data) error {
-	query := `INSERT INTO bamo_car_re_transmit (timestamp, motor_temp, controller_temp) VALUES ($1, $2, $3)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.MotorTemp, data.ControllerTemp)
-	return err
+// InsertFrontFrequencyDataBatch inserts multiple Front Frequency data records in a single transaction
+func InsertFrontFrequencyDataBatch(ctx context.Context, batch []types.FrontFrequency_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO front_frequency (timestamp, rear_right, front_right, rear_left, front_left)
+		VALUES ($1, $2, $3, $4, $5)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.RearRight, data.FrontRight, data.RearLeft, data.FrontLeft)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertINS_GPS_Data inserts an INS_GPS_Data record.
-func InsertINS_GPS_Data(ctx context.Context, data types.INS_GPS_Data) error {
-	query := `INSERT INTO ins_gps (timestamp, gnss_week, gnss_seconds, gnss_lat, gnss_long, gnss_height)
-VALUES ($1, $2, $3, $4, $5, $6)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.GNSSWeek, data.GNSSSeconds, data.GNSSLat, data.GNSSLong, data.GNSSHeight)
-	return err
+// InsertRearFrequencyDataBatch inserts multiple Rear Frequency data records in a single transaction
+func InsertRearFrequencyDataBatch(ctx context.Context, batch []types.RearFrequency_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO rear_frequency (timestamp, freq1, freq2, freq3, freq4)
+		VALUES ($1, $2, $3, $4, $5)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Freq1, data.Freq2, data.Freq3, data.Freq4)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-func InsertEncoderData(ctx context.Context, data types.Encoder_Data) error {
-	query := `INSERT INTO encoder_data (timestamp, encoder1, encoder2, encoder3, encoder4) VALUES ($1, $2, $3, $4, $5)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.Encoder1, data.Encoder2, data.Encoder3, data.Encoder4)
-	return err
+// InsertPDM1DataBatch inserts multiple PDM1 data records in a single transaction
+func InsertPDM1DataBatch(ctx context.Context, batch []types.PDM1_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO pdm1 (
+			timestamp, compound_id, pdm_int_temperature, pdm_batt_voltage, 
+			global_error_flag, total_current, internal_rail_voltage, reset_source
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.CompoundID, data.PDMIntTemperature, data.PDMBattVoltage,
+			data.GlobalErrorFlag, data.TotalCurrent, data.InternalRailVoltage, data.ResetSource)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertINS_IMUData inserts an INS_IMU_Data record.
-func InsertINS_IMUData(ctx context.Context, data types.INS_IMU_Data) error {
-	query := `INSERT INTO ins_imu (timestamp, north_vel, east_vel, up_vel, roll, pitch, azimuth, status)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.NorthVel, data.EastVel, data.UpVel, data.Roll, data.Pitch, data.Azimuth, data.Status)
-	return err
+// InsertEncoderDataBatch inserts multiple Encoder data records in a single transaction
+func InsertEncoderDataBatch(ctx context.Context, batch []types.Encoder_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO encoder_data (timestamp, encoder1, encoder2, encoder3, encoder4)
+		VALUES ($1, $2, $3, $4, $5)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.Encoder1, data.Encoder2, data.Encoder3, data.Encoder4)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertFrontFrequencyData inserts a FrontFrequency_Data record.
-func InsertFrontFrequencyData(ctx context.Context, data types.FrontFrequency_Data) error {
-	query := `INSERT INTO front_frequency (timestamp, rear_right, front_right, rear_left, front_left)
-VALUES ($1, $2, $3, $4, $5)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.RearRight, data.FrontRight, data.RearLeft, data.FrontLeft)
-	return err
+// InsertBamoCarReTransmitDataBatch inserts multiple Bamo Car Re Transmit data records in a single transaction
+func InsertBamoCarReTransmitDataBatch(ctx context.Context, batch []types.BamoCarReTransmit_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO bamo_car_re_transmit (timestamp, motor_temp, controller_temp)
+		VALUES ($1, $2, $3)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.MotorTemp, data.ControllerTemp)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertFrontAnalogData inserts a FrontAnalog_Data record.
-func InsertFrontAnalogData(ctx context.Context, data types.FrontAnalog_Data) error {
-	query := `INSERT INTO front_analog (timestamp, left_rad, right_rad, front_right_pot, front_left_pot, rear_right_pot, rear_left_pot, steering_angle, analog8)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.LeftRad, data.RightRad, data.FrontRightPot, data.FrontLeftPot, data.RearRightPot, data.RearLeftPot, data.SteeringAngle, data.Analog8)
-	return err
+// InsertPDMCurrentDataBatch inserts multiple PDM Current data records in a single transaction
+func InsertPDMCurrentDataBatch(ctx context.Context, batch []types.PDMCurrent_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO pdm_current (
+			timestamp, accumulator_current, tcu_current, bamocar_current, pumps_current, 
+			tsal_current, daq_current, display_kvaser_current, shutdown_reset_current
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.AccumulatorCurrent, data.TCUCurrent, data.BamocarCurrent,
+			data.PumpsCurrent, data.TSALCurrent, data.DAQCurrent,
+			data.DisplayKvaserCurrent, data.ShutdownResetCurrent)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertFrontStrainGauges1Data inserts a FrontStrainGauges1_Data record.
-func InsertFrontStrainGauges1Data(ctx context.Context, data types.FrontStrainGauges1_Data) error {
-	query := `INSERT INTO front_strain_gauges_1 (timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6)
-VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6)
-	return err
+// InsertPDMReTransmitDataBatch inserts multiple PDM Re Transmit data records in a single transaction
+func InsertPDMReTransmitDataBatch(ctx context.Context, batch []types.PDMReTransmit_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Prepare the statement once for reuse
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO pdm_re_transmit (
+			timestamp, pdm_int_temperature, pdm_batt_voltage, global_error_flag, 
+			total_current, internal_rail_voltage, reset_source
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record
+	for _, data := range batch {
+		_, err := stmt.ExecContext(ctx,
+			data.Timestamp, data.PDMIntTemperature, data.PDMBattVoltage,
+			data.GlobalErrorFlag, data.TotalCurrent, data.InternalRailVoltage, data.ResetSource)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }
 
-// InsertFrontStrainGauges2Data inserts a FrontStrainGauges2_Data record.
-func InsertFrontStrainGauges2Data(ctx context.Context, data types.FrontStrainGauges2_Data) error {
-	query := `INSERT INTO front_strain_gauges_2 (timestamp, gauge1, gauge2, gauge3, gauge4, gauge5, gauge6)
-VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.Gauge1, data.Gauge2, data.Gauge3, data.Gauge4, data.Gauge5, data.Gauge6)
-	return err
-}
+func InsertBamocarDataBatch(ctx context.Context, batch []types.BamocarTxData_Data) error {
+	if len(batch) == 0 {
+		return nil
+	}
 
-// InsertPDMCurrentData inserts a PDMCurrent_Data record.
-func InsertPDMCurrentData(ctx context.Context, data types.PDMCurrent_Data) error {
-	query := `INSERT INTO pdm_current (timestamp, accumulator_current, tcu_current, bamocar_current, pumps_current, tsal_current, daq_current, display_kvaser_current, shutdown_reset_current)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.AccumulatorCurrent, data.TCUCurrent, data.BamocarCurrent, data.PumpsCurrent, data.TSALCurrent, data.DAQCurrent, data.DisplayKvaserCurrent, data.ShutdownResetCurrent)
-	return err
-}
+	// Start a transaction
+	tx, err := DB.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 
-// InsertPDMReTransmitData inserts a PDMReTransmit_Data record.
-func InsertPDMReTransmitData(ctx context.Context, data types.PDMReTransmit_Data) error {
-	query := `INSERT INTO pdm_re_transmit (timestamp, pdm_int_temperature, pdm_batt_voltage, global_error_flag, total_current, internal_rail_voltage, reset_source)
-VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := DB.ExecContext(ctx, query, data.Timestamp, data.PDMIntTemperature, data.PDMBattVoltage, data.GlobalErrorFlag, data.TotalCurrent, data.InternalRailVoltage, data.ResetSource)
-	return err
+	// Prepare the statement for inserting into bamocar_tx_data
+	stmt, err := tx.PrepareContext(ctx, `
+        INSERT INTO bamocar_tx_data (
+            timestamp, regid, data
+        ) VALUES ($1, $2, $3)
+    `)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Insert each record in the batch
+	for _, record := range batch {
+		_, err := stmt.ExecContext(ctx, record.Timestamp, record.REGID, record.Data)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	return tx.Commit()
 }

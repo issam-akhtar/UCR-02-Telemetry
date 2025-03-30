@@ -1,17 +1,8 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  memo,
-  useContext,
-  useCallback,
-  useMemo
-} from 'react';
+import React, { useState, useEffect, useRef, memo, useContext, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
   Typography,
-  Grid,
   Paper,
   useTheme,
   LinearProgress,
@@ -20,6 +11,7 @@ import {
   CardHeader,
   CardContent,
   Divider,
+  Grid,
 } from '@mui/material';
 import {
   Battery,
@@ -27,7 +19,6 @@ import {
   BatteryFull,
   BatteryLow,
   BatteryMedium,
-  BatteryPlus,
   BatteryWarning,
   Zap,
   TrendingUp,
@@ -37,7 +28,6 @@ import {
 import useRealTimeData from '../../hooks/useRealTimeData';
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 import { useInView } from 'react-intersection-observer';
-import useResizeObserver from 'use-resize-observer';
 
 // --- Constants & Thresholds ---
 const VOLTAGE_THRESHOLDS = {
@@ -64,7 +54,7 @@ const SOC_THRESHOLDS = {
   EXCELLENT: 95
 };
 
-// --- Theming Helpers ---
+// --- Utility Functions ---
 const getVoltageColor = (voltage, theme) => {
   if (voltage <= VOLTAGE_THRESHOLDS.CRITICAL) return theme.palette.error.main;
   if (voltage <= VOLTAGE_THRESHOLDS.LOW) return theme.palette.warning.main;
@@ -86,115 +76,16 @@ const getFlowIndicator = (current) => {
   return 'IDLE';
 };
 
-// Custom hook for SoC colors
-const useSoCColors = () => {
-  const theme = useTheme();
-  return useMemo(() => ({
-    CRITICAL: theme.palette.error.main,
-    LOW: theme.palette.warning.main,
-    CAUTION: theme.palette.warning.light,
-    NORMAL: theme.palette.info.main,
-    GOOD: theme.palette.success.main,
-    EXCELLENT: theme.palette.success.light,
-    BACKGROUND: theme.palette.mode === 'dark'
-      ? alpha(theme.palette.background.paper, 0.6)
-      : alpha(theme.palette.background.paper, 0.9)
-  }), [theme.palette]);
+const getSoCColor = (soc, theme) => {
+  if (soc <= SOC_THRESHOLDS.CRITICAL) return theme.palette.error.main;
+  if (soc <= SOC_THRESHOLDS.LOW) return theme.palette.warning.main;
+  if (soc <= SOC_THRESHOLDS.CAUTION) return theme.palette.warning.light;
+  if (soc <= SOC_THRESHOLDS.NORMAL) return theme.palette.info.main;
+  if (soc <= SOC_THRESHOLDS.GOOD) return theme.palette.success.main;
+  return theme.palette.success.light;
 };
 
-const getSoCColor = (soc, colors) => {
-  if (soc <= SOC_THRESHOLDS.CRITICAL) return colors.CRITICAL;
-  if (soc <= SOC_THRESHOLDS.LOW) return colors.LOW;
-  if (soc <= SOC_THRESHOLDS.CAUTION) return colors.CAUTION;
-  if (soc <= SOC_THRESHOLDS.NORMAL) return colors.NORMAL;
-  if (soc <= SOC_THRESHOLDS.GOOD) return colors.GOOD;
-  return colors.EXCELLENT;
-};
-
-// --- Small Components ---
-const StatBox = memo(({ label, value, unit, color, icon: Icon, className }) => {
-  const theme = useTheme();
-  const { settings } = useContext(ChartSettingsContext);
-  const animationsEnabled = settings?.global?.enableTransitions !== false;
-
-  return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: theme.spacing(1),
-        borderRadius: theme.shape.borderRadius,
-        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        transform: settings?.global?.enableHardwareAcceleration !== false ? 'translateZ(0)' : 'none',
-        backgroundColor: alpha(theme.palette.background.paper, 0.7),
-        transition: animationsEnabled
-          ? theme.transitions.create(['background-color', 'transform'], {
-            duration: theme.transitions.duration.short
-          })
-          : 'none',
-        '&:hover': animationsEnabled ? {
-          transform: settings?.global?.enableHardwareAcceleration !== false ? 'translateZ(0) scale(1.01)' : 'scale(1.01)',
-          backgroundColor: alpha(theme.palette.background.paper, 0.9),
-        } : {}
-      }}
-      className={className}
-      role="region"
-      aria-label={`${label}: ${value} ${unit || ''}`}
-    >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: theme.spacing(0.25) }}>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          fontWeight={theme.typography.fontWeightMedium}
-          sx={{ fontSize: '0.65rem' }}
-        >
-          {label}
-        </Typography>
-        {Icon && <Icon size={14} color={theme.palette.text.secondary} aria-hidden="true" />}
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{
-            color: color || theme.palette.text.primary,
-            fontWeight: theme.typography.fontWeightBold,
-            lineHeight: 1.1,
-            fontSize: '1.25rem'
-          }}
-        >
-          {value}
-        </Typography>
-        {unit && (
-          <Typography
-            variant="body2"
-            component="span"
-            sx={{
-              ml: theme.spacing(0.25),
-              color: theme.palette.text.secondary,
-              fontWeight: theme.typography.fontWeightMedium,
-              fontSize: '0.7rem'
-            }}
-          >
-            {unit}
-          </Typography>
-        )}
-      </Box>
-    </Paper>
-  );
-});
-
-StatBox.propTypes = {
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  unit: PropTypes.string,
-  color: PropTypes.string,
-  icon: PropTypes.elementType,
-  className: PropTypes.string,
-};
-
+// --- Memoized Sub-Components ---
 const FlowIndicator = memo(({ flow, size = 20 }) => {
   const theme = useTheme();
   const label = flow === 'CHARGING' ? 'Charging' :
@@ -221,16 +112,16 @@ FlowIndicator.propTypes = {
 const BatteryIconDisplay = memo(({ soc, isCharging, size = 24, color }) => {
   const label = isCharging ? 'Battery Charging' :
     soc > 100 ? 'Battery Overcharged' :
-      soc >= 81 ? 'Battery Full' :
-        soc >= 30 ? 'Battery Medium' :
-          soc >= 1 ? 'Battery Low' : 'Battery Warning';
+    soc >= 81 ? 'Battery Full' :
+    soc >= 30 ? 'Battery Medium' :
+    soc >= 1 ? 'Battery Low' : 'Battery Warning';
 
   return (
     <Box component="span" aria-label={label}>
       {isCharging ? (
         <BatteryCharging size={size} color={color} aria-hidden="true" />
       ) : soc > 100 ? (
-        <BatteryPlus size={size} color={color} aria-hidden="true" />
+        <Battery size={size} color={color} aria-hidden="true" />
       ) : soc >= 81 && soc <= 100 ? (
         <BatteryFull size={size} color={color} aria-hidden="true" />
       ) : soc >= 30 && soc <= 80 ? (
@@ -251,618 +142,256 @@ BatteryIconDisplay.propTypes = {
   color: PropTypes.string.isRequired,
 };
 
-// --- Combined Component ---
+// Stat Box Component - Optimized for compact display
+const StatBox = memo(({ label, value, unit, color, icon: Icon }) => {
+  const theme = useTheme();
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        p: theme.spacing(0.75),
+        borderRadius: theme.shape.borderRadius,
+        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: alpha(theme.palette.background.paper, 0.7),
+      }}
+      role="region"
+      aria-label={`${label}: ${value} ${unit || ''}`}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          fontWeight={theme.typography.fontWeightMedium}
+          sx={{ fontSize: '0.6rem' }}
+        >
+          {label}
+        </Typography>
+        {Icon && <Icon size={12} color={theme.palette.text.secondary} aria-hidden="true" />}
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            color: color || theme.palette.text.primary,
+            fontWeight: theme.typography.fontWeightBold,
+            lineHeight: 1,
+            fontSize: '1.1rem'
+          }}
+        >
+          {value}
+        </Typography>
+        {unit && (
+          <Typography
+            variant="body2"
+            component="span"
+            sx={{
+              ml: theme.spacing(0.25),
+              color: theme.palette.text.secondary,
+              fontWeight: theme.typography.fontWeightMedium,
+              fontSize: '0.65rem'
+            }}
+          >
+            {unit}
+          </Typography>
+        )}
+      </Box>
+    </Paper>
+  );
+});
+
+StatBox.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  unit: PropTypes.string,
+  color: PropTypes.string,
+  icon: PropTypes.elementType,
+};
+
+// --- Main Component ---
 const SoCIndicator = () => {
   const theme = useTheme();
   const { settings } = useContext(ChartSettingsContext);
-
-  // Visibility detection using InView
+  
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
     triggerOnce: false
   });
-
-  // ResizeObserver for container dimensions
-  const { ref: resizeRef, width = 0, height = 0 } = useResizeObserver();
-
-  // Pack gauge state
+  
+  const updateInterval = settings?.dashboard?.updateInterval || 300;
+  const changeThreshold = settings?.dashboard?.significantChangeThreshold || 1.0;
+  const animationsEnabled = settings?.global?.enableTransitions !== false;
+  const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
+  
+  // State for battery data
   const [voltage, setVoltage] = useState(0);
   const [current, setCurrent] = useState(0);
+  const [soc, setSoC] = useState(0);
   const [minVoltage, setMinVoltage] = useState(null);
   const [maxVoltage, setMaxVoltage] = useState(null);
   const [maxCurrent, setMaxCurrent] = useState(null);
-
-  // SoC state
-  const [soc, setSoC] = useState(0);
-  const [stats, setStats] = useState({
-    minSoC: 0,
-    maxSoC: 0,
-    isCharging: false,
-    status: 'NORMAL',
-    message: 'Initializing...'
-  });
-
+  const [statusMessage, setStatusMessage] = useState('Initializing...');
+  const [isCharging, setIsCharging] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Refs for animation and timestamp tracking
-  const lastTimestampRef = useRef(null);
-  const animationFrameRef = useRef(null);
-
-  // Get update interval from dashboard settings (memoized)
-  const updateInterval = useMemo(() => (
-    settings?.dashboard?.updateInterval
-  ), [settings?.dashboard?.updateInterval]);
-
-  // Get change threshold from settings
-  const changeThreshold = useMemo(() => (
-    settings?.dashboard?.significantChangeThreshold
-  ), [settings?.dashboard?.significantChangeThreshold]);
-
-  // Check animation settings
-  const animationsEnabled = settings?.global?.enableTransitions !== false;
-  const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
-
-  // Clean up animation frames on unmount
+  const lastValuesRef = useRef({ voltage, current, soc, timestamp: 0 });
+  const isComponentMounted = useRef(true);
+  
   useEffect(() => {
+    isComponentMounted.current = true;
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      isComponentMounted.current = false;
     };
   }, []);
-
-  // Update min/max for pack gauge
-  useEffect(() => {
-    if (!inView) return; // Skip updates when not visible
-
-    if (voltage > 0) {
-      if (minVoltage === null || voltage < minVoltage) setMinVoltage(voltage);
-      if (maxVoltage === null || voltage > maxVoltage) setMaxVoltage(voltage);
+  
+  const updateStatusMessage = useCallback((socValue, charging) => {
+    if (socValue <= SOC_THRESHOLDS.CRITICAL) {
+      setStatusMessage(charging ? 'Charging' : 'Critically low');
+    } else if (socValue <= SOC_THRESHOLDS.LOW) {
+      setStatusMessage(charging ? 'Charging' : 'Charge soon');
+    } else if (socValue <= SOC_THRESHOLDS.CAUTION) {
+      setStatusMessage(charging ? 'Charging' : 'Decreasing');
+    } else if (socValue <= SOC_THRESHOLDS.NORMAL) {
+      setStatusMessage(charging ? 'Charging' : 'Normal');
+    } else if (socValue <= SOC_THRESHOLDS.GOOD) {
+      setStatusMessage(charging ? 'Charging' : 'Optimal');
+    } else {
+      setStatusMessage(charging ? 'Charging' : 'Fully charged');
     }
-
-    const absCurrent = Math.abs(current);
-    if (absCurrent > 0 && (maxCurrent === null || absCurrent > maxCurrent)) {
-      setMaxCurrent(absCurrent);
-    }
-  }, [voltage, current, minVoltage, maxVoltage, maxCurrent, inView]);
-
-  // Subscribe to pack voltage data using updateInterval
-  const { ref: voltageRef } = useRealTimeData('pack_voltage', (msg) => {
-    if (!inView) return; // Skip updates when not visible
+  }, []);
+  
+  const handleVoltageData = useCallback((msg) => {
+    if (!inView || !isComponentMounted.current) return;
 
     try {
-      const fields = msg.fields;
+      const fields = msg?.fields;
       if (fields && fields.voltage?.numberValue !== undefined) {
         const newVoltage = Number(fields.voltage.numberValue);
 
-        // Only update if change exceeds threshold
-        if (Math.abs(newVoltage - voltage) > changeThreshold) {
+        if (Math.abs(newVoltage - lastValuesRef.current.voltage) > changeThreshold) {
           setVoltage(newVoltage);
+          lastValuesRef.current.voltage = newVoltage;
+          
+          if (newVoltage > 0) {
+            if (minVoltage === null || newVoltage < minVoltage) {
+              setMinVoltage(newVoltage);
+            }
+            if (maxVoltage === null || newVoltage > maxVoltage) {
+              setMaxVoltage(newVoltage);
+            }
+          }
         }
-
-        if (newVoltage > 0 && isLoading) {
-          setIsLoading(false);
-        }
-
-        // Clear any previous errors
-        if (error) setError(null);
       }
     } catch (err) {
       console.error('Error processing voltage data:', err);
-      setError('Failed to process voltage data');
     }
-  }, { customInterval: updateInterval });
+  }, [inView, changeThreshold, minVoltage, maxVoltage]);
 
-  // Subscribe to pack current data using updateInterval
-  const { ref: currentRef } = useRealTimeData('pack_current', (msg) => {
-    if (!inView) return; // Skip updates when not visible
+  const handleCurrentData = useCallback((msg) => {
+    if (!inView || !isComponentMounted.current) return;
 
     try {
-      const fields = msg.fields;
+      const fields = msg?.fields;
       if (fields && fields.current?.numberValue !== undefined) {
         const newCurrent = Number(fields.current.numberValue);
 
-        // Only update if change exceeds threshold
-        if (Math.abs(newCurrent - current) > changeThreshold) {
+        if (Math.abs(newCurrent - lastValuesRef.current.current) > changeThreshold) {
           setCurrent(newCurrent);
+          lastValuesRef.current.current = newCurrent;
+          
+          const isChargingNow = newCurrent < 0;
+          setIsCharging(isChargingNow);
+          
+          updateStatusMessage(lastValuesRef.current.soc, isChargingNow);
+          
+          const absCurrent = Math.abs(newCurrent);
+          if (absCurrent > 0 && (maxCurrent === null || absCurrent > maxCurrent)) {
+            setMaxCurrent(absCurrent);
+          }
         }
-
-        // Clear any previous errors
-        if (error) setError(null);
       }
     } catch (err) {
       console.error('Error processing current data:', err);
-      setError('Failed to process current data');
     }
-  }, { customInterval: updateInterval });
+  }, [inView, changeThreshold, maxCurrent, updateStatusMessage]);
 
-  // Function to update SoC stats (excluding current/time remaining display)
-  const updateStats = useCallback((newSoC, newCurrent) => {
-    if (!inView) return; // Skip updates when not visible
-
-    const clampedSoC = Math.min(100, Math.max(0, newSoC));
-    const isCharging = newCurrent < 0;
-    let status, message;
-
-    if (clampedSoC <= SOC_THRESHOLDS.CRITICAL) {
-      status = 'CRITICAL';
-      message = isCharging ? 'Charging' : 'Critically low';
-    } else if (clampedSoC <= SOC_THRESHOLDS.LOW) {
-      status = 'LOW';
-      message = isCharging ? 'Charging' : 'Charge soon';
-    } else if (clampedSoC <= SOC_THRESHOLDS.CAUTION) {
-      status = 'CAUTION';
-      message = isCharging ? 'Charging' : 'Decreasing';
-    } else if (clampedSoC <= SOC_THRESHOLDS.NORMAL) {
-      status = 'NORMAL';
-      message = isCharging ? 'Charging' : 'Normal';
-    } else if (clampedSoC <= SOC_THRESHOLDS.GOOD) {
-      status = 'GOOD';
-      message = isCharging ? 'Charging' : 'Optimal';
-    } else {
-      status = 'EXCELLENT';
-      message = isCharging ? 'Charging' : 'Fully charged';
-    }
-
-    setStats(prev => ({
-      minSoC: prev.minSoC ? Math.min(prev.minSoC, clampedSoC) : clampedSoC,
-      maxSoC: Math.max(prev.maxSoC || 0, clampedSoC),
-      isCharging,
-      status,
-      message
-    }));
-
-    if (isLoading && clampedSoC > 0) {
-      setIsLoading(false);
-    }
-  }, [isLoading, inView]);
-
-  // Subscribe to SoC data using updateInterval
-  const { ref: socRef } = useRealTimeData('aculv_fd_1', (msg) => {
-    if (!inView) return; // Skip updates when not visible
+  const handleSocData = useCallback((msg) => {
+    if (!inView || !isComponentMounted.current) return;
 
     try {
-      const fields = msg.fields;
+      const fields = msg?.fields;
       if (!fields) return;
 
       const newTimestamp = fields.timestamp?.numberValue || Date.now();
-      if (lastTimestampRef.current && newTimestamp <= lastTimestampRef.current) return;
-      lastTimestampRef.current = newTimestamp;
-
-      if (error) setError(null);
+      if (lastValuesRef.current.timestamp && newTimestamp <= lastValuesRef.current.timestamp) return;
+      lastValuesRef.current.timestamp = newTimestamp;
 
       const newSoC = fields.state_of_charge?.numberValue !== undefined
         ? Number(fields.state_of_charge.numberValue)
-        : soc;
+        : lastValuesRef.current.soc;
 
-      // Only update if significant change
-      if (Math.abs(newSoC - soc) > changeThreshold) {
-        // Use animation frame for smoother updates
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
+      if (Math.abs(newSoC - lastValuesRef.current.soc) > changeThreshold) {
+        setSoC(newSoC);
+        lastValuesRef.current.soc = newSoC;
+        
+        updateStatusMessage(newSoC, isCharging);
+        
+        if (newSoC > 0 && isLoading) {
+          setIsLoading(false);
         }
-
-        animationFrameRef.current = requestAnimationFrame(() => {
-          setSoC(newSoC);
-          // Use current from pack data for charging status
-          updateStats(newSoC, current);
-        });
       }
     } catch (err) {
       console.error('Error processing SoC data:', err);
-      setError('Failed to process SoC data');
     }
-  }, { customInterval: updateInterval });
+  }, [inView, changeThreshold, isLoading, isCharging, updateStatusMessage]);
 
-  // Computed values for pack gauge
+  const { ref: voltageDataRef } = useRealTimeData(
+    'pack_voltage', 
+    handleVoltageData, 
+    { customInterval: updateInterval }
+  );
+
+  const { ref: currentDataRef } = useRealTimeData(
+    'pack_current', 
+    handleCurrentData, 
+    { customInterval: updateInterval }
+  );
+
+  const { ref: socDataRef } = useRealTimeData(
+    'aculv_fd_1', 
+    handleSocData, 
+    { customInterval: updateInterval }
+  );
+  
+  const setRefs = useCallback(
+    (node) => {
+      if (node) {
+        inViewRef(node);
+        if (voltageDataRef && typeof voltageDataRef === 'function') voltageDataRef(node);
+        if (currentDataRef && typeof currentDataRef === 'function') currentDataRef(node);
+        if (socDataRef && typeof socDataRef === 'function') socDataRef(node);
+      }
+    },
+    [inViewRef, voltageDataRef, currentDataRef, socDataRef]
+  );
+  
   const power = useMemo(() => (voltage * current).toFixed(0), [voltage, current]);
   const flowStatus = useMemo(() => getFlowIndicator(current), [current]);
   const voltageColor = useMemo(() => getVoltageColor(voltage, theme), [voltage, theme]);
   const currentColor = useMemo(() => getCurrentColor(current, theme), [current, theme]);
-
-  // Colors for SoC indicator
-  const socColors = useSoCColors();
-  const statusColor = useMemo(() => getSoCColor(soc, socColors), [soc, socColors]);
-
-  // Combine refs for resize, visibility, and real-time data subscriptions
-  const setRefs = useCallback(
-    (node) => {
-      resizeRef(node);
-      inViewRef(node);
-      if (voltageRef) voltageRef(node);
-      if (currentRef) currentRef(node);
-      if (socRef) socRef(node);
-    },
-    [resizeRef, inViewRef, voltageRef, currentRef, socRef]
-  );
-
-  // Dynamic content based on container size
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100%' 
-        }} aria-label="Loading battery data">
-          <Typography variant="body1">Loading...</Typography>
-        </Box>
-      );
-    }
-
-    // Super compact view for very small containers (height < 200px)
-    if (height < 200) {
-      return (
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: theme.spacing(1)
-        }}>
-          {/* Combined readings in super compact format */}
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <BatteryIconDisplay
-                soc={soc}
-                isCharging={stats.isCharging}
-                size={18}
-                color={statusColor}
-              />
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  ml: theme.spacing(0.5),
-                  fontWeight: theme.typography.fontWeightBold,
-                  color: statusColor,
-                  fontSize: '0.9rem'
-                }}
-              >
-                {Math.round(soc)}%
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" sx={{ fontSize: '0.7rem' }}>
-                {voltage.toFixed(1)}V / {Math.abs(current).toFixed(1)}A
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Compact stats box */}
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            px: theme.spacing(0.5),
-            py: theme.spacing(0.25),
-            bgcolor: alpha(theme.palette.background.paper, 0.1),
-            borderRadius: theme.shape.borderRadius,
-            border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(theme.palette.divider, 0.5)}`
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="caption" sx={{ fontSize: '0.6rem', color: theme.palette.text.secondary, mr: theme.spacing(0.5) }}>
-                MIN
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: theme.typography.fontWeightMedium }}>
-                {minVoltage ? minVoltage.toFixed(1) : '-'}V
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="caption" sx={{ fontSize: '0.6rem', color: theme.palette.text.secondary, mr: theme.spacing(0.5) }}>
-                MAX
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: theme.typography.fontWeightMedium }}>
-                {maxVoltage ? maxVoltage.toFixed(1) : '-'}V
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="caption" sx={{ fontSize: '0.6rem', color: theme.palette.text.secondary, mr: theme.spacing(0.5) }}>
-                PEAK
-              </Typography>
-              <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: theme.typography.fontWeightMedium }}>
-                {maxCurrent ? maxCurrent.toFixed(1) : '-'}A
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* SoC bar */}
-          <LinearProgress
-            variant="determinate"
-            value={Math.min(soc, 100)}
-            sx={{
-              height: theme.spacing(0.5),
-              borderRadius: theme.shape.borderRadius / 2,
-              backgroundColor: alpha(theme.palette.background.paper, 0.2),
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: statusColor,
-                transition: animationsEnabled ? 'transform 0.4s ease' : 'none'
-              }
-            }}
-            aria-hidden="true"
-          />
-        </Box>
-      );
-    }
-
-    // Standard view with all components
-    return (
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: theme.spacing(1.5)
-      }}>
-        {/* Pack Gauge Display */}
-        <Paper
-          elevation={0}
-          sx={{
-            p: theme.spacing(1.5),
-            borderRadius: theme.shape.borderRadius,
-            border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
-            backgroundColor: alpha(theme.palette.background.default, 0.5),
-            transition: animationsEnabled ? theme.transitions.create(['background-color', 'box-shadow']) : 'none',
-            '&:hover': animationsEnabled ? {
-              backgroundColor: alpha(theme.palette.background.paper, 0.7),
-              boxShadow: theme.shadows[2]
-            } : {}
-          }}
-          role="region"
-          aria-label="Battery Pack Measurements"
-        >
-          <Grid container spacing={theme.spacing(1.5)} alignItems="center">
-            <Grid item xs={4} sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                Voltage
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{
-                  color: voltageColor,
-                  fontWeight: theme.typography.fontWeightBold,
-                  lineHeight: 1.1,
-                  fontSize: '1.25rem'
-                }}
-                aria-label={`Voltage: ${voltage.toFixed(1)} Volts`}
-              >
-                {voltage.toFixed(1)}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                Volts
-              </Typography>
-            </Grid>
-
-            <Grid item xs={4} sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                Current
-              </Typography>
-              <Box
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                aria-label={`Current: ${Math.abs(current).toFixed(1)} Amps, ${flowStatus.toLowerCase()}`}
-              >
-                <Typography
-                  variant="h5"
-                  sx={{
-                    color: currentColor,
-                    fontWeight: theme.typography.fontWeightBold,
-                    lineHeight: 1.1,
-                    fontSize: '1.25rem'
-                  }}
-                >
-                  {Math.abs(current).toFixed(1)}
-                </Typography>
-                <FlowIndicator flow={flowStatus} size={20} />
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                Amps
-              </Typography>
-            </Grid>
-
-            <Grid item xs={4} sx={{ textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                Power
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: theme.typography.fontWeightBold,
-                  lineHeight: 1.1,
-                  fontSize: '1.25rem'
-                }}
-                aria-label={`Power: ${power} Watts`}
-              >
-                {power}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                Watts
-              </Typography>
-            </Grid>
-          </Grid>
-        </Paper>
-
-        {/* Stat Boxes - Always shown */}
-        <Grid container spacing={theme.spacing(1.5)}>
-          <Grid item xs={4}>
-            <StatBox
-              label="MIN VOLTAGE"
-              value={minVoltage ? minVoltage.toFixed(1) : '-'}
-              unit="V"
-              color={minVoltage ? getVoltageColor(minVoltage, theme) : undefined}
-              icon={Battery}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <StatBox
-              label="MAX VOLTAGE"
-              value={maxVoltage ? maxVoltage.toFixed(1) : '-'}
-              unit="V"
-              color={maxVoltage ? getVoltageColor(maxVoltage, theme) : undefined}
-              icon={Battery}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <StatBox
-              label="PEAK CURRENT"
-              value={maxCurrent ? maxCurrent.toFixed(1) : '-'}
-              unit="A"
-              color={maxCurrent ? getCurrentColor(maxCurrent, theme) : undefined}
-              icon={Zap}
-            />
-          </Grid>
-        </Grid>
-
-        {/* SoC Indicator - Only if enough space */}
-        {height >= 350 && (
-          <Paper
-            elevation={0}
-            sx={{
-              p: theme.spacing(1.5),
-              borderRadius: theme.shape.borderRadius,
-              border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
-              display: 'flex',
-              alignItems: 'center',
-              gap: theme.spacing(1.5),
-              backgroundColor: alpha(theme.palette.background.default, 0.5),
-              transition: animationsEnabled ? theme.transitions.create(['background-color', 'box-shadow']) : 'none',
-              '&:hover': animationsEnabled ? {
-                backgroundColor: alpha(theme.palette.background.paper, 0.7),
-                boxShadow: theme.shadows[2]
-              } : {}
-            }}
-            role="region"
-            aria-label={`Battery state of charge: ${Math.round(soc)}%`}
-          >
-            <BatteryIconDisplay
-              soc={soc}
-              isCharging={stats.isCharging}
-              size={32}
-              color={statusColor}
-            />
-            <Box sx={{ flex: 1 }}>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: theme.spacing(0.5)
-              }}>
-                <Typography
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: statusColor,
-                    fontWeight: theme.typography.fontWeightBold,
-                    lineHeight: 1.1,
-                    fontSize: '1.25rem'
-                  }}
-                >
-                  {Math.round(soc)}%
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: theme.palette.getContrastText(alpha(statusColor, 0.2)),
-                    backgroundColor: alpha(statusColor, 0.2),
-                    px: theme.spacing(1),
-                    py: theme.spacing(0.25),
-                    fontSize: '0.75rem',
-                    borderRadius: theme.shape.borderRadius / 2,
-                    border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(statusColor, 0.3)}`
-                  }}
-                  aria-live="polite"
-                >
-                  {stats.message}
-                </Typography>
-              </Box>
-              <LinearProgress
-                variant="determinate"
-                value={Math.min(soc, 100)}
-                sx={{
-                  height: theme.spacing(1),
-                  borderRadius: theme.shape.borderRadius / 2,
-                  backgroundColor: alpha(theme.palette.background.paper, 0.2),
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: statusColor,
-                    transition: animationsEnabled ? 'transform 0.4s ease' : 'none'
-                  }
-                }}
-                aria-hidden="true"
-              />
-            </Box>
-          </Paper>
-        )}
-
-        {/* Compact SoC display for smaller height */}
-        {height < 350 && (
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: theme.spacing(1),
-            py: theme.spacing(0.5)
-          }}>
-            <BatteryIconDisplay
-              soc={soc}
-              isCharging={stats.isCharging}
-              size={20}
-              color={statusColor}
-            />
-            <Typography
-              variant="subtitle1"
-              sx={{
-                ml: theme.spacing(0.5),
-                color: statusColor,
-                fontWeight: theme.typography.fontWeightBold,
-                fontSize: '0.9rem'
-              }}
-            >
-              {Math.round(soc)}%
-            </Typography>
-            <Box sx={{ flex: 1, ml: theme.spacing(1) }}>
-              <LinearProgress
-                variant="determinate"
-                value={Math.min(soc, 100)}
-                sx={{
-                  height: theme.spacing(0.5),
-                  borderRadius: theme.shape.borderRadius / 2,
-                  backgroundColor: alpha(theme.palette.background.paper, 0.2),
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: statusColor,
-                    transition: animationsEnabled ? 'transform 0.4s ease' : 'none'
-                  }
-                }}
-                aria-hidden="true"
-              />
-            </Box>
-            <Typography
-              variant="caption"
-              sx={{
-                ml: theme.spacing(1),
-                color: theme.palette.getContrastText(alpha(statusColor, 0.2)),
-                backgroundColor: alpha(statusColor, 0.2),
-                px: theme.spacing(0.75),
-                py: theme.spacing(0.1),
-                fontSize: '0.65rem',
-                borderRadius: theme.shape.borderRadius / 2,
-                border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(statusColor, 0.3)}`
-              }}
-            >
-              {stats.message}
-            </Typography>
-          </Box>
-        )}
-      </Box>
-    );
-  };
-
+  const socColor = useMemo(() => getSoCColor(soc, theme), [soc, theme]);
+  
   return (
     <Card
       ref={setRefs}
       elevation={0}
       sx={{
         width: '100%',
-        height: '100%', // Fill the grid cell
+        height: '100%',
         backgroundColor: theme.palette.background.paper,
         borderRadius: theme.shape.borderRadius,
         overflow: 'hidden',
@@ -870,31 +399,27 @@ const SoCIndicator = () => {
         display: 'flex',
         flexDirection: 'column',
         transform: hardwareAcceleration ? 'translateZ(0)' : 'none',
-        '&:hover': animationsEnabled ? {
-          boxShadow: theme.custom?.shadows?.md || theme.shadows[4]
-        } : {},
-        transition: animationsEnabled ? theme.transitions.create(['box-shadow']) : 'none',
       }}
       role="region"
       aria-label="Battery Pack Status"
     >
-      {/* Header */}
+      {/* Compact Header */}
       <CardHeader
         title={
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: theme.spacing(1),
+              gap: theme.spacing(0.5),
             }}
           >
-            <Zap size={20} color={theme.palette.primary.main} aria-hidden="true" />
+            <Zap size={16} color={theme.palette.primary.main} aria-hidden="true" />
             <Typography
-              variant="h6"
+              variant="subtitle1"
               sx={{
                 fontWeight: theme.typography.fontWeightMedium,
-                lineHeight: 1.2,
-                m: 0.5
+                lineHeight: 1,
+                m: 0
               }}
             >
               Battery Pack Status
@@ -903,8 +428,8 @@ const SoCIndicator = () => {
         }
         sx={{
           p: theme.spacing(0.5),
-          display: 'flex',
-          alignItems: 'center',
+          height: 'auto',
+          minHeight: 'unset',
           '& .MuiCardHeader-action': {
             m: 0,
           },
@@ -913,33 +438,16 @@ const SoCIndicator = () => {
 
       <Divider />
 
-      {/* Content - Scrollable container */}
+      {/* Compact Content */}
       <CardContent
         sx={{
-          p: theme.spacing(1.5),
+          p: theme.spacing(0.75),
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 0,
-          maxHeight: '100%',
-          overflow: 'auto',
-          scrollbarWidth: 'thin',
-          '&::-webkit-scrollbar': {
-            width: '4px',
-            height: '4px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: alpha(theme.palette.divider, 0.5),
-            borderRadius: '4px',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            background: theme.palette.divider,
-          },
+          overflow: 'visible', // Prevent scrollbar
           '&:last-child': {
-            pb: theme.spacing(1.5),
+            pb: theme.spacing(0.75),
           }
         }}
       >
@@ -958,8 +466,212 @@ const SoCIndicator = () => {
               Battery monitoring paused
             </Typography>
           </Box>
+        ) : isLoading ? (
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+            }}
+            aria-label="Loading battery data"
+          >
+            <Typography variant="body1">Loading...</Typography>
+          </Box>
         ) : (
-          renderContent()
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(0.75) }}>
+            {/* Pack Gauge Display - More Compact */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: theme.spacing(1),
+                borderRadius: theme.shape.borderRadius,
+                border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
+                backgroundColor: alpha(theme.palette.background.default, 0.5),
+              }}
+              role="region"
+              aria-label="Battery Pack Measurements"
+            >
+              <Grid container spacing={1} alignItems="center">
+                {/* Voltage */}
+                <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                    Voltage
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      color: voltageColor,
+                      fontWeight: theme.typography.fontWeightBold,
+                      lineHeight: 1,
+                      fontSize: '1.2rem',
+                      my: 0.25
+                    }}
+                    aria-label={`Voltage: ${voltage.toFixed(1)} Volts`}
+                  >
+                    {voltage.toFixed(1)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                    Volts
+                  </Typography>
+                </Grid>
+
+                {/* Current */}
+                <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                    Current
+                  </Typography>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', my: 0.25 }}
+                    aria-label={`Current: ${Math.abs(current).toFixed(1)} Amps, ${flowStatus.toLowerCase()}`}
+                  >
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        color: currentColor,
+                        fontWeight: theme.typography.fontWeightBold,
+                        lineHeight: 1,
+                        fontSize: '1.2rem'
+                      }}
+                    >
+                      {Math.abs(current).toFixed(1)}
+                    </Typography>
+                    <FlowIndicator flow={flowStatus} size={16} />
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                    Amps
+                  </Typography>
+                </Grid>
+
+                {/* Power */}
+                <Grid item xs={4} sx={{ textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                    Power
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: theme.typography.fontWeightBold,
+                      lineHeight: 1,
+                      fontSize: '1.2rem',
+                      my: 0.25
+                    }}
+                    aria-label={`Power: ${power} Watts`}
+                  >
+                    {power}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                    Watts
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            {/* Stat Boxes - Tighter layout */}
+            <Grid container spacing={0.75}>
+              <Grid item xs={4}>
+                <StatBox
+                  label="MIN VOLTAGE"
+                  value={minVoltage ? minVoltage.toFixed(1) : '-'}
+                  unit="V"
+                  color={minVoltage ? getVoltageColor(minVoltage, theme) : undefined}
+                  icon={Battery}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <StatBox
+                  label="MAX VOLTAGE"
+                  value={maxVoltage ? maxVoltage.toFixed(1) : '-'}
+                  unit="V"
+                  color={maxVoltage ? getVoltageColor(maxVoltage, theme) : undefined}
+                  icon={Battery}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <StatBox
+                  label="PEAK CURRENT"
+                  value={maxCurrent ? maxCurrent.toFixed(1) : '-'}
+                  unit="A"
+                  color={maxCurrent ? getCurrentColor(maxCurrent, theme) : undefined}
+                  icon={Zap}
+                />
+              </Grid>
+            </Grid>
+
+            {/* SoC Indicator - More Compact */}
+            <Paper
+              elevation={0}
+              sx={{
+                p: theme.spacing(0.75),
+                borderRadius: theme.shape.borderRadius,
+                border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: theme.spacing(1),
+                backgroundColor: alpha(theme.palette.background.default, 0.5),
+              }}
+              role="region"
+              aria-label={`Battery state of charge: ${Math.round(soc)}%`}
+            >
+              <BatteryIconDisplay
+                soc={soc}
+                isCharging={isCharging}
+                size={24}
+                color={socColor}
+              />
+              <Box sx={{ flex: 1 }}>
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: theme.spacing(0.25)
+                }}>
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{
+                      color: socColor,
+                      fontWeight: theme.typography.fontWeightBold,
+                      lineHeight: 1,
+                      fontSize: '1.1rem'
+                    }}
+                  >
+                    {Math.round(soc)}%
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: theme.palette.getContrastText(alpha(socColor, 0.2)),
+                      backgroundColor: alpha(socColor, 0.2),
+                      px: theme.spacing(0.75),
+                      py: theme.spacing(0.125),
+                      fontSize: '0.65rem',
+                      borderRadius: theme.shape.borderRadius / 2,
+                      border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(socColor, 0.3)}`
+                    }}
+                    aria-live="polite"
+                  >
+                    {statusMessage}
+                  </Typography>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={Math.min(soc, 100)}
+                  sx={{
+                    height: theme.spacing(0.5),
+                    borderRadius: theme.shape.borderRadius / 2,
+                    backgroundColor: alpha(theme.palette.background.paper, 0.2),
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: socColor,
+                      transition: animationsEnabled ? 'transform 0.4s ease' : 'none'
+                    }
+                  }}
+                  aria-hidden="true"
+                />
+              </Box>
+            </Paper>
+          </Box>
         )}
       </CardContent>
     </Card>

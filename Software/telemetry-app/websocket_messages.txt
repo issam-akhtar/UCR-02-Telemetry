@@ -1,7 +1,7 @@
 {
     "messages": [
         {
-            "type": "rear_strain_gauges2",
+            "type": "rear_strain_gauges_2",
             "fields": {
                 "timestamp": "Unix timestamp",
                 "gauge1": "Integer",
@@ -13,7 +13,7 @@
             }
         },
         {
-            "type": "rear_strain_gauges1",
+            "type": "rear_strain_gauges_1",
             "fields": {
                 "timestamp": "Unix timestamp",
                 "gauge1": "Integer",

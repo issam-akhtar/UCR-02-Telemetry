@@ -11,23 +11,56 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"telem-system/pkg/types"
 )
 
-// messageCache provides a simple caching mechanism for frequently decoded messages
-var messageCache = struct {
+// Cache configuration
+const (
+	// Maximum number of entries in the cache per message ID
+	maxCacheSize = 100
+
+	// LRU cache eviction threshold (percentage of cache to clear)
+	evictionThreshold = 0.25
+
+	// Message data cache key max length
+	maxCacheKeyLength = 32
+)
+
+// Cache statistics for monitoring
+var (
+	cacheHits   uint64
+	cacheMisses uint64
+)
+
+// messageCache provides an optimized caching mechanism with LRU-inspired eviction
+type messageCache struct {
 	sync.RWMutex
-	cache map[uint32]map[string]map[string]string
-}{
-	cache: make(map[uint32]map[string]map[string]string),
+	cache       map[uint32]map[string]*cachedItem
+	enabled     bool
+	maxSize     int
+	cacheHits   uint64
+	cacheMisses uint64
 }
 
-// maxCacheSize controls the maximum number of entries in the cache per message ID
-const maxCacheSize = 100
+// cachedItem represents a cached decoded message with access tracking
+type cachedItem struct {
+	data      map[string]string
+	timestamp int64 // Unix timestamp for access time tracking
+}
+
+// Global message cache instance
+var msgCache = &messageCache{
+	cache:   make(map[uint32]map[string]*cachedItem),
+	enabled: true,
+	maxSize: maxCacheSize,
+}
 
 // Buffer pools to reduce allocations
 var (
@@ -46,16 +79,53 @@ var (
 			return &buf
 		},
 	}
+
+	// Pool for decoded string maps
+	decodedMapPool = sync.Pool{
+		New: func() interface{} {
+			// Start with a reasonable size that covers most messages
+			m := make(map[string]string, 16)
+			return &m
+		},
+	}
+
+	// Pool for byte slices used in decoding
+	byteSlicePool = sync.Pool{
+		New: func() interface{} {
+			// 64 bytes should handle most CAN messages
+			b := make([]byte, 64)
+			return &b
+		},
+	}
 )
 
-// getCacheKey generates a consistent string key for the message data
+// getCacheKey generates an efficient string key for the message data
 func getCacheKey(data []byte) string {
-	// Only use first 32 bytes max to keep keys reasonably sized
-	maxLen := 32
+	// Limit key size for memory efficiency
+	maxLen := maxCacheKeyLength
 	if len(data) < maxLen {
 		maxLen = len(data)
 	}
-	return string(data[:maxLen])
+
+	// Use a small buffer for the key to avoid allocation
+	buf := make([]byte, maxLen*2) // Each byte becomes 2 hex chars
+
+	// Manual hex conversion to avoid allocations from fmt.Sprintf
+	for i := 0; i < maxLen; i++ {
+		b := data[i]
+		buf[i*2] = hexChar(b >> 4)
+		buf[i*2+1] = hexChar(b & 0x0F)
+	}
+
+	return string(buf)
+}
+
+// hexChar returns the hex character for a nibble
+func hexChar(nibble byte) byte {
+	if nibble < 10 {
+		return '0' + nibble
+	}
+	return 'a' + (nibble - 10)
 }
 
 // LoadJSONDefinitions reads and parses a JSON file containing CAN message definitions.
@@ -73,52 +143,141 @@ func LoadJSONDefinitions(jsonPath string) ([]types.Message, map[uint32]types.Mes
 
 	// Pre-allocate map with the exact size needed
 	msgMap := make(map[uint32]types.Message, len(messages))
-	for _, msg := range messages {
-		msgMap[msg.FrameID] = msg
+
+	// Process message definitions to optimize for decoding
+	for i := range messages {
+		// Store it in the map
+		msgMap[messages[i].FrameID] = messages[i]
+
+		// Sort signals by frequency of access (optimization opportunity)
+		// In a real system, this would be based on access patterns
 	}
 
 	// Initialize cache for each message
-	messageCache.Lock()
+	msgCache.Lock()
 	for id := range msgMap {
-		if _, exists := messageCache.cache[id]; !exists {
-			messageCache.cache[id] = make(map[string]map[string]string)
+		if _, exists := msgCache.cache[id]; !exists {
+			msgCache.cache[id] = make(map[string]*cachedItem)
 		}
 	}
-	messageCache.Unlock()
+	msgCache.Unlock()
+
+	// Start cache maintenance goroutine
+	go cacheMaintenance()
 
 	return messages, msgMap, nil
+}
+
+// cacheMaintenance periodically cleans up the message cache
+func cacheMaintenance() {
+	ticker := time.NewTicker(5 * time.Minute)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		now := time.Now().Unix()
+		evictOlderThan := now - (60 * 60) // 1 hour
+
+		msgCache.Lock()
+
+		for id, items := range msgCache.cache {
+			if len(items) < 10 {
+				// Skip small caches
+				continue
+			}
+
+			// Count items to evict
+			oldItemCount := 0
+			for _, item := range items {
+				if item.timestamp < evictOlderThan {
+					oldItemCount++
+				}
+			}
+
+			// If more than 25% of items are old, clean them up
+			if float64(oldItemCount)/float64(len(items)) >= evictionThreshold {
+				newCache := make(map[string]*cachedItem, len(items)-oldItemCount)
+				for key, item := range items {
+					if item.timestamp >= evictOlderThan {
+						newCache[key] = item
+					}
+				}
+				msgCache.cache[id] = newCache
+			}
+		}
+
+		msgCache.Unlock()
+	}
 }
 
 // DecodeMessage decodes raw CAN data into a map of signal names and stringified values.
 // If a signal cannot be decoded, its value is returned as an empty string.
 func DecodeMessage(data []byte, msg types.Message) (map[string]string, error) {
-	// Check cache first for identical message data
-	cacheKey := getCacheKey(data)
+	// Quick check for empty data
+	if len(data) == 0 {
+		return nil, fmt.Errorf("empty data for message %d", msg.FrameID)
+	}
 
-	messageCache.RLock()
-	if msgCache, exists := messageCache.cache[msg.FrameID]; exists {
-		if cached, found := msgCache[cacheKey]; found {
-			messageCache.RUnlock()
-			// Return a copy to prevent modification of cached data
-			result := make(map[string]string, len(cached))
-			for k, v := range cached {
-				result[k] = v
+	// Check cache first for identical message data (if enabled)
+	if msgCache.enabled {
+		cacheKey := getCacheKey(data)
+
+		msgCache.RLock()
+		if frameCache, exists := msgCache.cache[msg.FrameID]; exists {
+			if cached, found := frameCache[cacheKey]; found {
+				// Update timestamp and return a copy of the cached data
+				atomic.StoreInt64(&cached.timestamp, time.Now().Unix())
+				atomic.AddUint64(&cacheHits, 1)
+
+				// Get a map from the pool for the result
+				resultPtr := decodedMapPool.Get().(*map[string]string)
+				result := *resultPtr
+
+				// Clear the map (more efficient than creating a new one)
+				for k := range result {
+					delete(result, k)
+				}
+
+				// Copy the cached data
+				for k, v := range cached.data {
+					result[k] = v
+				}
+
+				msgCache.RUnlock()
+
+				// Return the map to the pool when done with it
+				runtime.SetFinalizer(resultPtr, func(m *map[string]string) {
+					decodedMapPool.Put(m)
+				})
+
+				return result, nil
 			}
-			return result, nil
 		}
+		msgCache.RUnlock()
+		atomic.AddUint64(&cacheMisses, 1)
 	}
-	messageCache.RUnlock()
 
-	// Pad data if shorter than expected (only do this once)
-	paddedData := data
+	// Ensure data is at least as long as the message definition requires
+	var paddedData []byte
 	if len(data) < msg.Length {
-		paddedData = make([]byte, msg.Length)
+		// Get a buffer from the pool
+		bufPtr := byteSlicePool.Get().(*[]byte)
+		paddedData = (*bufPtr)[:msg.Length]
 		copy(paddedData, data)
+		defer byteSlicePool.Put(bufPtr)
+	} else {
+		paddedData = data
 	}
 
-	// Pre-allocate the result map with the exact size needed
-	decoded := make(map[string]string, len(msg.Signals))
+	// Get a map from the pool for the result
+	resultPtr := decodedMapPool.Get().(*map[string]string)
+	decoded := *resultPtr
 
+	// Clear the map (more efficient than creating a new one)
+	for k := range decoded {
+		delete(decoded, k)
+	}
+
+	// Decode each signal
 	for _, signal := range msg.Signals {
 		val, err := decodeSignal(paddedData, signal, msg.Length)
 		if err != nil {
@@ -144,24 +303,80 @@ func DecodeMessage(data []byte, msg types.Message) (map[string]string, error) {
 		}
 	}
 
-	// Cache the result
-	messageCache.Lock()
-	defer messageCache.Unlock()
+	// Cache the result (if caching is enabled)
+	if msgCache.enabled {
+		cacheKey := getCacheKey(data)
 
-	// Check cache size and evict if necessary
-	if msgCache, exists := messageCache.cache[msg.FrameID]; exists {
-		if len(msgCache) >= maxCacheSize {
-			// Simple strategy: just clear the cache for this message ID
-			messageCache.cache[msg.FrameID] = make(map[string]map[string]string)
-		}
+		msgCache.Lock()
+		defer msgCache.Unlock()
 
-		// Cache a copy of the result
-		cachedResult := make(map[string]string, len(decoded))
-		for k, v := range decoded {
-			cachedResult[k] = v
+		// Get the cache for this message ID
+		if msgMap, exists := msgCache.cache[msg.FrameID]; exists {
+			// Check if we need to evict entries
+			if len(msgMap) >= msgCache.maxSize {
+				// Evict approximately 25% of the oldest entries
+				evictCount := msgCache.maxSize / 4
+				if evictCount < 1 {
+					evictCount = 1
+				}
+
+				// Find the oldest entries
+				type keyTime struct {
+					key string
+					ts  int64
+				}
+
+				// We only need to track the oldest entries we'll remove
+				oldestEntries := make([]keyTime, 0, evictCount)
+
+				for k, item := range msgMap {
+					ts := atomic.LoadInt64(&item.timestamp)
+
+					if len(oldestEntries) < evictCount {
+						oldestEntries = append(oldestEntries, keyTime{k, ts})
+					} else {
+						// Find the newest entry in our "oldest" list
+						newestIdx := 0
+						newestTs := oldestEntries[0].ts
+
+						for i := 1; i < len(oldestEntries); i++ {
+							if oldestEntries[i].ts > newestTs {
+								newestTs = oldestEntries[i].ts
+								newestIdx = i
+							}
+						}
+
+						// Replace it if this entry is older
+						if ts < newestTs {
+							oldestEntries[newestIdx] = keyTime{k, ts}
+						}
+					}
+				}
+
+				// Remove the oldest entries
+				for _, entry := range oldestEntries {
+					delete(msgMap, entry.key)
+				}
+			}
+
+			// Create a copy of the decoded data for the cache
+			cachedData := make(map[string]string, len(decoded))
+			for k, v := range decoded {
+				cachedData[k] = v
+			}
+
+			// Store in cache with current timestamp
+			msgMap[cacheKey] = &cachedItem{
+				data:      cachedData,
+				timestamp: time.Now().Unix(),
+			}
 		}
-		messageCache.cache[msg.FrameID][cacheKey] = cachedResult
 	}
+
+	// Set finalizer to return the map to the pool when GC happens
+	runtime.SetFinalizer(resultPtr, func(m *map[string]string) {
+		decodedMapPool.Put(m)
+	})
 
 	return decoded, nil
 }
@@ -188,8 +403,46 @@ func decodeSignal(data []byte, signal types.Signal, msgLength int) (interface{},
 		return decodeByteAlignedLittleEndian(data, signal)
 	}
 
+	// Fast path: 1-byte signal aligned to byte boundary
+	if signal.Length <= 8 && bitStart%8 == 0 {
+		return decodeSmallAlignedSignal(data, signal)
+	}
+
 	// Fallback: Optimized bit-level extraction for non-byte-aligned signals
 	return decodeBitLevel(data, signal)
+}
+
+// decodeSmallAlignedSignal provides a fast path for single-byte signals
+func decodeSmallAlignedSignal(data []byte, signal types.Signal) (interface{}, error) {
+	byteIdx := signal.Start / 8
+
+	// Get the byte
+	raw := uint64(data[byteIdx])
+
+	// Apply any needed masking for signals smaller than 8 bits
+	if signal.Length < 8 {
+		mask := uint64((1 << signal.Length) - 1)
+		raw &= mask
+	}
+
+	// Handle signed values
+	if signal.IsSigned && signal.Length < 8 {
+		// Check if sign bit is set
+		signBit := uint64(1) << (signal.Length - 1)
+		if raw&signBit != 0 {
+			// Set all bits above the signal length to 1
+			raw |= ^uint64(0) << signal.Length
+		}
+	}
+
+	// Apply factor and offset
+	if signal.IsSigned {
+		phys := float64(int8(raw))*signal.Factor + signal.Offset
+		return int64(phys), nil
+	}
+
+	phys := float64(raw)*signal.Factor + signal.Offset
+	return phys, nil
 }
 
 // decodeFloatSignal handles IEEE 754 floating-point values.
@@ -214,18 +467,31 @@ func decodeFloatSignal(data []byte, signal types.Signal) (interface{}, error) {
 		bufPtr := float32Pool.Get().(*[]byte)
 		floatBytes = *bufPtr
 		defer float32Pool.Put(bufPtr)
+
+		// Fast path for common case: data is properly aligned already
+		if byteStart%4 == 0 && len(data[byteStart:]) >= 4 && len(floatBytes) >= 4 {
+			copy(floatBytes[:4], data[byteStart:byteStart+4])
+		} else {
+			// Safe fallback
+			copy(floatBytes, data[byteStart:byteStart+bytesNeeded])
+		}
 	} else {
 		bufPtr := float64Pool.Get().(*[]byte)
 		floatBytes = *bufPtr
 		defer float64Pool.Put(bufPtr)
-	}
 
-	// Copy the data to our buffer
-	copy(floatBytes, data[byteStart:byteStart+bytesNeeded])
+		// Fast path for common case: data is properly aligned already
+		if byteStart%8 == 0 && len(data[byteStart:]) >= 8 && len(floatBytes) >= 8 {
+			copy(floatBytes[:8], data[byteStart:byteStart+8])
+		} else {
+			// Safe fallback
+			copy(floatBytes, data[byteStart:byteStart+bytesNeeded])
+		}
+	}
 
 	// Handle byte order
 	if strings.EqualFold(signal.ByteOrder, "big_endian") {
-		reverseBytes(floatBytes)
+		reverseBytes(floatBytes[:bytesNeeded])
 	}
 
 	// Convert to float
@@ -349,9 +615,32 @@ func decodeBitLevel(data []byte, signal types.Signal) (interface{}, error) {
 	return phys, nil
 }
 
+// byteToNibbles converts a byte to its ASCII hex representation
+var byteToNibbles [256][2]byte
+
+// Initialize lookup table for byte to hex conversion
+func init() {
+	// Pre-compute hex representations for all byte values
+	for i := 0; i < 256; i++ {
+		byteToNibbles[i][0] = hexChar(byte(i >> 4))
+		byteToNibbles[i][1] = hexChar(byte(i & 0x0F))
+	}
+}
+
 // ParseLiveCANPacket converts a space-separated CAN packet string into a byte slice.
 // This function is optimized for minimal allocations.
 func ParseLiveCANPacket(packet string) ([]byte, error) {
+	// Special case for empty packet
+	if len(packet) == 0 {
+		return nil, fmt.Errorf("empty CAN packet")
+	}
+
+	// Fast path for small packets
+	if len(packet) <= 32 {
+		// Small packet optimization
+		return parseSmallCANPacket(packet)
+	}
+
 	// Count the fields first to pre-allocate the slice
 	fieldCount := 0
 	for i := 0; i < len(packet); i++ {
@@ -375,12 +664,12 @@ func ParseLiveCANPacket(packet string) ([]byte, error) {
 			if start < i {
 				// Extract the hex value
 				hexVal := packet[start:i]
-				b, err := strconv.ParseUint(hexVal, 16, 8)
+				b, err := parseHexByte(hexVal)
 				if err != nil {
 					return nil, fmt.Errorf("invalid hex byte '%s' at position %d: %w",
 						hexVal, start, err)
 				}
-				data = append(data, byte(b))
+				data = append(data, b)
 			}
 			start = i + 1
 		}
@@ -389,13 +678,113 @@ func ParseLiveCANPacket(packet string) ([]byte, error) {
 	return data, nil
 }
 
+// parseSmallCANPacket is an optimized version for small packets
+func parseSmallCANPacket(packet string) ([]byte, error) {
+	// For small packets, use a stack-allocated buffer
+	var buf [16]byte // Most small CAN packets will fit in 16 bytes
+	data := buf[:0]
+
+	// Process each space-delimited field
+	start := 0
+	for i := 0; i <= len(packet); i++ {
+		if i == len(packet) || packet[i] == ' ' {
+			if start < i {
+				// Extract the hex value
+				hexVal := packet[start:i]
+				b, err := parseHexByte(hexVal)
+				if err != nil {
+					return nil, fmt.Errorf("invalid hex byte '%s' at position %d: %w",
+						hexVal, start, err)
+				}
+				data = append(data, b)
+			}
+			start = i + 1
+		}
+	}
+
+	// Make a copy to return (since we can't return a slice of a stack var)
+	result := make([]byte, len(data))
+	copy(result, data)
+	return result, nil
+}
+
+// parseHexByte parses a hex string into a byte with minimal allocations
+func parseHexByte(hex string) (byte, error) {
+	// Fast path for common 2-character hex values
+	if len(hex) == 2 {
+		high := hexValue(hex[0])
+		low := hexValue(hex[1])
+
+		// Check for invalid characters
+		if high < 0 || low < 0 {
+			return 0, fmt.Errorf("invalid hex characters")
+		}
+
+		return byte(high<<4 | low), nil
+	}
+
+	// Fallback to standard library for other cases
+	val, err := strconv.ParseUint(hex, 16, 8)
+	return byte(val), err
+}
+
+// hexValue converts a hex character to its numeric value
+func hexValue(c byte) int {
+	switch {
+	case c >= '0' && c <= '9':
+		return int(c - '0')
+	case c >= 'a' && c <= 'f':
+		return int(c - 'a' + 10)
+	case c >= 'A' && c <= 'F':
+		return int(c - 'A' + 10)
+	default:
+		return -1 // Invalid hex character
+	}
+}
+
+// GetCacheStats returns cache hit/miss statistics
+func GetCacheStats() (hits, misses uint64) {
+	return atomic.LoadUint64(&cacheHits), atomic.LoadUint64(&cacheMisses)
+}
+
 // ClearCache clears the message cache
 func ClearCache() {
-	messageCache.Lock()
-	defer messageCache.Unlock()
+	msgCache.Lock()
+	defer msgCache.Unlock()
 
 	// Reinitialize the cache map
-	for id := range messageCache.cache {
-		messageCache.cache[id] = make(map[string]map[string]string)
+	for id := range msgCache.cache {
+		msgCache.cache[id] = make(map[string]*cachedItem)
 	}
+
+	// Reset statistics
+	atomic.StoreUint64(&cacheHits, 0)
+	atomic.StoreUint64(&cacheMisses, 0)
+}
+
+// SetCacheEnabled enables or disables the message cache
+func SetCacheEnabled(enabled bool) {
+	msgCache.Lock()
+	defer msgCache.Unlock()
+
+	msgCache.enabled = enabled
+
+	// Clear cache if disabling
+	if !enabled {
+		for id := range msgCache.cache {
+			msgCache.cache[id] = make(map[string]*cachedItem)
+		}
+	}
+}
+
+// SetCacheSize sets the maximum number of entries in the cache per message ID
+func SetCacheSize(size int) {
+	if size < 10 {
+		size = 10 // Enforce minimum size
+	}
+
+	msgCache.Lock()
+	defer msgCache.Unlock()
+
+	msgCache.maxSize = size
 }

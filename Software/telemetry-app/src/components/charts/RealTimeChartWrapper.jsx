@@ -56,7 +56,9 @@ const RealTimeChartWrapper = ({
   }, [isPaused]);
   
   // Effective paused state: paused if explicitly paused or not in view
-  const effectivePaused = localPaused || !inView;
+  const effectivePaused = useMemo(() => 
+    localPaused || !inView,
+  [localPaused, inView]);
   
   // Handle pause/resume
   const handlePauseToggle = useCallback(() => {
@@ -72,23 +74,23 @@ const RealTimeChartWrapper = ({
   
   // Trigger resize event when component becomes visible or changes fullscreen state
   useEffect(() => {
-    if (inView) {
-      const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
-      return () => clearTimeout(timer);
-    }
+    if (!inView) return;
+    
+    const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    return () => clearTimeout(timer);
   }, [inView, isFullscreen]);
   
-  // Dynamic styles for containers
+  // Dynamic styles for containers - UPDATED to match HistoricalChartWrapper
   const containerStyle = useMemo(() => ({
-    width: isFullscreen ? '100vw' : (typeof width === 'number' ? `${width}px` : width),
-    height: isFullscreen ? '100vh' : (typeof height === 'number' ? `${height}px` : height),
+    width: isFullscreen ? '98vw' : (typeof width === 'number' ? `${width}px` : width),
+    height: isFullscreen ? '95vh' : (typeof height === 'number' ? `${height}px` : height),
     position: isFullscreen ? 'fixed' : 'relative',
-    top: isFullscreen ? 0 : 'auto',
-    left: isFullscreen ? 0 : 'auto',
+    top: isFullscreen ? '2.5vh' : 'auto',
+    left: isFullscreen ? '1vw' : 'auto',
     zIndex: isFullscreen ? 1300 : 'auto',
-    borderRadius: isFullscreen ? 0 : theme.shape.borderRadius,
+    borderRadius: theme.shape.borderRadius,
     overflow: 'hidden',
-    boxShadow: isFullscreen ? 'none' : theme.shadows[3],
+    boxShadow: isFullscreen ? '0 0 30px rgba(0, 0, 0, 0.5)' : theme.shadows[3],
     transition: settings?.global?.enableTransitions !== false 
       ? theme.transitions.create(['width', 'height', 'box-shadow', 'border-radius'], { 
           duration: theme.transitions.duration.standard 
@@ -109,6 +111,85 @@ const RealTimeChartWrapper = ({
     settings?.global?.enableHardwareAcceleration,
     customStyles
   ]);
+
+  // Memoize the header action buttons
+  const headerActions = useMemo(() => (
+    <Box sx={{ display: 'flex', gap: 0.5 }}>
+      <Tooltip title={localPaused ? 'Resume' : 'Pause'}>
+        <IconButton size="small" onClick={handlePauseToggle} color={localPaused ? 'primary' : 'default'}>
+          {localPaused ? <PlayArrowIcon /> : <PauseIcon />}
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}>
+        <IconButton size="small" onClick={handleFullscreenToggle}>
+          {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        </IconButton>
+      </Tooltip>
+    </Box>
+  ), [localPaused, isFullscreen, handlePauseToggle, handleFullscreenToggle]);
+
+  // Memoize "Not in viewport" overlay
+  const notInViewOverlay = useMemo(() => (
+    !inView && (
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.palette.mode === 'dark' 
+            ? 'rgba(0, 0, 0, 0.7)' 
+            : 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(2px)',
+          zIndex: 1,
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Chart paused (not in viewport)
+        </Typography>
+      </Box>
+    )
+  ), [inView, theme.palette.mode]);
+
+  // Memoize "Paused" overlay
+  const pausedOverlay = useMemo(() => (
+    inView && localPaused && (
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'transparent',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      >
+        <Chip
+          label="PAUSED"
+          color="primary"
+          variant="outlined"
+          sx={{ 
+            backgroundColor: theme.palette.mode === 'dark' 
+              ? 'rgba(0, 0, 0, 0.7)' 
+              : 'rgba(255, 255, 255, 0.7)',
+            backdropFilter: 'blur(2px)',
+            fontWeight: 'bold',
+            pointerEvents: 'auto'
+          }}
+          onClick={handlePauseToggle}
+        />
+      </Box>
+    )
+  ), [inView, localPaused, theme.palette.mode, handlePauseToggle]);
 
   return (
     <Card 
@@ -131,20 +212,7 @@ const RealTimeChartWrapper = ({
             </Typography>
           </Box>
         }
-        action={
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Tooltip title={localPaused ? 'Resume' : 'Pause'}>
-              <IconButton size="small" onClick={handlePauseToggle} color={localPaused ? 'primary' : 'default'}>
-                {localPaused ? <PlayArrowIcon /> : <PauseIcon />}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}>
-              <IconButton size="small" onClick={handleFullscreenToggle}>
-                {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-              </IconButton>
-            </Tooltip>
-          </Box>
-        }
+        action={headerActions}
         sx={{
           padding: theme.spacing(1, 2),
           borderBottom: `1px solid ${theme.palette.divider}`,
@@ -179,63 +247,10 @@ const RealTimeChartWrapper = ({
         />
         
         {/* Overlay when not in view */}
-        {!inView && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: theme.palette.mode === 'dark' 
-                ? 'rgba(0, 0, 0, 0.7)' 
-                : 'rgba(255, 255, 255, 0.7)',
-              backdropFilter: 'blur(2px)',
-              zIndex: 1,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              Chart paused (not in viewport)
-            </Typography>
-          </Box>
-        )}
+        {notInViewOverlay}
         
         {/* Overlay when paused */}
-        {inView && localPaused && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'transparent',
-              zIndex: 1,
-              pointerEvents: 'none',
-            }}
-          >
-            <Chip
-              label="PAUSED"
-              color="primary"
-              variant="outlined"
-              sx={{ 
-                backgroundColor: theme.palette.mode === 'dark' 
-                  ? 'rgba(0, 0, 0, 0.7)' 
-                  : 'rgba(255, 255, 255, 0.7)',
-                backdropFilter: 'blur(2px)',
-                fontWeight: 'bold',
-                pointerEvents: 'auto'
-              }}
-              onClick={handlePauseToggle}
-            />
-          </Box>
-        )}
+        {pausedOverlay}
       </CardContent>
     </Card>
   );

@@ -1,45 +1,119 @@
-// Dashboard.jsx
-import React, { memo, useState, useContext, useMemo, useEffect, useRef } from 'react';
+import React, { lazy, Suspense, useState, useEffect, useContext, useMemo, useCallback, memo, useRef } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useTheme } from '@mui/material/styles';
-import { Box, useMediaQuery } from '@mui/material';
+import { Box, CircularProgress, useMediaQuery } from '@mui/material';
 import { ChartSettingsContext } from '../contexts/ChartSettingsContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AnimationContext } from '../App';
+import { wsService } from '../services/websocket';
 
-// Import components
-import RaceCarTelemetry from '../components/caroverview/RaceCarTelemetry';
-import SoCIndicator from '../components/visuals/SoCIndicator';
-import LiveGPSMap from '../components/visuals/LiveGPSMap';
-import CellHeatmap from '../components/visuals/CellHeatmap';
-import SpeedometerGauge from '../components/visuals/SpeedometerGauge';
-import PedalsGauge from '../components/visuals/PedalsGauge';
-import MotorControllerTempGauge from '../components/visuals/MotorControllerTempGauge';
-import WeatherVisual from '../components/visuals/Weather';
+// Import components - using lazy loading for non-critical components
+const RaceCarTelemetry = lazy(() => import('../components/caroverview/RaceCarTelemetry'));
+const SoCIndicator = lazy(() => import('../components/visuals/SoCIndicator'));
+const LiveGPSMap = lazy(() => import('../components/visuals/LiveGPSMap'));
+const CellHeatmap = lazy(() => import('../components/visuals/CellHeatmap'));
+const SpeedometerGauge = lazy(() => import('../components/visuals/SpeedometerGauge'));
+const PedalsGauge = lazy(() => import('../components/visuals/PedalsGauge'));
+const MotorControllerTempGauge = lazy(() => import('../components/visuals/MotorControllerTempGauge'));
+const WeatherVisual = lazy(() => import('../components/visuals/Weather'));
+
+// Simple fallback component for Suspense
+const ComponentLoader = memo(({ settings }) => (
+  <Box sx={{ 
+    height: '100%', 
+    width: '100%', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    bgcolor: settings?.dashboard?.loaderBackgroundColor || 'background.paper',
+    borderRadius: settings?.dashboard?.componentBorderRadius || 1,
+  }}>
+    <CircularProgress 
+      size={settings?.dashboard?.loaderSize || 24} 
+      color={settings?.dashboard?.loaderColor || "primary"}
+    />
+  </Box>
+));
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const Dashboard = () => {
   const theme = useTheme();
-  const { settings } = useContext(ChartSettingsContext);
+  const { settings, updateSettings } = useContext(ChartSettingsContext);
+  const animationContext = useContext(AnimationContext);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const scrollContainerRef = useRef(null);
-
-  const animationsEnabled = useMemo(
-    () => settings.global.animationDuration > 0 && settings.global.enableTransitions,
-    [settings.global.animationDuration, settings.global.enableTransitions]
-  );
-
-  const animationDuration = useMemo(
-    () => `${settings.global.animationDuration}ms`,
-    [settings.global.animationDuration]
-  );
-
+  const prevMaxHeightRef = useRef(0);
+  const resizeTimeoutRef = useRef(null);
+  
+  // Track component subscriptions for cleanup
+  const subscriptions = useRef({});
+  
+  // Track if the component is being unmounted
+  const isUnmounting = useRef(false);
+  
+  // References to mounted components for efficient cleanup
+  const componentRefs = useRef({});
+  
+  // Add a state to gracefully handle unmounting
+  const [isVisible, setIsVisible] = useState(true);
+  
+  // Parse animation context safely, with fallback to settings
+  const animationsEnabled = useMemo(() => {
+    // First check if animations are explicitly set in ChartSettingsContext
+    if (settings?.dashboard?.animationsEnabled !== undefined) {
+      return settings.dashboard.animationsEnabled;
+    }
+    // Otherwise fall back to AnimationContext or default
+    return animationContext?.enabled ?? true;
+  }, [settings?.dashboard?.animationsEnabled, animationContext?.enabled]);
+  
+  const animationDuration = useMemo(() => {
+    // First check if duration is explicitly set in ChartSettingsContext
+    if (settings?.dashboard?.animationDuration !== undefined) {
+      return settings.dashboard.animationDuration;
+    }
+    // Otherwise fall back to AnimationContext or default
+    return animationContext?.duration ?? 300;
+  }, [settings?.dashboard?.animationDuration, animationContext?.duration]);
+  
+  // Performance settings from context
   const useHardwareAcceleration = useMemo(
-    () => settings.global.enableHardwareAcceleration,
-    [settings.global.enableHardwareAcceleration]
+    () => settings?.global?.enableHardwareAcceleration ?? false,
+    [settings?.global?.enableHardwareAcceleration]
   );
-
+  
+  const prefetchResources = useMemo(
+    () => settings?.dashboard?.prefetchResources ?? true,
+    [settings?.dashboard?.prefetchResources]
+  );
+  
+  const isLowPowerMode = useMemo(
+    () => settings?.performance?.lowPowerMode ?? false,
+    [settings?.performance?.lowPowerMode]
+  );
+  
+  // Get visible components from settings
+  const visibleComponents = useMemo(() => {
+    // If not specified in settings, show all components
+    if (!settings?.dashboard?.visibleComponents) {
+      return {
+        'soc-indicator': true,
+        'speedometer-gauge': true,
+        'motor-controller-temp-gauge': true,
+        'car-overview': true,
+        'live-gps-map': true,
+        'pedals': true,
+        'cell-heatmap': true,
+        'weather-visual': true
+      };
+    }
+    return settings.dashboard.visibleComponents;
+  }, [settings?.dashboard?.visibleComponents]);
+  
+  // Combine default layouts with saved layouts from settings if available
   const defaultLayouts = useMemo(() => ({
     lg: [
       { i: 'soc-indicator', x: 0, y: 0, w: 8, h: 6 },
@@ -82,53 +156,299 @@ const Dashboard = () => {
       { i: 'weather-visual', x: 0, y: 61.5, w: 10, h: 8 }
     ],
   }), []);
-
-  const [layouts, setLayouts] = useState(defaultLayouts);
-
-  const onLayoutChange = (currentLayout, allLayouts) => {
-    setLayouts(allLayouts);
-  };
-
-  const rowHeight = useMemo(() => (isMobile ? 35 : 40), [isMobile]);
-  const layoutMargin = useMemo(() => (isMobile ? [5, 5] : [10, 10]), [isMobile]);
-  const containerPadding = useMemo(() => (isMobile ? [5, 5] : [10, 10]), [isMobile]);
-
+  
+  // Use layouts from settings if available, otherwise use defaults
+  const initialLayouts = useMemo(() => {
+    if (settings?.dashboard?.layouts) {
+      // Filter out any components that aren't visible
+      const filteredLayouts = {};
+      Object.keys(settings.dashboard.layouts).forEach(breakpoint => {
+        filteredLayouts[breakpoint] = settings.dashboard.layouts[breakpoint].filter(
+          layout => visibleComponents[layout.i]
+        );
+      });
+      return filteredLayouts;
+    }
+    
+    // If no saved layouts, filter default layouts by visible components
+    const filteredDefaults = {};
+    Object.keys(defaultLayouts).forEach(breakpoint => {
+      filteredDefaults[breakpoint] = defaultLayouts[breakpoint].filter(
+        layout => visibleComponents[layout.i]
+      );
+    });
+    
+    return filteredDefaults;
+  }, [defaultLayouts, settings?.dashboard?.layouts, visibleComponents]);
+  
+  const [layouts, setLayouts] = useState(initialLayouts);
+  
+  // This prevents layout changes during unmounting for better transitions
+  const onLayoutChange = useCallback((currentLayout, allLayouts) => {
+    // Skip layout updates during unmounting
+    if (isUnmounting.current) return;
+    
+    // Use functional update to avoid stale closures
+    setLayouts(prevLayouts => {
+      // Don't update if nothing changed - prevents infinite loops
+      if (JSON.stringify(prevLayouts) === JSON.stringify(allLayouts)) {
+        return prevLayouts;
+      }
+      
+      // Save to settings if configured to do so
+      if (settings?.dashboard?.saveLayoutChanges) {
+        // Use a debounced save to prevent too many updates
+        if (resizeTimeoutRef.current) {
+          clearTimeout(resizeTimeoutRef.current);
+        }
+        resizeTimeoutRef.current = setTimeout(() => {
+          updateSettings('dashboard', 'layouts', allLayouts);
+          resizeTimeoutRef.current = null;
+        }, 500);
+      }
+      
+      return allLayouts;
+    });
+  }, [settings?.dashboard?.saveLayoutChanges, updateSettings]);
+  
+  // Grid configuration from settings
+  const rowHeight = useMemo(() => {
+    if (settings?.dashboard?.rowHeight) {
+      return isMobile ? 
+        (settings.dashboard.rowHeight.mobile || 35) : 
+        (settings.dashboard.rowHeight.desktop || 40);
+    }
+    return isMobile ? 35 : 40;
+  }, [isMobile, settings?.dashboard?.rowHeight]);
+  
+  const layoutMargin = useMemo(() => {
+    if (settings?.dashboard?.layoutMargin) {
+      return isMobile ? 
+        (settings.dashboard.layoutMargin.mobile || [5, 5]) : 
+        (settings.dashboard.layoutMargin.desktop || [10, 10]);
+    }
+    return isMobile ? [5, 5] : [10, 10];
+  }, [isMobile, settings?.dashboard?.layoutMargin]);
+  
+  const containerPadding = useMemo(() => {
+    if (settings?.dashboard?.containerPadding) {
+      return isMobile ? 
+        (settings.dashboard.containerPadding.mobile || [5, 5]) : 
+        (settings.dashboard.containerPadding.desktop || [10, 10]);
+    }
+    return isMobile ? [5, 5] : [10, 10];
+  }, [isMobile, settings?.dashboard?.containerPadding]);
+  
+  // Break points configuration from settings
+  const breakpoints = useMemo(() => 
+    settings?.dashboard?.breakpoints || { lg: 1200, md: 996, sm: 768, xs: 480 },
+    [settings?.dashboard?.breakpoints]
+  );
+  
+  const cols = useMemo(() => 
+    settings?.dashboard?.cols || { lg: 30, md: 25, sm: 15, xs: 10 },
+    [settings?.dashboard?.cols]
+  );
+  
+  // Grid behavior from settings
+  const isDraggable = useMemo(() => 
+    isLowPowerMode ? false : (settings?.dashboard?.isDraggable !== undefined ? 
+      settings.dashboard.isDraggable : false),
+    [isLowPowerMode, settings?.dashboard?.isDraggable]
+  );
+  
+  const isResizable = useMemo(() => 
+    isLowPowerMode ? false : (settings?.dashboard?.isResizable !== undefined ? 
+      settings.dashboard.isResizable : false),
+    [isLowPowerMode, settings?.dashboard?.isResizable]
+  );
+  
+  const compactType = useMemo(() => 
+    settings?.dashboard?.compactType || null,
+    [settings?.dashboard?.compactType]
+  );
+  
+  const preventCollision = useMemo(() => 
+    settings?.dashboard?.preventCollision !== undefined ? 
+      settings.dashboard.preventCollision : true,
+    [settings?.dashboard?.preventCollision]
+  );
+  
+  // Extra padding to add to bottom of grid
+  const bottomMargin = useMemo(() => 
+    settings?.dashboard?.bottomMargin || 50,
+    [settings?.dashboard?.bottomMargin]
+  );
+  
+  // Memoize this expensive calculation
   const getMaxGridHeight = useMemo(() => {
-    if (!layouts.lg) return 0;
+    if (!layouts.lg || layouts.lg.length === 0) return 0;
     
-    const maxItemBottom = layouts.lg.reduce((maxHeight, item) => {
-      const verticalMargin = layoutMargin[1];
-      const itemBottom = 
-        (item.y + item.h) * rowHeight + 
-        (item.y + item.h - 1) * verticalMargin;
-      return Math.max(maxHeight, itemBottom);
-    }, 0);
-    
-    const totalPadding = containerPadding[1] * 2;
-    return maxItemBottom + totalPadding + 50;
-  }, [layouts.lg, rowHeight, layoutMargin, containerPadding]);
-
+    try {
+      const maxItemBottom = layouts.lg.reduce((maxHeight, item) => {
+        const verticalMargin = layoutMargin[1];
+        const itemBottom = 
+          (item.y + item.h) * rowHeight + 
+          (item.y + item.h - 1) * verticalMargin;
+        return Math.max(maxHeight, itemBottom);
+      }, 0);
+      
+      const totalPadding = containerPadding[1] * 2;
+      return maxItemBottom + totalPadding + bottomMargin;
+    } catch (error) {
+      console.error('Error calculating max grid height:', error);
+      return settings?.dashboard?.fallbackHeight || 1200; // Fallback height
+    }
+  }, [
+    layouts.lg, 
+    rowHeight, 
+    layoutMargin, 
+    containerPadding, 
+    bottomMargin, 
+    settings?.dashboard?.fallbackHeight
+  ]);
+  
+  // More efficient dashboard exiting handler
   useEffect(() => {
-    const ensureFullVisibility = () => {
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.style.minHeight = `${getMaxGridHeight}px`;
+    const handleDashboardExiting = () => {
+      // Set unmounting flag immediately
+      isUnmounting.current = true;
+      
+      // OPTIMIZATION: Prioritize visual feedback first
+      setIsVisible(false);
+      
+      // Use requestAnimationFrame to batch the heavy cleanup after the visual change
+      requestAnimationFrame(() => {
+        // Cancel any pending resize or animation timers first
+        if (resizeTimeoutRef.current) {
+          clearTimeout(resizeTimeoutRef.current);
+          resizeTimeoutRef.current = null;
+        }
+        
+        // Clean up subscriptions asynchronously - don't block navigation
+        setTimeout(() => {
+          if (isUnmounting.current) {
+            // Clean up subscriptions
+            Object.values(subscriptions.current).forEach(unsub => {
+              if (typeof unsub === 'function') unsub();
+            });
+            subscriptions.current = {};
+            
+            // Signal child components to stop heavy work
+            Object.values(componentRefs.current).forEach(ref => {
+              if (ref?.current?.pauseUpdates) {
+                ref.current.pauseUpdates();
+              }
+            });
+          }
+        }, 0);
+      });
+    };
+    
+    window.addEventListener('dashboardExiting', handleDashboardExiting);
+    
+    return () => {
+      window.removeEventListener('dashboardExiting', handleDashboardExiting);
+      isUnmounting.current = true;
+      
+      // Cleanup on unmount
+      Object.values(subscriptions.current).forEach(unsub => {
+        if (typeof unsub === 'function') unsub();
+      });
+      
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, []);
+  
+  // Handle container sizing - with safeguards to prevent update loops
+  useEffect(() => {
+    if (isUnmounting.current) return;
+    
+    // Check if height actually changed to prevent unnecessary DOM updates
+    if (scrollContainerRef.current && Math.abs(prevMaxHeightRef.current - getMaxGridHeight) > 1) {
+      prevMaxHeightRef.current = getMaxGridHeight;
+      
+      // Clear any previous timeout
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+      
+      // Use RAF to batch DOM updates
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current && !isUnmounting.current) {
+          scrollContainerRef.current.style.minHeight = `${getMaxGridHeight}px`;
+        }
+      });
+    }
+    
+    // Cleanup function
+    return () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+        resizeTimeoutRef.current = null;
+      }
+    };
+  }, [getMaxGridHeight]);
+  
+  // Prefetch critical resources - safer version
+  useEffect(() => {
+    const doPrefetchResources = () => {
+      if (!prefetchResources) return;
+      
+      try {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            const links = settings?.dashboard?.prefetchLinks || ['realtime', 'historical'];
+            links.forEach(href => {
+              const link = document.createElement('link');
+              link.rel = 'prefetch';
+              link.href = '/' + href;
+              document.head.appendChild(link);
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error prefetching resources:', error);
       }
     };
     
-    ensureFullVisibility();
-    const timeoutId = setTimeout(ensureFullVisibility, 100);
-    return () => clearTimeout(timeoutId);
-  }, [getMaxGridHeight, layouts]);
-
+    // Only run prefetch once and don't do it if component is unmounting
+    if (!isUnmounting.current) {
+      doPrefetchResources();
+    }
+  }, [prefetchResources, settings?.dashboard?.prefetchLinks]);
+  
+  // This component now uses conditional rendering for better unmounting
+  if (!isVisible) {
+    return (
+      <Box
+        sx={{
+          width: '100%',
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          bgcolor: settings?.ui?.loadingBackgroundColor || theme.palette.background.default,
+        }}
+      />
+    );
+  }
+  
   return (
     <Box
       sx={{
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        bgcolor: theme.palette.background.default,
-        p: { xs: 1, sm: 1.5 },
-        transition: animationsEnabled ? `background-color ${animationDuration}` : 'none',
+        bgcolor: settings?.ui?.dashboardBackgroundColor || theme.palette.background.default,
+        p: { 
+          xs: settings?.ui?.padding?.xs || 1, 
+          sm: settings?.ui?.padding?.sm || 1.5 
+        },
+        transition: animationsEnabled ? 
+          `background-color ${animationDuration}ms` : 'none',
         willChange: useHardwareAcceleration ? 'background-color' : 'auto',
         height: '100vh',
         overflow: 'auto',
@@ -145,12 +465,12 @@ const Dashboard = () => {
           width: '100%',
           height: '100%', 
           position: 'relative',
+          minHeight: `${getMaxGridHeight}px`, // Set initial height
         }}
         data-testid="dashboard-scroll-container"
       >
         <Box 
           sx={{ 
-            minHeight: `${getMaxGridHeight}px`,
             width: '100%',
             position: 'relative',
           }}
@@ -159,54 +479,143 @@ const Dashboard = () => {
           <ResponsiveGridLayout
             className="dashboard-layout"
             layouts={layouts}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
-            cols={{ lg: 30, md: 25, sm: 15, xs: 10 }}
+            breakpoints={breakpoints}
+            cols={cols}
             rowHeight={rowHeight}
             margin={layoutMargin}
             containerPadding={containerPadding}
-            isDraggable={false}
-            isResizable={false}
+            isDraggable={isDraggable}
+            isResizable={isResizable}
             useCSSTransforms={useHardwareAcceleration}
-            measureBeforeMount={false}
-            compactType={null}
-            preventCollision
+            measureBeforeMount={settings?.dashboard?.measureBeforeMount || false}
+            compactType={compactType}
+            preventCollision={preventCollision}
             onLayoutChange={onLayoutChange}
             style={{
               width: '100%',
-              transition: animationsEnabled ? `all ${animationDuration}` : 'none',
+              transition: animationsEnabled ? 
+                `all ${animationDuration}ms` : 'none',
             }}
           >
-            <div key="soc-indicator" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <SoCIndicator />
-            </div>
+            {visibleComponents['soc-indicator'] && (
+              <div key="soc-indicator" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <SoCIndicator 
+                    settings={settings?.components?.socIndicator || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
             
-            <div key="speedometer-gauge" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <SpeedometerGauge />
-            </div>
-
-            <div key="motor-controller-temp-gauge" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <MotorControllerTempGauge />
-            </div>
-
-            <div key="car-overview" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <RaceCarTelemetry />
-            </div>
-
-            <div key="live-gps-map" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <LiveGPSMap />
-            </div>
-
-            <div key="pedals" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <PedalsGauge />
-            </div>
-
-            <div key="cell-heatmap" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <CellHeatmap />
-            </div>
-
-            <div key="weather-visual" style={{ height: '100%', willChange: useHardwareAcceleration ? 'transform' : 'auto' }}>
-              <WeatherVisual />
-            </div>
+            {visibleComponents['speedometer-gauge'] && (
+              <div key="speedometer-gauge" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <SpeedometerGauge 
+                    settings={settings?.components?.speedometerGauge || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
+            
+            {visibleComponents['motor-controller-temp-gauge'] && (
+              <div key="motor-controller-temp-gauge" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <MotorControllerTempGauge 
+                    settings={settings?.components?.motorControllerTempGauge || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
+            
+            {visibleComponents['car-overview'] && (
+              <div key="car-overview" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <RaceCarTelemetry 
+                    settings={settings?.components?.raceCarTelemetry || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
+            
+            {visibleComponents['live-gps-map'] && (
+              <div key="live-gps-map" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <LiveGPSMap 
+                    settings={settings?.components?.liveGPSMap || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
+            
+            {visibleComponents['pedals'] && (
+              <div key="pedals" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <PedalsGauge 
+                    settings={settings?.components?.pedalsGauge || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
+            
+            {visibleComponents['cell-heatmap'] && (
+              <div key="cell-heatmap" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <CellHeatmap 
+                    settings={settings?.components?.cellHeatmap || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
+            
+            {visibleComponents['weather-visual'] && (
+              <div key="weather-visual" style={{ 
+                height: '100%', 
+                willChange: useHardwareAcceleration ? 'transform' : 'auto',
+                borderRadius: settings?.dashboard?.componentBorderRadius || 0,
+                overflow: 'hidden',
+              }}>
+                <Suspense fallback={<ComponentLoader settings={settings} />}>
+                  <WeatherVisual 
+                    settings={settings?.components?.weatherVisual || {}}
+                  />
+                </Suspense>
+              </div>
+            )}
           </ResponsiveGridLayout>
         </Box>
       </Box>

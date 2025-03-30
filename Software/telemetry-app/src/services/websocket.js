@@ -1,24 +1,15 @@
 import { loadTelemetryProto, decodeTelemetryMessage } from '../utils/protobuf';
 
-// Default configuration values
-const DEFAULT_CONFIG = {
-  RECONNECT_INTERVAL: 5000,
-  MAX_QUEUE_SIZE: 125,
-  MAX_RETRIES: 5,
-  RETRY_DELAY: 2000,
-  MAX_BATCH_SIZE: 10,  // Reduced for real-time dashboard
-  INACTIVE_THRESHOLD: 30000,
-  THROTTLE_TIME_NORMAL: 8,  // ~120fps for smooth dashboard
-  THROTTLE_TIME_LOW_POWER: 33, // 20fps for low-power devices
-  PING_INTERVAL: 25000,
-  HEALTH_CHECK_INTERVAL: 30000,
-  LOW_POWER_HEALTH_CHECK_INTERVAL: 60000,
-  ERROR_THRESHOLD: 5,
-  ENABLE_COMPRESSION: false, // Disabled by default, enable if needed
+// Simple configuration
+const CONFIG = {
+  RECONNECT_INTERVAL: 3000,
+  MAX_RETRIES: 3,
+  PING_INTERVAL: 15000,
+  PING_TIMEOUT: 5000
 };
 
-// Connection state enum
-const CONNECTION_STATES = {
+// Connection state constants
+const ConnectionState = {
   DISCONNECTED: 'DISCONNECTED',
   CONNECTING: 'CONNECTING',
   CONNECTED: 'CONNECTED',
@@ -27,686 +18,728 @@ const CONNECTION_STATES = {
 };
 
 /**
- * Enhanced WebSocketService with performance optimizations and resilience
- * - Message batching with configurable size limits
- * - Queue size limiting
- * - Efficient reconnection with exponential backoff
- * - Memory-efficient message handling
- * - Throttled message delivery
- * - Connection state machine
- * - Security enhancements
+ * WebSocketService class for managing WebSocket connections.
  */
 export class WebSocketService {
-  constructor(url, options = {}) {
+  constructor(url) {
     this.url = url;
-    this.options = { ...DEFAULT_CONFIG, ...options };
     this.socket = null;
-    this.reconnectInterval = this.options.RECONNECT_INTERVAL;
+    this.reconnectInterval = CONFIG.RECONNECT_INTERVAL;
     this.subscribers = new Map();
+    this.connectionState = ConnectionState.DISCONNECTED;
+    this.onConnectionChangeCallbacks = new Set();
+    this.onResumeCallbacks = new Set();
+    this.reconnectTimerId = null;
     this.protoRoot = null;
-    this.messageQueue = [];
-    this.isConnecting = false;
+    this.isProtoLoaded = false;
     this.connectionAttempts = 0;
     this.lastMessageTime = 0;
-    this.pendingMessages = new Map(); // For message batching
-    this.batchProcessTimeout = null;
-    this.lastProcessTime = 0;
-    this.isProtoLoaded = false;
-    this.onConnectionChangeCallbacks = new Set();
-    this.connectionState = CONNECTION_STATES.DISCONNECTED;
-    this.errorStats = {};
-    
-    // Detect device capabilities
-    this.detectDeviceCapabilities();
-    
-    // Start cleanup interval
-    this.startCleanupInterval();
+    this.pingTimerId = null;
+    this._subscriptionsPaused = false;
+    this._pingId = 0;
   }
 
   /**
-   * Detect device capabilities for better performance adjustments
+   * Set connection state and trigger notifications.
+   * @param {string} newState
    */
-  detectDeviceCapabilities() {
-    // Get memory and CPU information if available
-    const memory = navigator.deviceMemory || 4; // Default to 4GB if not available
-    const cores = navigator.hardwareConcurrency || 2;
+  setConnectionState(newState) {
+    if (!newState || !ConnectionState[newState]) return;
     
-    // Check for Raspberry Pi or other low-power devices
-    this.lowPowerDevice = memory <= 2 || cores <= 2 || 
-                        /Raspberry Pi/i.test(navigator.userAgent) || 
-                        /Linux arm/i.test(navigator.userAgent) ||
-                        localStorage.getItem('forceRaspberryPiMode');
+    const prevState = this.connectionState;
+    if (prevState === newState) return;
     
-    // Adjust settings based on device capabilities
-    this.throttleTime = this.lowPowerDevice 
-      ? this.options.THROTTLE_TIME_LOW_POWER 
-      : this.options.THROTTLE_TIME_NORMAL;
+    this.connectionState = newState;
     
-    this.maxBatchSize = this.lowPowerDevice 
-      ? Math.floor(this.options.MAX_BATCH_SIZE / 2) 
-      : this.options.MAX_BATCH_SIZE;
+    // Notify subscribers of connection state change
+    this.notifyConnectionChange(newState === ConnectionState.CONNECTED);
+
+    if (newState === ConnectionState.CONNECTED) {
+      this.connectionAttempts = 0;
+      this.startPingPongCycle();
+      
+      if (prevState === ConnectionState.RECONNECTING && !this._subscriptionsPaused) {
+        this._notifyResumeListeners();
+      }
+    }
     
-    if (this.lowPowerDevice) {
-      console.log('WebSocket: Optimizing for low-power device');
-      console.log(`WebSocket: Using throttle time ${this.throttleTime}ms and batch size ${this.maxBatchSize}`);
+    if (newState === ConnectionState.DISCONNECTED && prevState === ConnectionState.CONNECTED) {
+      this.handleDisconnection();
     }
   }
 
   /**
-   * Start interval to clean up stale subscriptions
+   * Register a callback for connection state changes.
+   * @param {(isConnected: boolean) => void} callback
+   * @returns {Function} unsubscribe function
    */
-  startCleanupInterval() {
-    // Clean up every 5 minutes
-    this.cleanupInterval = setInterval(() => this.cleanupSubscriptions(), 300000);
-  }
-
-  /**
-   * Clean up stale subscriptions to prevent memory leaks
-   */
-  cleanupSubscriptions() {
-    let removedCount = 0;
+  onConnectionChange(callback) {
+    if (typeof callback !== 'function') return () => {};
     
-    this.subscribers.forEach((handlers, type) => {
-      // Filter out undefined or null handlers that might have been
-      // created by garbage-collected components
-      const validHandlers = handlers.filter(h => typeof h === 'function');
-      
-      removedCount += handlers.length - validHandlers.length;
-      
-      if (validHandlers.length === 0) {
-        this.subscribers.delete(type);
-      } else {
-        this.subscribers.set(type, validHandlers);
+    this.onConnectionChangeCallbacks.add(callback);
+    
+    // Call immediately with current state
+    const isConnected = this.socket?.readyState === WebSocket.OPEN || 
+                        this.connectionState === ConnectionState.CONNECTED;
+    
+    queueMicrotask(() => {
+      try {
+        callback(Boolean(isConnected));
+      } catch (error) {
+        this.onConnectionChangeCallbacks.delete(callback);
       }
     });
     
-    if (removedCount > 0) {
-      console.log(`Cleaned up ${removedCount} stale subscriptions`);
-    }
-  }
-
-  /**
-   * Track errors with categorization
-   */
-  trackError(category, error) {
-    if (!this.errorStats[category]) {
-      this.errorStats[category] = { count: 0, lastError: null, firstSeen: Date.now() };
-    }
-    
-    this.errorStats[category].count++;
-    this.errorStats[category].lastError = error;
-    this.errorStats[category].lastSeen = Date.now();
-    
-    // Log error with category
-    console.error(`WebSocket error (${category}):`, error);
-    
-    // Report errors if they exceed thresholds
-    if (this.errorStats[category].count >= this.options.ERROR_THRESHOLD) {
-      this.reportErrors(category);
-    }
-  }
-
-  /**
-   * Report accumulated errors
-   */
-  reportErrors(category) {
-    const stats = category ? { [category]: this.errorStats[category] } : this.errorStats;
-    console.warn('WebSocket error report:', stats);
-    
-    // Could send to monitoring service
-    // if (typeof window.errorReporter === 'function') {
-    //   window.errorReporter('websocket', stats);
-    // }
-  }
-
-  /**
-   * Set connection state and trigger notifications
-   */
-  setConnectionState(newState) {
-    const prevState = this.connectionState;
-    this.connectionState = newState;
-    
-    if (prevState !== newState) {
-      console.log(`WebSocket state changed: ${prevState} -> ${newState}`);
-      this.notifyConnectionChange(newState === CONNECTION_STATES.CONNECTED);
-      
-      // Handle state transitions
-      if (newState === CONNECTION_STATES.DISCONNECTED && 
-          prevState === CONNECTION_STATES.CONNECTED) {
-        // Just disconnected - attempt reconnect
-        this.handleDisconnection();
-      }
-    }
-  }
-
-  /**
-   * Handle disconnection event
-   */
-  handleDisconnection() {
-    // Set up reconnection with backoff
-    const backoff = Math.min(
-      30000, 
-      this.reconnectInterval * Math.pow(1.5, this.connectionAttempts)
-    );
-    
-    console.log(`Will attempt reconnect in ${Math.round(backoff / 1000)} seconds`);
-    
-    setTimeout(() => {
-      if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-        this.setConnectionState(CONNECTION_STATES.RECONNECTING);
-        this.connect();
-      }
-    }, backoff);
-  }
-
-  /**
-   * Compress message data if supported and enabled
-   */
-  async compressMessage(data) {
-    if (!this.options.ENABLE_COMPRESSION || !window.CompressionStream) {
-      return data; // Return original data if compression not available
-    }
-    
-    try {
-      const blob = new Blob([data]);
-      const stream = blob.stream();
-      const compressedStream = stream.pipeThrough(new CompressionStream('gzip'));
-      return new Uint8Array(await new Response(compressedStream).arrayBuffer());
-    } catch (error) {
-      this.trackError('compression', error);
-      return data; // Return original data if compression fails
-    }
-  }
-
-  /**
-   * Decompress message data if needed
-   */
-  async decompressMessage(data, isCompressed) {
-    if (!isCompressed || !window.DecompressionStream) {
-      return data;
-    }
-    
-    try {
-      const blob = new Blob([data]);
-      const stream = blob.stream();
-      const decompressedStream = stream.pipeThrough(new DecompressionStream('gzip'));
-      return new Uint8Array(await new Response(decompressedStream).arrayBuffer());
-    } catch (error) {
-      this.trackError('decompression', error);
-      return data;
-    }
-  }
-
-  /**
-   * Register a callback for connection state changes
-   */
-  onConnectionChange(callback) {
-    this.onConnectionChangeCallbacks.add(callback);
-    // Call immediately with current status to initialize
-    try {
-      callback(this.connectionState === CONNECTION_STATES.CONNECTED);
-    } catch (error) {
-      this.trackError('callback_init', error);
-    }
     return () => this.onConnectionChangeCallbacks.delete(callback);
   }
 
   /**
-   * Notify all connection change listeners
+   * Register a callback for resume events
+   * @param {Function} callback
+   * @returns {Function} Unsubscribe function
    */
-  notifyConnectionChange(isConnected) {
-    this.onConnectionChangeCallbacks.forEach(callback => {
-      try {
-        callback(isConnected);
-      } catch (error) {
-        this.trackError('connection_callback', error);
-      }
-    });
+  onResume(callback) {
+    if (typeof callback !== 'function') return () => {};
+    
+    this.onResumeCallbacks.add(callback);
+    return () => this.onResumeCallbacks.delete(callback);
   }
 
   /**
-   * Load protocol buffers with retry logic
+   * Notify resume listeners when WebSocket is resumed
+   * @private
    */
-  async loadProto(retries = this.options.MAX_RETRIES) {
+  _notifyResumeListeners() {
+    for (const callback of this.onResumeCallbacks) {
+      try {
+        callback();
+      } catch (error) {
+        this.onResumeCallbacks.delete(callback);
+      }
+    }
+  }
+
+  /**
+   * Notify all registered connection change listeners.
+   * @param {boolean} isConnected
+   */
+  notifyConnectionChange(isConnected) {
+    const connectedState = Boolean(isConnected);
+    
+    for (const callback of this.onConnectionChangeCallbacks) {
+      try {
+        callback(connectedState);
+      } catch (error) {
+        this.onConnectionChangeCallbacks.delete(callback);
+      }
+    }
+  }
+
+  /**
+   * Load protocol buffers.
+   * @returns {Promise<boolean>}
+   */
+  async loadProto(retries = CONFIG.MAX_RETRIES) {
+    if (this.isProtoLoaded && this.protoRoot) return true;
+    
     try {
-      console.log("Attempting to load protocol buffers...");
       this.protoRoot = await loadTelemetryProto();
-      console.log("Protocol buffers loaded successfully");
-      this.isProtoLoaded = true;
-      return true;
+      this.isProtoLoaded = Boolean(this.protoRoot);
+      return this.isProtoLoaded;
     } catch (error) {
-      this.trackError('proto_load', error);
       if (retries > 0) {
-        console.log(`Retrying protocol buffer load... (${retries} attempts left)`);
-        await new Promise((resolve) => setTimeout(resolve, this.options.RETRY_DELAY));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         return this.loadProto(retries - 1);
       }
-      console.error("Failed to load proto after multiple attempts");
       return false;
     }
   }
 
   /**
-   * Initialize WebSocket connection
+   * Initialize the WebSocket connection.
    */
   async initialize() {
-    if (this.isConnecting) return;
-    
-    this.isConnecting = true;
-    this.setConnectionState(CONNECTION_STATES.CONNECTING);
+    this.setConnectionState(ConnectionState.CONNECTING);
     
     try {
-      // Load proto first
-      const success = await this.loadProto();
-      if (success) {
-        this.connect();
-        
-        // Process any queued messages
-        if (this.messageQueue.length > 0) {
-          console.log(`Processing ${this.messageQueue.length} queued messages`);
-          this.processQueue();
-        }
-      } else {
-        console.error("Protocol buffer loading failed - attempting to continue anyway");
-        // Try to connect even if proto loading failed
-        this.connect();
-      }
+      await this.loadProto();
+      await this.connect();
+      this.setupTimers();
     } catch (error) {
-      this.trackError('initialization', error);
-      this.setConnectionState(CONNECTION_STATES.ERROR);
-      setTimeout(() => {
-        this.isConnecting = false;
-        this.initialize();
-      }, 5000);
-    } finally {
-      this.isConnecting = false;
-    }
-  }
-
-  /**
-   * Process the message queue
-   */
-  processQueue() {
-    // Limit queue size to prevent memory issues
-    if (this.messageQueue.length > this.options.MAX_QUEUE_SIZE) {
-      this.messageQueue = this.messageQueue.slice(-this.options.MAX_QUEUE_SIZE);
-    }
-
-    // Process messages in batches for better performance
-    const batchSize = Math.min(this.messageQueue.length, this.maxBatchSize);
-    const batch = this.messageQueue.splice(0, batchSize);
-    
-    if (batch.length > 0) {
-      console.log(`Processing batch of ${batch.length} messages`);
-    }
-    
-    for (const { buffer, rawMessage } of batch) {
-      try {
-        if (buffer && this.protoRoot) {
-          // Try to decode with protobuf
-          const message = decodeTelemetryMessage(this.protoRoot, buffer);
-          this.scheduleMessageDelivery(message);
-        } else if (rawMessage) {
-          // Use raw message if protobuf not available
-          this.scheduleMessageDelivery(rawMessage);
-        }
-      } catch (error) {
-        this.trackError('queue_processing', error);
-      }
-    }
-    
-    // Continue processing if there are more messages
-    if (this.messageQueue.length > 0) {
-      // Use requestAnimationFrame for better performance
-      requestAnimationFrame(() => this.processQueue());
-    }
-  }
-
-  /**
-   * Schedule message delivery with batching and throttling
-   */
-  scheduleMessageDelivery(message) {
-    if (!message || !message.type) {
-      this.trackError('invalid_message', new Error('Invalid message format'));
-      return;
-    }
-    
-    const { type } = message;
-    
-    // Debug logging for subscribers
-    if (!this.subscribers.has(type)) {
-      // Only log once per type to avoid console spam
-      if (!this._loggedMissingSubscribers?.has(type)) {
-        if (!this._loggedMissingSubscribers) this._loggedMissingSubscribers = new Set();
-        this._loggedMissingSubscribers.add(type);
-      }
-      return;
-    }
-    
-    // Sanitize message object - ensure payload and fields exist to prevent errors
-    const sanitizedMessage = this.sanitizeMessage(message);
-    
-    // Add message to pending batch
-    if (!this.pendingMessages.has(type)) {
-      this.pendingMessages.set(type, []);
-    }
-    
-    const messages = this.pendingMessages.get(type);
-    messages.push(sanitizedMessage);
-    
-    // Limit batch size to prevent memory issues
-    if (messages.length > this.maxBatchSize) {
-      // Remove oldest messages and keep newest ones
-      const toKeep = messages.slice(-this.maxBatchSize);
-      this.pendingMessages.set(type, toKeep);
-    }
-    
-    // Clear any existing batch processing timeout
-    if (this.batchProcessTimeout) {
-      clearTimeout(this.batchProcessTimeout);
-    }
-    
-    // Throttle updates based on device capabilities
-    const now = performance.now();
-    const timeSinceLastProcess = now - this.lastProcessTime;
-    const delay = Math.max(0, this.throttleTime - timeSinceLastProcess);
-    
-    // Process batched messages with throttling
-    this.batchProcessTimeout = setTimeout(() => {
-      this.deliverPendingMessages();
-      this.lastProcessTime = performance.now();
-    }, delay);
-  }
-  
-  /**
-   * Sanitize message to ensure required fields exist
-   * This prevents errors in subscribers when accessing undefined properties
-   */
-  sanitizeMessage(message) {
-    if (!message) return { type: 'unknown', payload: {}, time: Date.now() };
-    
-    // Create a shallow copy to avoid modifying the original
-    const sanitized = { ...message };
-    
-    // Ensure payload exists
-    if (!sanitized.payload) {
-      sanitized.payload = {};
-    }
-    
-    // Ensure fields exists within payload
-    if (!sanitized.payload.fields) {
-      sanitized.payload.fields = {};
-    }
-    
-    // Ensure time exists
-    if (!sanitized.time) {
-      sanitized.time = Date.now();
-    }
-    
-    return sanitized;
-  }
-  
-  /**
-   * Deliver all pending messages to their subscribers
-   */
-  deliverPendingMessages() {
-    this.pendingMessages.forEach((messages, type) => {
-      const handlers = this.subscribers.get(type) || [];
+      this.setConnectionState(ConnectionState.ERROR);
       
-      if (handlers.length > 0) {
-        handlers.forEach(handler => {
-          try {
-            // For single message, send it directly, otherwise send the batch
-            const batch = messages.length === 1 ? messages[0] : [...messages];
-            
-            // Use requestAnimationFrame to align with browser rendering
-            requestAnimationFrame(() => {
-              try {
-                handler(batch);
-              } catch (err) {
-                // Truncate error message for console readability
-                const errMsg = err.toString().substring(0, 100);
-                this.trackError('message_handler', new Error(`Handler error for type ${type}: ${errMsg}`));
-              }
-            });
-          } catch (err) {
-            this.trackError('message_prep', err);
-          }
-        });
-      }
-    });
-    
-    // Clear pending messages
-    this.pendingMessages.clear();
-    this.batchProcessTimeout = null;
+      // Retry with backoff
+      const retryDelay = Math.min(30000, 5000 * (this.connectionAttempts + 1));
+      setTimeout(() => this.initialize(), retryDelay);
+    }
   }
 
   /**
-   * Connect to WebSocket with exponential backoff
+   * Setup ping timer
    */
-  connect() {
-    if (this.socket && (this.socket.readyState === WebSocket.CONNECTING || 
-                         this.socket.readyState === WebSocket.OPEN)) {
+  setupTimers() {
+    if (this.pingTimerId) {
+      clearInterval(this.pingTimerId);
+    }
+    
+    if (!this._subscriptionsPaused) {
+      this.pingTimerId = setInterval(() => this.sendPing(), CONFIG.PING_INTERVAL);
+    }
+  }
+
+  /**
+   * Handle JSON messages
+   * @param {string} data
+   * @returns {Object|null}
+   */
+  parseJSONMessage(data) {
+    if (!data || typeof data !== 'string') return null;
+    
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Parse binary message using protobuf
+   * @param {ArrayBuffer} data
+   * @returns {Object|null}
+   */
+  parseBinaryMessage(data) {
+    if (!this.protoRoot || !this.isProtoLoaded || !data) return null;
+    
+    try {
+      const buffer = new Uint8Array(data);
+      return decodeTelemetryMessage(this.protoRoot, buffer);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Normalize message format
+   * @param {Object} message
+   * @param {string|null} messageType
+   * @returns {Object}
+   */
+  normalizeMessage(message, messageType) {
+    if (!message) {
+      return { type: messageType || 'unknown', payload: { fields: {} }, time: Date.now() };
+    }
+    
+    const { type = messageType || 'unknown', time, timestamp, payload, ...rest } = message;
+    
+    const normalized = {
+      type,
+      time: time || timestamp || Date.now(),
+    };
+    
+    if (!payload || typeof payload !== 'object') {
+      normalized.payload = { fields: { ...rest } };
+    } else if (!payload.fields) {
+      normalized.payload = {
+        ...payload,
+        fields: { ...payload }
+      };
+    } else {
+      normalized.payload = payload;
+    }
+    
+    return normalized;
+  }
+
+  /**
+   * Deliver message to subscribers
+   * @param {Object} message
+   */
+  deliverMessage(message) {
+    if (!message || this._subscriptionsPaused) return;
+    
+    // Check for pong
+    if (message.type === 'pong' || (message.payload && message.payload.type === 'pong')) {
       return;
+    }
+    
+    let messageType = message.type || (message.payload && message.payload.type);
+    if (!messageType) return;
+    
+    const normalizedMessage = this.normalizeMessage(message, messageType);
+    
+    // Deliver to specific subscribers
+    const subscribers = this.subscribers.get(messageType);
+    if (subscribers && subscribers.size > 0) {
+      for (const handler of subscribers) {
+        try {
+          handler(normalizedMessage);
+        } catch (err) {
+          subscribers.delete(handler);
+        }
+      }
+      return;
+    }
+    
+    // Deliver to wildcard subscribers
+    const wildcardSubscribers = this.subscribers.get('*');
+    if (wildcardSubscribers && wildcardSubscribers.size > 0) {
+      for (const handler of wildcardSubscribers) {
+        try {
+          handler(normalizedMessage);
+        } catch (err) {
+          wildcardSubscribers.delete(handler);
+        }
+      }
+    }
+  }
+
+  /**
+   * Connect to the WebSocket
+   * @returns {Promise<boolean>} True if connected successfully
+   */
+  async connect() {
+    if (this.socket) {
+      // Clean up existing socket if closed
+      if ([WebSocket.CLOSING, WebSocket.CLOSED].includes(this.socket.readyState)) {
+        this.socket.onopen = null;
+        this.socket.onclose = null;
+        this.socket.onerror = null;
+        this.socket.onmessage = null;
+        this.socket = null;
+      } else if (this.socket.readyState === WebSocket.OPEN) {
+        this.setConnectionState(ConnectionState.CONNECTED);
+        return true; // Already connected
+      } else if (this.socket.readyState === WebSocket.CONNECTING) {
+        // Wait for connection to complete
+        try {
+          await new Promise((resolve, reject) => {
+            const onOpen = () => {
+              this.socket.removeEventListener('open', onOpen);
+              this.socket.removeEventListener('error', onError);
+              resolve();
+            };
+            
+            const onError = () => {
+              this.socket.removeEventListener('open', onOpen);
+              this.socket.removeEventListener('error', onError);
+              reject(new Error('WebSocket connection failed'));
+            };
+            
+            this.socket.addEventListener('open', onOpen);
+            this.socket.addEventListener('error', onError);
+            
+            setTimeout(() => reject(new Error('WebSocket connection timeout')), 5000);
+          });
+          
+          this.setConnectionState(ConnectionState.CONNECTED);
+          return true;
+        } catch (err) {
+          this.socket.onopen = null;
+          this.socket.onclose = null;
+          this.socket.onerror = null;
+          this.socket.onmessage = null;
+          this.socket = null;
+        }
+      }
+    }
+    
+    // Don't create new connections while paused
+    if (this._subscriptionsPaused) return false;
+    
+    try {
+      this.socket = new WebSocket(this.url);
+      this.socket.binaryType = 'arraybuffer';
+      
+      this.setConnectionState(ConnectionState.CONNECTING);
+      
+      await new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          reject(new Error('WebSocket connection timeout'));
+        }, 5000);
+        
+        this.socket.onopen = () => {
+          clearTimeout(timeoutId);
+          this.handleOpen();
+          resolve();
+        };
+        
+        this.socket.onerror = () => {
+          clearTimeout(timeoutId);
+          this.setConnectionState(ConnectionState.ERROR);
+          this.handleDisconnection();
+          reject(new Error('WebSocket connection error'));
+        };
+      });
+      
+      return true;
+    } catch (error) {
+      this.setConnectionState(ConnectionState.ERROR);
+      
+      if (this.socket) {
+        this.socket.onopen = null;
+        this.socket.onclose = null;
+        this.socket.onerror = null;
+        this.socket.onmessage = null;
+        this.socket = null;
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Handle WebSocket open event
+   */
+  handleOpen() {
+    this.reconnectInterval = CONFIG.RECONNECT_INTERVAL;
+    this.lastMessageTime = Date.now();
+    this.setConnectionState(ConnectionState.CONNECTED);
+    
+    this.socket.onmessage = this.handleMessage.bind(this);
+    this.socket.onclose = this.handleClose.bind(this);
+    this.socket.onerror = this.handleError.bind(this);
+    
+    this.startPingPongCycle();
+  }
+
+  /**
+   * Start the ping/pong cycle
+   */
+  startPingPongCycle() {
+    if (this.pingTimerId || this.connectionState !== ConnectionState.CONNECTED) return;
+    
+    // Send initial ping
+    this.sendPing();
+    
+    // Set up regular pings
+    this.pingTimerId = setInterval(() => this.sendPing(), CONFIG.PING_INTERVAL);
+  }
+
+  /**
+   * Send a ping message
+   */
+  sendPing() {
+    if (this._subscriptionsPaused || !this.socket || this.socket.readyState !== WebSocket.OPEN) return;
+    
+    try {
+      this._pingId = (this._pingId + 1) % 1000000;
+      
+      this.socket.send(JSON.stringify({ 
+        type: "ping", 
+        pingId: this._pingId,
+        timestamp: Date.now() 
+      }));
+    } catch (error) {
+      // Connection might be broken
+      if (this.connectionState === ConnectionState.CONNECTED) {
+        this.checkConnection();
+      }
+    }
+  }
+
+  /**
+   * Handle WebSocket message event
+   * @param {MessageEvent} event
+   */
+  handleMessage(event) {
+    this.lastMessageTime = Date.now();
+    
+    if (this._subscriptionsPaused) return;
+    
+    let message = null;
+    
+    if (typeof event.data === 'string') {
+      message = this.parseJSONMessage(event.data);
+      if (message) {
+        this.deliverMessage(message);
+        return;
+      }
+    } else if (event.data instanceof ArrayBuffer) {
+      message = this.parseBinaryMessage(event.data);
+      if (message) {
+        this.deliverMessage(message);
+        return;
+      }
+      
+      // Fallback to JSON decoding
+      try {
+        const text = new TextDecoder().decode(event.data);
+        message = this.parseJSONMessage(text);
+        if (message) {
+          this.deliverMessage(message);
+        }
+      } catch (e) {
+        // Unable to parse message
+      }
+    }
+  }
+
+  /**
+   * Handle WebSocket error event
+   */
+  handleError() {
+    this.setConnectionState(ConnectionState.ERROR);
+    
+    if (!this._subscriptionsPaused) {
+      this.handleDisconnection();
+    }
+  }
+
+  /**
+   * Handle WebSocket close event
+   */
+  handleClose() {
+    if (this.socket) {
+      this.socket.onopen = null;
+      this.socket.onclose = null;
+      this.socket.onerror = null;
+      this.socket.onmessage = null;
+    }
+    
+    this.setConnectionState(ConnectionState.DISCONNECTED);
+    
+    if (!this._subscriptionsPaused) {
+      this.handleDisconnection();
+    }
+  }
+
+  /**
+   * Handle disconnection with backoff strategy
+   */
+  handleDisconnection() {
+    if (this._subscriptionsPaused) return;
+    
+    if (this.reconnectTimerId !== null) {
+      clearTimeout(this.reconnectTimerId);
+      this.reconnectTimerId = null;
     }
     
     this.connectionAttempts++;
+    const baseDelay = this.reconnectInterval;
+    // Cap backoff at 10 seconds
+    const backoff = Math.min(10000, baseDelay * Math.pow(2, Math.min(this.connectionAttempts, 10)));
     
-    try {
-      console.log(`Connecting to WebSocket at ${this.url} (attempt ${this.connectionAttempts})`);
-      this.socket = new WebSocket(this.url);
-      this.socket.binaryType = 'arraybuffer';
+    this.reconnectTimerId = setTimeout(() => {
+      if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
+        this.setConnectionState(ConnectionState.RECONNECTING);
+        this.connect().catch(() => {});
+      }
+      this.reconnectTimerId = null;
+    }, backoff);
+  }
 
-      this.socket.onopen = () => {
-        console.log("WebSocket connected successfully");
-        this.reconnectInterval = this.options.RECONNECT_INTERVAL;
-        this.connectionAttempts = 0;
-        this.lastMessageTime = Date.now();
-        this.setConnectionState(CONNECTION_STATES.CONNECTED);
-        
-        // Reset error stats on successful connection
-        this.errorStats = {};
-      };
-
-      this.socket.onmessage = async (event) => {
-        this.lastMessageTime = Date.now();
-        
-        // Try to parse as JSON first in case it's not binary
-        if (typeof event.data === 'string') {
-          try {
-            const jsonMessage = JSON.parse(event.data);
-            this.scheduleMessageDelivery(jsonMessage);
-            return;
-          } catch (e) {
-            // Not JSON, continue with binary processing
-          }
-        }
-        
-        if (!this.protoRoot || !this.isProtoLoaded) {
-          // Queue the message if proto isn't loaded yet
-          if (this.messageQueue.length < this.options.MAX_QUEUE_SIZE) {
-            // Try to parse as JSON first
-            try {
-              const text = new TextDecoder().decode(event.data);
-              const jsonMessage = JSON.parse(text);
-              this.messageQueue.push({ rawMessage: jsonMessage });
-            } catch (e) {
-              // Not valid JSON, store as binary
-              this.messageQueue.push({ buffer: new Uint8Array(event.data) });
-            }
-          }
-          return;
-        }
-        
+  /**
+   * Check connection status
+   */
+  checkConnection() {
+    if (this._subscriptionsPaused) return;
+    
+    const now = Date.now();
+    const inactiveTime = now - this.lastMessageTime;
+    
+    if (this.lastMessageTime > 0 &&
+      inactiveTime > 10000 &&
+      this.connectionState === ConnectionState.CONNECTED) {
+      
+      if (this.socket) {
         try {
-          const buffer = new Uint8Array(event.data);
-          
-          // Check if message is compressed (could add a header to indicate this)
-          const isCompressed = false; // Implement logic to detect compression
-          const decompressedBuffer = isCompressed ? 
-            await this.decompressMessage(buffer, true) : buffer;
-          
-          const message = decodeTelemetryMessage(this.protoRoot, decompressedBuffer);
-          this.scheduleMessageDelivery(message);
-        } catch (error) {
-          this.trackError('message_decode', error);
-          // Try to parse as JSON as fallback
-          try {
-            const text = new TextDecoder().decode(event.data);
-            const jsonMessage = JSON.parse(text);
-            this.scheduleMessageDelivery(jsonMessage);
-          } catch (e) {
-            this.trackError('json_fallback', e);
-          }
+          this.socket.close();
+        } catch (err) {
+          // Error closing socket
         }
-      };
-
-      this.socket.onerror = (error) => {
-        this.trackError('socket_error', error);
-        this.setConnectionState(CONNECTION_STATES.ERROR);
-      };
-
-      this.socket.onclose = (event) => {
-        console.log(`WebSocket closed (code: ${event.code}, reason: ${event.reason})`);
-        this.setConnectionState(CONNECTION_STATES.DISCONNECTED);
-      };
-    } catch (error) {
-      this.trackError('socket_creation', error);
-      this.setConnectionState(CONNECTION_STATES.ERROR);
-      setTimeout(() => this.connect(), this.reconnectInterval);
+      }
+      
+      this.connect().catch(() => {});
     }
   }
 
   /**
    * Subscribe to a message type
+   * @param {string} messageType 
+   * @param {Function} callback 
+   * @returns {Function} Unsubscribe function
    */
   subscribe(messageType, callback) {
-    if (!messageType) {
-      console.warn("Attempted to subscribe to undefined message type");
-      return () => {}; // Return empty unsubscribe function
+    if (!messageType || typeof callback !== 'function') {
+      return () => {};
     }
     
     if (!this.subscribers.has(messageType)) {
-      this.subscribers.set(messageType, []);
-      console.log(`New subscription created for message type: ${messageType}`);
+      this.subscribers.set(messageType, new Set());
     }
     
-    const handlers = this.subscribers.get(messageType);
-    if (!handlers.includes(callback)) {
-      handlers.push(callback);
-      console.log(`Added subscriber to ${messageType} (total: ${handlers.length})`);
-    }
+    this.subscribers.get(messageType).add(callback);
     
-    return () => this.unsubscribe(messageType, callback);
+    return () => {
+      const handlers = this.subscribers.get(messageType);
+      if (handlers) {
+        handlers.delete(callback);
+        if (handlers.size === 0) {
+          this.subscribers.delete(messageType);
+        }
+      }
+    };
   }
 
   /**
-   * Unsubscribe from a message type
-   */
-  unsubscribe(messageType, callback) {
-    if (!messageType || !this.subscribers.has(messageType)) return;
-    
-    const handlers = this.subscribers.get(messageType);
-    const index = handlers.indexOf(callback);
-    
-    if (index !== -1) {
-      handlers.splice(index, 1);
-      console.log(`Removed subscriber from ${messageType} (remaining: ${handlers.length})`);
-    }
-    
-    if (handlers.length === 0) {
-      this.subscribers.delete(messageType);
-      console.log(`No more subscribers for ${messageType}, removed subscription`);
-    }
-  }
-  
-  /**
-   * Get connection status
+   * Check if WebSocket is connected
+   * @returns {boolean}
    */
   isConnected() {
-    return this.connectionState === CONNECTION_STATES.CONNECTED;
+    return this.socket?.readyState === WebSocket.OPEN;
   }
-  
+
   /**
-   * Check connection health and reconnect if needed
+   * Pause all WebSocket subscriptions
+   * @returns {Promise<boolean>}
    */
-  checkConnection() {
-    const now = Date.now();
-    const inactiveTime = now - this.lastMessageTime;
-    
-    // If no messages for over INACTIVE_THRESHOLD ms and we're supposed to be connected, reconnect
-    if (this.lastMessageTime > 0 && 
-        inactiveTime > this.options.INACTIVE_THRESHOLD && 
-        this.connectionState === CONNECTION_STATES.CONNECTED) {
-      console.log(`No messages received for ${inactiveTime}ms, reconnecting`);
-      this.socket.close();
-      this.connect();
-    }
-  }
-  
-  /**
-   * Send a ping to keep the connection alive
-   */
-  sendPing() {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      try {
-        this.socket.send(JSON.stringify({ type: "ping", timestamp: Date.now() }));
-      } catch (error) {
-        this.trackError('ping', error);
+  pauseSubscriptions() {
+    return new Promise((resolve) => {
+      if (this._subscriptionsPaused) {
+        resolve(true);
+        return;
       }
+      
+      this._subscriptionsPaused = true;
+      
+      if (this.pingTimerId) {
+        clearInterval(this.pingTimerId);
+        this.pingTimerId = null;
+      }
+      
+      resolve(true);
+    });
+  }
+
+  /**
+   * Resume all WebSocket subscriptions
+   * @returns {Promise<boolean>}
+   */
+  resumeSubscriptions() {
+    return new Promise(async (resolve) => {
+      if (!this._subscriptionsPaused) {
+        resolve(true);
+        return;
+      }
+      
+      this._subscriptionsPaused = false;
+      
+      try {
+        if (!this.isConnected()) {
+          await this.connect();
+        }
+        
+        this.setupTimers();
+        
+        if (this.isConnected()) {
+          this.startPingPongCycle();
+        }
+        
+        this._notifyResumeListeners();
+        
+        resolve(true);
+      } catch (error) {
+        resolve(false);
+      }
+    });
+  }
+
+  /**
+   * Force a connection attempt
+   * @returns {Promise<boolean>}
+   */
+  async forceConnect() {
+    if (this._subscriptionsPaused) {
+      return Promise.resolve(false);
+    }
+    
+    try {
+      if (!this.isConnected()) {
+        return await this.connect();
+      } else {
+        this.sendPing();
+        return true;
+      }
+    } catch (err) {
+      return false;
     }
   }
-  
+
   /**
    * Destroy the WebSocket service
    */
   destroy() {
-    if (this.socket) {
-      this.socket.close();
+    if (this.pingTimerId) {
+      clearInterval(this.pingTimerId);
+      this.pingTimerId = null;
     }
     
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
+    if (this.reconnectTimerId) {
+      clearTimeout(this.reconnectTimerId);
+      this.reconnectTimerId = null;
+    }
+    
+    if (this.socket) {
+      try {
+        this.socket.onopen = null;
+        this.socket.onclose = null;
+        this.socket.onerror = null;
+        this.socket.onmessage = null;
+        this.socket.close();
+      } catch (e) {
+        // Error closing socket
+      }
+      this.socket = null;
     }
     
     this.subscribers.clear();
     this.onConnectionChangeCallbacks.clear();
-    this.pendingMessages.clear();
-    this.messageQueue = [];
-    
-    console.log("WebSocket service destroyed");
+    this.onResumeCallbacks.clear();
   }
 }
 
-// Create WebSocket service instance with secure connection if appropriate
+// Create WebSocket service instance
 const hostname = window.location.hostname === 'localhost' ? '0.0.0.0' : window.location.hostname;
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-export const wsService = new WebSocketService(`${protocol}//${hostname}:9094/ws`, {
-  MAX_BATCH_SIZE: 10, // Small batch size for real-time dashboard
-  THROTTLE_TIME_NORMAL: 8, // ~120fps for smooth updates
-  THROTTLE_TIME_LOW_POWER: 33 // 20fps for low-power devices
-});
+const getWebSocketPort = () => {
+  if (import.meta && import.meta.env && import.meta.env.VITE_WS_PORT) {
+    return import.meta.env.VITE_WS_PORT;
+  }
+  const appPort = window.location.port;
+  return appPort === '9093' ? '9094' : '9094';
+};
 
-// Initialize connection
-console.log("Initializing WebSocket service");
-wsService.initialize();
+const wsPort = getWebSocketPort();
+export const wsService = new WebSocketService(`${protocol}//${hostname}:${wsPort}/ws`);
+wsService.initialize().catch(() => {});
 
-// Setup health check interval based on device capabilities
-const healthCheckInterval = wsService.lowPowerDevice ? 
-  wsService.options.LOW_POWER_HEALTH_CHECK_INTERVAL : 
-  wsService.options.HEALTH_CHECK_INTERVAL;
-
-// Health check interval
-const healthCheckTimer = setInterval(() => wsService.checkConnection(), healthCheckInterval);
-
-// Send periodic pings to keep the connection alive
-const pingTimer = setInterval(() => wsService.sendPing(), wsService.options.PING_INTERVAL);
-
-// Add proper cleanup for SPA navigation
-window.addEventListener('beforeunload', () => {
-  clearInterval(healthCheckTimer);
-  clearInterval(pingTimer);
-  wsService.destroy();
-});
+// Create a simple animation context to support app animations
+export const animationContext = (() => {
+  // Default state
+  let state = {
+    enabled: true,
+    duration: 300
+  };
+  return {
+    pause: () => {
+      state.enabled = false;
+    },
+    resume: () => {
+      state.enabled = true;
+    },
+    isEnabled: () => state.enabled,
+    getDuration: () => state.duration,
+    setConfig: (config) => {
+      if (!config || typeof config !== 'object') return;
+      if (typeof config.enabled === 'boolean') {
+        state.enabled = config.enabled;
+      }
+      if (typeof config.duration === 'number' && config.duration >= 0) {
+        state.duration = config.duration;
+      }
+    },
+    getState: () => ({ ...state })
+  };
+})();
 
 export default wsService;

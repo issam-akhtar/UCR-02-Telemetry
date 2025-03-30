@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import { axiosInstance } from '../services/api';
 import { ChartSettingsContext } from '../contexts/ChartSettingsContext';
 import { throttle } from 'lodash';
@@ -12,10 +12,14 @@ import { throttle } from 'lodash';
  * @returns {Object} - { data, loading, error, refresh }
  */
 const useHistoricalData = (endpoint, customPageSize) => {
-  const { settings } = useContext(ChartSettingsContext);
-  const { refreshRate, pageSize: settingsPageSize } = settings.historical;
+  // Safely access context with fallback values
+  const settingsContext = useContext(ChartSettingsContext);
+  const settings = settingsContext?.settings || {};
+  const historical = settings.historical || {};
   
-  // Use custom page size or fall back to settings
+  // Use custom page size or fall back to settings with safe defaults
+  const settingsPageSize = historical.pageSize || 1000;
+  const refreshRate = historical.refreshRate || 0;
   const pageSize = customPageSize || settingsPageSize;
 
   // State for data management
@@ -24,37 +28,52 @@ const useHistoricalData = (endpoint, customPageSize) => {
   const [error, setError] = useState(null);
   const [refreshCounter, setRefreshCounter] = useState(0);
   
-  // Cache previous successful responses
+  // Refs to maintain stable values between renders
   const dataCache = useRef(new Map());
-  
-  // Track active requests to prevent race conditions
   const activeRequest = useRef(null);
-  
-  // Track if component is mounted
   const isMounted = useRef(true);
+  const intervalRef = useRef(null);
+  const refreshRateRef = useRef(refreshRate);
+  const pageSizeRef = useRef(pageSize);
+  const endpointRef = useRef(endpoint);
+  
+  // Update refs when props change
+  useEffect(() => {
+    refreshRateRef.current = refreshRate;
+    pageSizeRef.current = pageSize;
+    endpointRef.current = endpoint;
+  }, [refreshRate, pageSize, endpoint]);
 
-  // Function to fetch data with error handling and caching
-  // Using throttle to prevent excessive requests
-  const fetchData = throttle(async () => {
+  // Create a stable fetch function using useCallback
+  const fetchDataCore = useCallback(async () => {
     // Skip if there's already an active request for this endpoint
-    if (activeRequest.current === endpoint) return;
+    if (activeRequest.current === endpointRef.current) return;
     
     // Set loading state and active request
-    setLoading(true);
-    activeRequest.current = endpoint;
+    if (isMounted.current) {
+      setLoading(true);
+    }
+    activeRequest.current = endpointRef.current;
     
     // Check cache first
-    const cacheKey = `${endpoint}_${pageSize}`;
+    const cacheKey = `${endpointRef.current}_${pageSizeRef.current}`;
     if (dataCache.current.has(cacheKey)) {
-      setData(dataCache.current.get(cacheKey));
-      setLoading(false);
+      if (isMounted.current) {
+        setData(dataCache.current.get(cacheKey));
+        setLoading(false);
+      }
       activeRequest.current = null;
       return;
     }
     
     try {
+      // Validate that axiosInstance is available
+      if (!axiosInstance || typeof axiosInstance.get !== 'function') {
+        throw new Error('API client not available');
+      }
+      
       // Construct URL with parameters
-      const url = `${endpoint}?limit=${pageSize}`;
+      const url = `${endpointRef.current}?limit=${pageSizeRef.current}`;
       
       // Fetch data with timeout
       const response = await axiosInstance.get(url, { 
@@ -94,8 +113,10 @@ const useHistoricalData = (endpoint, customPageSize) => {
               
               // Limit cache size to prevent memory issues
               if (dataCache.current.size > 10) {
-                const oldestKey = dataCache.current.keys().next().value;
-                dataCache.current.delete(oldestKey);
+                const oldestKey = Array.from(dataCache.current.keys())[0];
+                if (oldestKey) {
+                  dataCache.current.delete(oldestKey);
+                }
               }
             }
           } else {
@@ -117,12 +138,27 @@ const useHistoricalData = (endpoint, customPageSize) => {
       // Clear loading state and active request if component is still mounted
       if (isMounted.current) {
         setLoading(false);
-        activeRequest.current = null;
       }
+      activeRequest.current = null;
     }
-  }, 300);
+  }, []); // Empty dependency array since we use refs for changing values
+  
+  // Use throttle with memoization to prevent excessive renders
+  const fetchData = useRef(
+    throttle(fetchDataCore, 300, { leading: true, trailing: true })
+  ).current;
 
-  // Initial fetch and refresh interval
+  // Manual refresh function that doesn't recreate on each render
+  const refresh = useCallback(() => {
+    // Clear cache for this endpoint to force fresh data
+    const cacheKey = `${endpointRef.current}_${pageSizeRef.current}`;
+    dataCache.current.delete(cacheKey);
+    
+    // Increment counter to trigger useEffect
+    setRefreshCounter(prev => prev + 1);
+  }, []);
+
+  // Setup and cleanup effect
   useEffect(() => {
     // Set mounted flag
     isMounted.current = true;
@@ -130,33 +166,48 @@ const useHistoricalData = (endpoint, customPageSize) => {
     // Perform initial fetch
     fetchData();
     
+    // Clean up previous interval if it exists
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    
     // Set up auto-refresh interval if enabled
-    let interval;
-    if (refreshRate > 0) {
-      interval = setInterval(fetchData, refreshRate);
+    if (refreshRateRef.current > 0) {
+      intervalRef.current = setInterval(() => {
+        if (isMounted.current) {
+          fetchData();
+        }
+      }, refreshRateRef.current);
     }
     
     // Cleanup function
     return () => {
       isMounted.current = false;
-      if (interval) clearInterval(interval);
-      if (fetchData.cancel) fetchData.cancel();
+      
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      
+      // Cancel any in-flight throttled fetch
+      if (fetchData && typeof fetchData.cancel === 'function') {
+        fetchData.cancel();
+      }
+      
+      // Clear active request
+      activeRequest.current = null;
     };
-  }, [endpoint, refreshRate, pageSize, refreshCounter]);
-  // Adding the throttled function to the dependencies array would cause an infinite loop,
-  // so we're omitting it and handling cleanup in the effect.
+  }, [fetchData, refreshCounter]);
+  // We don't need refreshRate, pageSize, endpoint in deps since we use refs
 
-  // Manual refresh function
-  const refresh = () => {
-    // Clear cache for this endpoint to force fresh data
-    const cacheKey = `${endpoint}_${pageSize}`;
-    dataCache.current.delete(cacheKey);
-    
-    // Increment counter to trigger useEffect
-    setRefreshCounter((prev) => prev + 1);
+  return { 
+    data, 
+    loading, 
+    error, 
+    refresh,
+    pageSize: pageSizeRef.current  // Expose current page size
   };
-
-  return { data, loading, error, refresh };
 };
 
 export default useHistoricalData;

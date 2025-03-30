@@ -11,9 +11,6 @@ import PropTypes from 'prop-types';
 import {
   Box,
   Typography,
-  Grid,
-  FormControlLabel,
-  Switch,
   useTheme,
   Tooltip,
   LinearProgress,
@@ -26,7 +23,6 @@ import {
   Divider
 } from '@mui/material';
 import useRealTimeData from '../../hooks/useRealTimeData';
-import useResizeObserver from 'use-resize-observer';
 import { 
   Gauge, 
   ArrowUp, 
@@ -36,60 +32,42 @@ import {
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 import { useInView } from 'react-intersection-observer';
 
-// Constants extracted and memoized for better performance
+// Constants - moved outside component to prevent recreation
 const CONSTANTS = {
-  // Baselines for sensor idle values
   SENSOR_BASELINES: {
-    APPS1_IDLE: 0.805,
-    APPS2_IDLE: 0.772,
-    BSE_IDLE: 1.05,
-    APPS_MAX: 4.0,
-    BSE_MAX: 4.0
+    APPS1_IDLE: 0.5,
+    APPS2_IDLE: 0.5,
+    BSE_IDLE: 0.5,
+    APPS_MAX: 100.0,
+    BSE_MAX: 100.0
   },
-  // Pedal thresholds (percentage scale)
   PEDAL_THRESHOLDS: {
-    DEADZONE: 0.5,  // Minimum pedal % to consider "active"
+    DEADZONE: 1.0,
     LIGHT: 5,
     MODERATE: 15,
     HEAVY: 30
   },
-  // ~60fps limit
   FRAME_RATE_LIMIT: 16,
-  // Buffer size for sensor history (reduced for better performance)
-  HISTORY_BUFFER_SIZE: 30
+  HISTORY_BUFFER_SIZE: 10 // Reduced for better performance
 };
 
-// Optimized conversion functions with memoized results
+// Optimized sensor conversion functions
 const sensorConversions = {
-  // Convert raw APPS sensor reading to percentage (0-100%)
-  appsToPercentage: (rawValue) => {
-    const { APPS1_IDLE, APPS_MAX } = CONSTANTS.SENSOR_BASELINES;
-    const normalizedValue = Math.max(0, rawValue - APPS1_IDLE);
-    const range = APPS_MAX - APPS1_IDLE;
-    return Math.min(100, (normalizedValue / range) * 100);
-  },
-  
-  // Convert raw BSE sensor reading to percentage (0-100%)
-  bseToPercentage: (rawValue) => {
-    const { BSE_IDLE, BSE_MAX } = CONSTANTS.SENSOR_BASELINES;
-    const normalizedValue = Math.max(0, rawValue - BSE_IDLE);
-    const range = BSE_MAX - BSE_IDLE;
-    return Math.min(100, (normalizedValue / range) * 100);
-  }
+  appsToPercentage: (rawValue) => Math.min(100, Math.max(0, rawValue)),
+  bseToPercentage: (rawValue) => Math.min(100, Math.max(0, rawValue * 20))
 };
 
-// Optimized ring buffer using TypedArray for better performance
+// Optimized ring buffer for sensor smoothing
 class SensorRingBuffer {
   constructor(size = CONSTANTS.HISTORY_BUFFER_SIZE) {
     this.buffer = new Float32Array(size);
     this.index = 0;
     this.size = size;
     this.isFull = false;
-    this._sum = 0; // Track sum for efficient average calculation
+    this._sum = 0;
   }
   
   add(value) {
-    // Update running sum by removing old value and adding new one
     if (this.isFull) {
       this._sum -= this.buffer[this.index];
     }
@@ -106,41 +84,7 @@ class SensorRingBuffer {
   }
 }
 
-// Custom hook for pedal colors based on theme
-const usePedalColors = () => {
-  const theme = useTheme();
-  
-  // Memoize colors to prevent unnecessary recalculations
-  return useMemo(() => ({
-    APPS: theme.palette.info.main,
-    APPS_LIGHT: theme.palette.info.light,
-    BSE: theme.palette.error.main,
-    BSE_LIGHT: theme.palette.error.light,
-    WARNING: theme.palette.warning.main,
-    SUCCESS: theme.palette.success.main,
-    IDLE: theme.palette.text.secondary,
-    TEXT: theme.palette.text.primary,
-    TEXT_SECONDARY: theme.palette.text.secondary,
-    BACKGROUND: alpha(
-      theme.palette.mode === 'dark' 
-        ? theme.palette.background.default 
-        : theme.palette.background.paper, 
-      theme.palette.mode === 'dark' ? 0.95 : 0.95
-    ),
-    PANEL_BG: alpha(
-      theme.palette.mode === 'dark' 
-        ? theme.palette.background.default 
-        : theme.palette.background.paper, 
-      theme.palette.mode === 'dark' ? 0.85 : 0.85
-    ),
-    BORDER: alpha(
-      theme.palette.divider, 
-      theme.palette.mode === 'dark' ? 0.5 : 0.6
-    )
-  }), [theme.palette]);
-};
-
-// Optimized function to determine pedal status from sensor values
+// Helper function to determine pedal status
 const computePedalStatus = (avgApps, bse) => {
   const { DEADZONE, LIGHT, MODERATE, HEAVY } = CONSTANTS.PEDAL_THRESHOLDS;
   
@@ -166,80 +110,7 @@ const computePedalStatus = (avgApps, bse) => {
   return { status: 'idle', desc: 'No Pedal Input' };
 };
 
-// Custom hook for calculating pedal stats with performance optimizations
-const usePedalStats = (apps1, apps2, bse) => {
-  const [stats, setStats] = useState({
-    maxAcceleration: 0,
-    maxBrake: 0,
-    sensorDeviation: 0,
-    appsConsistency: 100,
-    avgApps: 0,
-    status: { status: 'idle', desc: 'No Pedal Input' }
-  });
-  
-  // Reference to track previous values to avoid unnecessary updates
-  const prevValuesRef = useRef({ apps1, apps2, bse });
-  const frameRequestRef = useRef(null);
-  
-  useEffect(() => {
-    // Skip updates if values haven't changed significantly (threshold-based)
-    const prevValues = prevValuesRef.current;
-    if (
-      Math.abs(apps1 - prevValues.apps1) < 0.05 &&
-      Math.abs(apps2 - prevValues.apps2) < 0.05 &&
-      Math.abs(bse - prevValues.bse) < 0.05
-    ) {
-      return;
-    }
-    
-    // Update previous values
-    prevValuesRef.current = { apps1, apps2, bse };
-    
-    // Cancel any existing animation frame to prevent multiple updates
-    if (frameRequestRef.current) {
-      cancelAnimationFrame(frameRequestRef.current);
-    }
-    
-    // Schedule stats update in next animation frame for better performance
-    frameRequestRef.current = requestAnimationFrame(() => {
-      setStats(prev => {
-        const avgApps = (apps1 + apps2) / 2;
-        const deviation = Math.abs(apps1 - apps2);
-        const maxApps = Math.max(apps1, apps2);
-
-        // APPS consistency calculation
-        const appsConsistency = maxApps > 5
-          ? Math.max(0, 100 - (deviation / maxApps) * 100)
-          : 100;
-          
-        // Get pedal status
-        const status = computePedalStatus(avgApps, bse);
-        
-        // Update stats with optimized logic
-        return {
-          // Only update max values if they're higher than previous
-          maxAcceleration: Math.max(prev.maxAcceleration, avgApps),
-          maxBrake: Math.max(prev.maxBrake, bse),
-          sensorDeviation: deviation,
-          appsConsistency,
-          avgApps,
-          status
-        };
-      });
-    });
-    
-    // Cleanup animation frame on unmount or update
-    return () => {
-      if (frameRequestRef.current) {
-        cancelAnimationFrame(frameRequestRef.current);
-      }
-    };
-  }, [apps1, apps2, bse]);
-  
-  return stats;
-};
-
-// Smaller, more compact styled accelerator progress bar with theme integration
+// Styled components - defined outside component to prevent recreation
 const AcceleratorBar = styled(LinearProgress, {
   shouldForwardProp: (prop) => prop !== 'active'
 })(({ theme, active }) => ({
@@ -261,14 +132,10 @@ const AcceleratorBar = styled(LinearProgress, {
       : `linear-gradient(90deg, ${alpha(theme.palette.info.light, 0.5)} 0%, ${alpha(theme.palette.info.main, 0.5)} 100%)`,
     boxShadow: active 
       ? `0 0 6px ${alpha(theme.palette.info.main, 0.7)}, inset 0 -1px 0 ${alpha('#000', 0.1)}` 
-      : 'none',
-    transition: theme.transitions.create(['transform', 'background', 'box-shadow'], {
-      duration: theme.transitions.duration.shortest
-    })
+      : 'none'
   }
 }));
 
-// Professional styled brake progress bar with theme integration
 const BrakeBar = styled(LinearProgress, {
   shouldForwardProp: (prop) => prop !== 'active'
 })(({ theme, active }) => ({
@@ -290,27 +157,18 @@ const BrakeBar = styled(LinearProgress, {
       : `linear-gradient(90deg, ${alpha(theme.palette.error.light, 0.5)} 0%, ${alpha(theme.palette.error.main, 0.5)} 100%)`,
     boxShadow: active 
       ? `0 0 6px ${alpha(theme.palette.error.main, 0.7)}, inset 0 -1px 0 ${alpha('#000', 0.1)}` 
-      : 'none',
-    transition: theme.transitions.create(['transform', 'background', 'box-shadow'], {
-      duration: theme.transitions.duration.shortest
-    })
+      : 'none'
   }
 }));
 
-// Professional pedal indicator - optimized with memo
+// Pedal indicator component - memoized for performance
 const PedalIndicator = memo(({ type, value, active }) => {
   const theme = useTheme();
-  const colors = usePedalColors();
   const isAccel = type === 'accelerator';
-  const color = isAccel ? colors.APPS : colors.BSE;
-  
-  // Get animation settings from context
+  const color = isAccel ? theme.palette.info.main : theme.palette.error.main;
   const { settings } = useContext(ChartSettingsContext);
   const animationsEnabled = settings?.global?.enableTransitions !== false;
-  
-  // Round value for ARIA attributes
   const roundedValue = Math.round(value);
-  const icon = isAccel ? <ArrowUp size={16} /> : <ArrowDown size={16} />;
   
   return (
     <Box
@@ -334,9 +192,6 @@ const PedalIndicator = memo(({ type, value, active }) => {
             : `inset 0 1px 2px ${alpha('#000', 0.05)}`,
         height: '40px',
         overflow: 'hidden',
-        transition: animationsEnabled ? theme.transitions.create(['border', 'box-shadow', 'background-color'], {
-          duration: theme.transitions.duration.short
-        }) : 'none',
         ...(active && {
           backgroundColor: theme.palette.mode === 'dark'
             ? alpha(color, 0.1)
@@ -350,23 +205,20 @@ const PedalIndicator = memo(({ type, value, active }) => {
       aria-valuenow={roundedValue}
       aria-valuetext={`${roundedValue}%`}
     >
-      <Tooltip title={`${isAccel ? 'Accelerator' : 'Brake'} pedal input`} arrow placement="top" enterDelay={200} leaveDelay={0}>
+      <Tooltip title={`${isAccel ? 'Accelerator' : 'Brake'} pedal input`} arrow placement="top">
         <Box sx={{ 
           color: active ? color : theme.palette.text.secondary, 
           opacity: active ? 1 : 0.7,
           display: 'flex',
           alignItems: 'center',
-          mr: theme.spacing(0.75),
-          transition: animationsEnabled ? theme.transitions.create(['color', 'opacity'], {
-            duration: theme.transitions.duration.short
-          }) : 'none'
+          mr: theme.spacing(0.75)
         }}>
-          {icon}
+          {isAccel ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
         </Box>
       </Tooltip>
       <Box sx={{ 
         flex: 1, 
-        minWidth: 0, // Ensure flex item can shrink below content size
+        minWidth: 0,
         mx: theme.spacing(0.5)
       }}>
         {isAccel ? (
@@ -383,10 +235,7 @@ const PedalIndicator = memo(({ type, value, active }) => {
           fontSize: '0.8rem',
           ml: theme.spacing(0.75),
           minWidth: 42,
-          textAlign: 'right',
-          transition: animationsEnabled ? theme.transitions.create('color', {
-            duration: theme.transitions.duration.short
-          }) : 'none'
+          textAlign: 'right'
         }}
       >
         {value.toFixed(1)}%
@@ -401,11 +250,68 @@ PedalIndicator.propTypes = {
   active: PropTypes.bool.isRequired
 };
 
+// Optimized SensorValue component for consistent rendering
+const SensorValue = memo(({ label, value, icon, color, isActive }) => {
+  const theme = useTheme();
+  
+  return (
+    <Box sx={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: theme.spacing(0.5),
+      px: theme.spacing(0.5),
+      py: theme.spacing(0.35),
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: theme.palette.mode === 'dark' 
+        ? alpha(theme.palette.background.default, 0.4) 
+        : alpha(theme.palette.background.paper, 0.5),
+      border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
+        color, 
+        theme.palette.mode === 'dark' ? 0.2 : 0.1
+      )}`,
+      boxShadow: `inset 0 1px 2px ${alpha('#000', 0.05)}`
+    }}>
+      <Box sx={{ 
+        bgcolor: color, 
+        borderRadius: '50%', 
+        p: theme.spacing(0.5), 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        boxShadow: `0 1px 2px ${alpha('#000', 0.2)}`
+      }}>
+        {icon}
+      </Box>
+      <Typography variant="caption" sx={{ 
+        color: color, 
+        fontSize: '0.7rem',
+        fontWeight: theme.typography.fontWeightSemiBold || 600
+      }}>
+        {label}
+      </Typography>
+      <Typography variant="body2" sx={{ 
+        fontSize: '0.75rem', 
+        fontWeight: theme.typography.fontWeightMedium,
+        ml: 'auto',
+        color: isActive ? color : theme.palette.text.primary
+      }}>
+        {`${value.toFixed(1)}%`}
+      </Typography>
+    </Box>
+  );
+});
 
-// Main pedal gauge component with optimization for React-Grid-Layout
+SensorValue.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.number.isRequired,
+  icon: PropTypes.node.isRequired,
+  color: PropTypes.string.isRequired,
+  isActive: PropTypes.bool.isRequired
+};
+
+// Main component
 const PedalsGauge = () => {
   const theme = useTheme();
-  const colors = usePedalColors();
   const { settings } = useContext(ChartSettingsContext);
   
   // Use InView for visibility detection
@@ -414,46 +320,75 @@ const PedalsGauge = () => {
     triggerOnce: false
   });
   
-  // Use resize observer to make component responsive
-  const { ref: resizeRef } = useResizeObserver({
-    box: 'border-box'
-  });
+  // Get settings with defaults
+  const updateInterval = settings?.dashboard?.updateInterval || 300;
+  const changeThreshold = settings?.dashboard?.significantChangeThreshold || 0.5;
+  const animationsEnabled = settings?.global?.enableTransitions !== false;
+  const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
   
-  // State management for pedal values
-  const [rawApps1, setRawApps1] = useState(CONSTANTS.SENSOR_BASELINES.APPS1_IDLE);
-  const [rawApps2, setRawApps2] = useState(CONSTANTS.SENSOR_BASELINES.APPS2_IDLE);
-  const [rawBse, setRawBse] = useState(CONSTANTS.SENSOR_BASELINES.BSE_IDLE);
-  
+  // State for sensor values
   const [apps1, setApps1] = useState(0);
   const [apps2, setApps2] = useState(0);
   const [bse, setBse] = useState(0);
-  
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Calculate pedal stats
-  const stats = usePedalStats(apps1, apps2, bse);
+  // State for derived stats
+  const [stats, setStats] = useState({
+    avgApps: 0,
+    maxAcceleration: 0,
+    maxBrake: 0,
+    sensorDeviation: 0,
+    appsConsistency: 100,
+    status: { status: 'idle', desc: 'No Pedal Input' }
+  });
   
-  // Refs for tracking data and updates
-  const lastUpdateTimeRef = useRef(Date.now());
-  const frameRequestRef = useRef(null);
-  
-  // Sensor history buffers for smoothing
+  // Refs for tracking and optimization
   const sensorHistoryRef = useRef({
     apps1: new SensorRingBuffer(),
     apps2: new SensorRingBuffer(),
     bse: new SensorRingBuffer()
   });
   
-  // Settings with defaults from context
-  const updateInterval = settings?.dashboard?.updateInterval;
-  const changeThreshold = settings?.dashboard?.significantChangeThreshold || 0.5;
+  const lastUpdateTimeRef = useRef(Date.now());
+  const frameRequestRef = useRef(null);
+  const isComponentMounted = useRef(true);
+  const valuesRef = useRef({ apps1: 0, apps2: 0, bse: 0 });
   
-  // Check for animation and hardware acceleration settings
-  const animationsEnabled = settings?.global?.enableTransitions !== false;
-  const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
+  // Component lifecycle management
+  useEffect(() => {
+    isComponentMounted.current = true;
+    
+    return () => {
+      isComponentMounted.current = false;
+      if (frameRequestRef.current) {
+        cancelAnimationFrame(frameRequestRef.current);
+      }
+    };
+  }, []);
   
-  // Frame limiting for performance
+  // Theme colors (memoized to prevent recalculation)
+  const colors = useMemo(() => ({
+    apps: theme.palette.info.main,
+    appsLight: theme.palette.info.light,
+    bse: theme.palette.error.main,
+    bseLight: theme.palette.error.light,
+    warning: theme.palette.warning.main,
+    success: theme.palette.success.main,
+    idle: theme.palette.text.secondary
+  }), [theme.palette]);
+  
+  // Determine status color based on current state
+  const statusColor = useMemo(() => {
+    switch (stats.status.status) {
+      case 'accelerating': return colors.apps;
+      case 'braking': return colors.bse;
+      case 'warning': return colors.warning;
+      default: return colors.idle;
+    }
+  }, [stats.status.status, colors]);
+  
+  // Frame-limiting for performance
   const shouldUpdateFrame = useCallback(() => {
     const now = Date.now();
     const elapsed = now - lastUpdateTimeRef.current;
@@ -464,121 +399,503 @@ const PedalsGauge = () => {
     return false;
   }, []);
   
-  // Determine status color based on current state (memoized)
-  const getStatusColor = useCallback(() => {
-    switch (stats.status.status) {
-      case 'accelerating':
-        return colors.APPS;
-      case 'braking':
-        return colors.BSE;
-      case 'warning':
-        return colors.WARNING;
-      default:
-        return colors.IDLE;
-    }
-  }, [stats.status.status, colors]);
-  
-  // Process incoming data with optimized approach
-  const processData = useCallback((data) => {
-    if (!data || !data.fields) return false;
-    
-    const fields = data.fields;
-    
-    if (error) setError(null);
-    
-    // Update sensor history buffers
-    if (fields.apps1?.numberValue !== undefined) {
-      sensorHistoryRef.current.apps1.add(fields.apps1.numberValue);
-    }
-    if (fields.apps2?.numberValue !== undefined) {
-      sensorHistoryRef.current.apps2.add(fields.apps2.numberValue);
-    }
-    if (fields.bse?.numberValue !== undefined) {
-      sensorHistoryRef.current.bse.add(fields.bse.numberValue);
-    }
-    
-    return true;
-  }, [error]);
-  
-  // Update visual state based on sensor data with optimized performance
+  // Update visual state based on sensor data
   const updateVisualState = useCallback(() => {
-    const apps1Buffer = sensorHistoryRef.current.apps1;
-    const apps2Buffer = sensorHistoryRef.current.apps2;
-    const bseBuffer = sensorHistoryRef.current.bse;
-    
-    const newApps1Raw = apps1Buffer.getAverage();
-    const newApps2Raw = apps2Buffer.getAverage();
-    const newBseRaw = bseBuffer.getAverage();
-    
-    // Only update state if there's a significant change
-    if (Math.abs(newApps1Raw - rawApps1) > changeThreshold / 100) {
-      setRawApps1(newApps1Raw);
-      setApps1(sensorConversions.appsToPercentage(newApps1Raw));
-    }
-    
-    if (Math.abs(newApps2Raw - rawApps2) > changeThreshold / 100) {
-      setRawApps2(newApps2Raw);
-      setApps2(sensorConversions.appsToPercentage(newApps2Raw));
-    }
-    
-    if (Math.abs(newBseRaw - rawBse) > changeThreshold / 100) {
-      setRawBse(newBseRaw);
-      setBse(sensorConversions.bseToPercentage(newBseRaw));
-    }
-    
-    if (isLoading) setIsLoading(false);
-  }, [rawApps1, rawApps2, rawBse, isLoading, changeThreshold]);
-  
-  // Handle incoming data with batched updates for better performance
-  const handleNewData = useCallback((msg) => {
-    // Skip updates if component is not in view
-    if (!inView) return;
+    if (!isComponentMounted.current) return;
     
     try {
-      if (!processData(msg)) return;
+      // Get averaged values from sensor history
+      const apps1Value = sensorHistoryRef.current.apps1.getAverage();
+      const apps2Value = sensorHistoryRef.current.apps2.getAverage();
+      const bseValue = sensorHistoryRef.current.bse.getAverage();
+      
+      // Convert to percentages
+      const apps1Percent = sensorConversions.appsToPercentage(apps1Value);
+      const apps2Percent = sensorConversions.appsToPercentage(apps2Value);
+      const bsePercent = sensorConversions.bseToPercentage(bseValue);
+      
+      // Calculate derived values
+      const avgApps = (apps1Percent + apps2Percent) / 2;
+      const deviation = Math.abs(apps1Percent - apps2Percent);
+      const maxApps = Math.max(apps1Percent, apps2Percent);
+      const appsConsistency = maxApps > 5
+        ? Math.max(0, 100 - (deviation / maxApps) * 100)
+        : 100;
+      
+      // Get current status
+      const status = computePedalStatus(avgApps, bsePercent);
+      
+      // Update state only if values have changed sufficiently
+      const thresholdPercent = changeThreshold / 100;
+      
+      // Update pedal values
+      if (Math.abs(apps1Percent - valuesRef.current.apps1) > thresholdPercent) {
+        setApps1(apps1Percent);
+        valuesRef.current.apps1 = apps1Percent;
+      }
+      
+      if (Math.abs(apps2Percent - valuesRef.current.apps2) > thresholdPercent) {
+        setApps2(apps2Percent);
+        valuesRef.current.apps2 = apps2Percent;
+      }
+      
+      if (Math.abs(bsePercent - valuesRef.current.bse) > thresholdPercent) {
+        setBse(bsePercent);
+        valuesRef.current.bse = bsePercent;
+      }
+      
+      // Update stats (only if changed)
+      setStats(prevStats => {
+        // Prepare updates
+        const updates = {};
+        
+        if (Math.abs(avgApps - prevStats.avgApps) > thresholdPercent) {
+          updates.avgApps = avgApps;
+        }
+        
+        if (deviation !== prevStats.sensorDeviation) {
+          updates.sensorDeviation = deviation;
+        }
+        
+        if (appsConsistency !== prevStats.appsConsistency) {
+          updates.appsConsistency = appsConsistency;
+        }
+        
+        // Update max values if needed
+        if (avgApps > prevStats.maxAcceleration) {
+          updates.maxAcceleration = avgApps;
+        }
+        
+        if (bsePercent > prevStats.maxBrake) {
+          updates.maxBrake = bsePercent;
+        }
+        
+        // Update status if changed
+        if (status.status !== prevStats.status.status || 
+            status.desc !== prevStats.status.desc) {
+          updates.status = status;
+        }
+        
+        // Only update state if there are changes
+        return Object.keys(updates).length > 0 ? { ...prevStats, ...updates } : prevStats;
+      });
+      
+      // Clear loading state
+      if (isLoading) {
+        setIsLoading(false);
+      }
+      
+      // Clear error state if we got this far
+      if (error) {
+        setError(null);
+      }
+    } catch (err) {
+      console.error('Error updating visual state:', err);
+      if (isComponentMounted.current) {
+        setError('Failed to update pedal display');
+      }
+    }
+  }, [isLoading, error, changeThreshold]);
+  
+  // Handle incoming data
+  const handleDataMessage = useCallback((data) => {
+    if (!inView || !isComponentMounted.current) return;
+    
+    try {
+      // Extract values from the message
+      const fields = data?.fields;
+      if (!fields) return;
+      
+      // Get sensor values
+      const apps1Value = fields.apps1?.numberValue;
+      const apps2Value = fields.apps2?.numberValue;
+      const bseValue = fields.bse?.numberValue;
+      
+      // Add to history buffers for smoothing
+      if (apps1Value !== undefined) {
+        sensorHistoryRef.current.apps1.add(apps1Value);
+      }
+      
+      if (apps2Value !== undefined) {
+        sensorHistoryRef.current.apps2.add(apps2Value);
+      }
+      
+      if (bseValue !== undefined) {
+        sensorHistoryRef.current.bse.add(bseValue);
+      }
       
       // Throttle visual updates for performance
       if (!shouldUpdateFrame() && !isLoading) return;
       
       // Cancel any existing frame request
-      if (frameRequestRef.current) cancelAnimationFrame(frameRequestRef.current);
+      if (frameRequestRef.current) {
+        cancelAnimationFrame(frameRequestRef.current);
+      }
       
       // Schedule update in next animation frame
-      frameRequestRef.current = requestAnimationFrame(updateVisualState);
+      frameRequestRef.current = requestAnimationFrame(() => {
+        if (isComponentMounted.current) {
+          updateVisualState();
+        }
+      });
     } catch (err) {
       console.error('Error processing pedal data:', err);
-      setError('Failed to process pedal input data');
+      if (isComponentMounted.current) {
+        setError('Failed to process pedal input data');
+      }
     }
-  }, [processData, shouldUpdateFrame, isLoading, updateVisualState, inView]);
+  }, [inView, shouldUpdateFrame, isLoading, updateVisualState]);
   
-  // Use real-time data hook to get telemetry updates
+  // Subscribe to real-time data
   const { ref: dataRef } = useRealTimeData(
     'tcu',
-    handleNewData,
-    { 
-      customInterval: updateInterval,
-      threshold: 0.1,
-      triggerOnce: false
-    }
+    handleDataMessage,
+    { customInterval: updateInterval }
   );
   
   // Combine refs
   const setRefs = useCallback(node => {
-    resizeRef(node);
-    inViewRef(node);
-    if (dataRef) dataRef(node);
-  }, [resizeRef, inViewRef, dataRef]);
+    if (node) {
+      inViewRef(node);
+      if (dataRef) dataRef(node); // Only call dataRef if it exists
+    }
+  }, [inViewRef, dataRef]);
   
-  // Clean up resources on unmount
-  useEffect(() => {
-    return () => {
-      if (frameRequestRef.current) cancelAnimationFrame(frameRequestRef.current);
-    };
-  }, []);
+  // Render the main content
+  const renderContent = useCallback(() => {
+    if (!inView) {
+      return (
+        <Box 
+          sx={{ 
+            flex: 1, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            color: theme.palette.text.secondary
+          }}
+        >
+          <Typography variant="body2">
+            Pedal data monitoring paused
+          </Typography>
+        </Box>
+      );
+    }
+    
+    if (isLoading) {
+      return (
+        <Box 
+          sx={{ 
+            flex: 1, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="body1">
+            Loading...
+          </Typography>
+        </Box>
+      );
+    }
+    
+    return (
+      <>
+        {/* Pedal indicator bars */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'row', 
+          mb: theme.spacing(1.25), 
+          gap: theme.spacing(1),
+          flexShrink: 0
+        }}>
+          <Box sx={{ flex: 1 }}>
+            <PedalIndicator
+              type="accelerator"
+              value={stats.avgApps}
+              active={stats.status.status === 'accelerating' || stats.status.status === 'warning'}
+            />
+          </Box>
+          <Box sx={{ flex: 1 }}>
+            <PedalIndicator
+              type="brake"
+              value={bse}
+              active={stats.status.status === 'braking' || stats.status.status === 'warning'}
+            />
+          </Box>
+        </Box>
+
+        {/* Sensor readings panel */}
+        <Box
+          sx={{
+            backgroundColor: alpha(theme.palette.background.paper, 0.8),
+            borderRadius: theme.shape.borderRadius,
+            border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
+              theme.palette.primary.main, 0.1
+            )}`,
+            p: theme.spacing(1),
+            boxShadow: `0 1px 2px ${alpha('#000', 0.05)}`,
+            flex: 1
+          }}
+        >
+          <Typography
+            variant="subtitle2"
+            sx={{ 
+              color: theme.palette.primary.main,
+              fontSize: '0.75rem',
+              mb: theme.spacing(0.75),
+              display: 'flex',
+              alignItems: 'center',
+              gap: theme.spacing(0.5),
+              fontWeight: theme.typography.fontWeightSemiBold || 600,
+              textTransform: 'uppercase',
+              borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              paddingBottom: theme.spacing(0.5)
+            }}
+          >
+            <Info size={14} /> Sensor Readings
+          </Typography>
+          
+          {/* Sensor readings grid */}
+          <Box sx={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: theme.spacing(0.75),
+            mb: theme.spacing(0.75)
+          }}>
+            {/* APPS1 */}
+            <SensorValue
+              label="APPS1"
+              value={apps1}
+              icon={<ArrowUp size={10} color="white" />}
+              color={colors.apps}
+              isActive={apps1 > 5}
+            />
+            
+            {/* APPS2 */}
+            <SensorValue
+              label="APPS2"
+              value={apps2}
+              icon={<ArrowUp size={10} color="white" />}
+              color={colors.apps}
+              isActive={apps2 > 5}
+            />
+            
+            {/* Brake */}
+            <SensorValue
+              label="Brake"
+              value={bse}
+              icon={<ArrowDown size={10} color="white" />}
+              color={colors.bse}
+              isActive={bse > 5}
+            />
+            
+            {/* Max Values */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: theme.spacing(0.5),
+              px: theme.spacing(0.5),
+              py: theme.spacing(0.35),
+              borderRadius: theme.shape.borderRadius,
+              backgroundColor: alpha(theme.palette.background.paper, 0.5),
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              boxShadow: `inset 0 1px 2px ${alpha('#000', 0.05)}`
+            }}>
+              <Box sx={{ 
+                bgcolor: theme.palette.info.main, 
+                borderRadius: '50%', 
+                p: theme.spacing(0.5), 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                boxShadow: `0 1px 2px ${alpha('#000', 0.2)}`
+              }}>
+                <Info size={10} color="white" />
+              </Box>
+              <Typography variant="caption" sx={{ 
+                color: theme.palette.info.main, 
+                fontSize: '0.7rem',
+                fontWeight: theme.typography.fontWeightSemiBold || 600
+              }}>
+                Max:
+              </Typography>
+              <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: theme.spacing(0.75) }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(0.25) }}>
+                  <ArrowUp size={10} color={colors.apps} />
+                  <Typography variant="body2" sx={{ 
+                    fontSize: '0.75rem', 
+                    color: colors.apps, 
+                    fontWeight: theme.typography.fontWeightMedium 
+                  }}>
+                    {`${stats.maxAcceleration.toFixed(1)}%`}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(0.25) }}>
+                  <ArrowDown size={10} color={colors.bse} />
+                  <Typography variant="body2" sx={{ 
+                    fontSize: '0.75rem', 
+                    color: colors.bse, 
+                    fontWeight: theme.typography.fontWeightMedium 
+                  }}>
+                    {`${stats.maxBrake.toFixed(1)}%`}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+          
+          {/* Metrics with progress bars */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: theme.spacing(0.75) }}>
+            {/* Deviation */}
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="caption" sx={{ 
+                  color: theme.palette.text.secondary, 
+                  fontSize: '0.65rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: theme.spacing(0.25)
+                }}>
+                  <Info size={10} /> Deviation
+                </Typography>
+                <Box sx={{ 
+                  bgcolor: stats.sensorDeviation > 8 
+                    ? alpha(theme.palette.error.main, 0.2)
+                    : stats.sensorDeviation > 3 
+                      ? alpha(theme.palette.warning.main, 0.2)
+                      : alpha(theme.palette.info.main, 0.2),
+                  px: theme.spacing(0.75),
+                  py: theme.spacing(0.15),
+                  borderRadius: theme.shape.borderRadius
+                }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color:
+                        stats.sensorDeviation > 8
+                          ? theme.palette.error.main
+                          : stats.sensorDeviation > 3
+                          ? theme.palette.warning.main
+                          : theme.palette.info.main,
+                      fontSize: '0.7rem',
+                      fontWeight: theme.typography.fontWeightSemiBold || 600
+                    }}
+                  >
+                    {`${stats.sensorDeviation.toFixed(1)}%`}
+                  </Typography>
+                </Box>
+              </Box>
+              <Tooltip title={`Difference between APPS1 and APPS2: ${stats.sensorDeviation.toFixed(1)}%`} arrow>
+                <LinearProgress
+                  variant="determinate"
+                  value={Math.min(100, stats.sensorDeviation * 10)} // Scale for better visualization
+                  sx={{
+                    height: theme.spacing(0.5),
+                    borderRadius: theme.shape.borderRadius,
+                    mt: theme.spacing(0.25),
+                    backgroundColor: alpha(theme.palette.mode === 'dark' ? '#fff' : '#000', 0.08),
+                    boxShadow: `inset 0 1px 2px ${alpha('#000', 0.1)}`,
+                    '& .MuiLinearProgress-bar': {
+                      borderRadius: theme.shape.borderRadius,
+                      backgroundImage:
+                        stats.sensorDeviation > 8
+                          ? `linear-gradient(90deg, ${theme.palette.error.light} 0%, ${theme.palette.error.main} 100%)`
+                          : stats.sensorDeviation > 3
+                          ? `linear-gradient(90deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 100%)`
+                          : `linear-gradient(90deg, ${theme.palette.info.light} 0%, ${theme.palette.info.main} 100%)`
+                    }
+                  }}
+                />
+              </Tooltip>
+            </Box>
+            
+            {/* Consistency */}
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="caption" sx={{ 
+                  color: theme.palette.text.secondary, 
+                  fontSize: '0.65rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: theme.spacing(0.25)
+                }}>
+                  <Info size={10} /> Consistency
+                </Typography>
+                <Box sx={{ 
+                  bgcolor: stats.appsConsistency < 80 
+                    ? alpha(theme.palette.error.main, 0.2)
+                    : stats.appsConsistency < 90 
+                      ? alpha(theme.palette.warning.main, 0.2)
+                      : alpha(theme.palette.success.main, 0.2),
+                  px: theme.spacing(0.75),
+                  py: theme.spacing(0.15),
+                  borderRadius: theme.shape.borderRadius
+                }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color:
+                        stats.appsConsistency < 80
+                          ? theme.palette.error.main
+                          : stats.appsConsistency < 90
+                          ? theme.palette.warning.main
+                          : theme.palette.success.main,
+                      fontSize: '0.7rem',
+                      fontWeight: theme.typography.fontWeightSemiBold || 600
+                    }}
+                  >
+                    {`${stats.appsConsistency.toFixed(1)}%`}
+                  </Typography>
+                </Box>
+              </Box>
+              <Tooltip title={`APPS sensor consistency: ${stats.appsConsistency.toFixed(1)}%`} arrow>
+                <LinearProgress
+                  variant="determinate"
+                  value={stats.appsConsistency}
+                  sx={{
+                    height: theme.spacing(0.5),
+                    borderRadius: theme.shape.borderRadius,
+                    mt: theme.spacing(0.25),
+                    backgroundColor: alpha(theme.palette.mode === 'dark' ? '#fff' : '#000', 0.08),
+                    boxShadow: `inset 0 1px 2px ${alpha('#000', 0.1)}`,
+                    '& .MuiLinearProgress-bar': {
+                      borderRadius: theme.shape.borderRadius,
+                      backgroundImage:
+                        stats.appsConsistency < 80
+                          ? `linear-gradient(90deg, ${theme.palette.error.light} 0%, ${theme.palette.error.main} 100%)`
+                          : stats.appsConsistency < 90
+                          ? `linear-gradient(90deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 100%)`
+                          : `linear-gradient(90deg, ${theme.palette.success.light} 0%, ${theme.palette.success.main} 100%)`
+                    }
+                  }}
+                />
+              </Tooltip>
+            </Box>
+          </Box>
+        </Box>
+      </>
+    );
+  }, [
+    theme, colors, inView, isLoading, 
+    stats, apps1, apps2, bse
+  ]);
   
-  // Computed values for UI
-  const sensorDeviationPercent = Math.min(100, stats.sensorDeviation * 10);
-  const statusColor = getStatusColor();
+  // Render error info if needed
+  const renderErrorInfo = useCallback(() => {
+    if (!error) return null;
+    
+    return (
+      <Box sx={{ 
+        p: 1, 
+        backgroundColor: alpha(theme.palette.error.main, 0.1),
+        borderTop: `1px solid ${alpha(theme.palette.error.main, 0.3)}`,
+        color: theme.palette.error.main,
+        fontSize: '0.7rem'
+      }}>
+        <Typography variant="caption" sx={{ fontWeight: 'bold' }}>Error: {error}</Typography>
+      </Box>
+    );
+  }, [error, theme]);
   
   return (
     <Card
@@ -591,31 +908,26 @@ const PedalsGauge = () => {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: theme.palette.background.paper,
-        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-          theme.palette.primary.main, 
-          theme.palette.mode === 'dark' ? 0.2 : 0.1
-        )}`,
+        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
         position: 'relative',
-        transition: animationsEnabled ? theme.transitions.create(['border', 'background-color', 'box-shadow'], {
-          duration: theme.transitions.duration.short
-        }) : 'none',
-        boxShadow: theme.custom?.shadows?.md,
+        boxShadow: theme.custom?.shadows?.md || '0 2px 4px rgba(0,0,0,0.1)',
         transform: hardwareAcceleration ? 'translateZ(0)' : 'none'
       }}
       role="region"
       aria-label="Pedal inputs monitor"
     >
-      {/* Professional header */}
+      {/* Header */}
       <CardHeader
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(1) }}>
             <Gauge size={20} color={theme.palette.primary.main} />
             <Typography
               variant="h6"
-              sx={{ fontWeight: theme.typography.fontWeightMedium,
+              sx={{
+                fontWeight: theme.typography.fontWeightMedium,
                 lineHeight: 1.2,
                 m: 0.5
-               }}
+              }}
             >
               Pedal Inputs
             </Typography>
@@ -623,17 +935,9 @@ const PedalsGauge = () => {
         }
         sx={{
           p: theme.spacing(0.5),
-          backgroundColor: theme.palette.mode === 'dark' 
-            ? alpha(theme.palette.background.subtle, 0.4) 
-            : alpha(theme.palette.primary.main, 0.02),
-          borderBottom: `1px solid ${alpha(
-            theme.palette.primary.main,
-            theme.palette.mode === 'dark' ? 0.1 : 0.05
-          )}`,
+          backgroundColor: alpha(theme.palette.background.default, 0.4),
           '& .MuiCardHeader-action': {
-            p: theme.spacing(0.5),
-            m: 0,
-            alignSelf: 'center'
+            m: 0
           }
         }}
       />
@@ -646,494 +950,17 @@ const PedalsGauge = () => {
           flex: 1, 
           display: 'flex', 
           flexDirection: 'column',
-          overflow: inView ? 'auto' : 'hidden', // Allow scrolling only when in view
+          overflow: inView ? 'auto' : 'hidden',
           '&:last-child': {
-            pb: theme.spacing(1.5),
+            pb: theme.spacing(1.5)
           }
         }}
       >
-        {!inView ? (
-          // Minimal content when not in view
-          <Box 
-            sx={{ 
-              flex: 1, 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              textAlign: 'center',
-              color: theme.palette.text.secondary
-            }}
-          >
-            <Typography variant="body2">
-              Pedal data monitoring paused
-            </Typography>
-          </Box>
-        ) : isLoading ? (
-          // Simple loading state
-          <Box 
-            sx={{ 
-              flex: 1, 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="body1">
-              Loading...
-            </Typography>
-          </Box>
-        ) : (
-          // Full content when in view
-          <>
-            {/* Professional gauge bars with side-by-side layout */}
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'row', 
-              mb: theme.spacing(1.25), 
-              gap: theme.spacing(1),
-              flexShrink: 0
-            }}>
-              <Box sx={{ flex: 1 }}>
-                <PedalIndicator
-                  type="accelerator"
-                  value={stats.avgApps}
-                  active={stats.status.status === 'accelerating' || stats.status.status === 'warning'}
-                />
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <PedalIndicator
-                  type="brake"
-                  value={bse}
-                  active={stats.status.status === 'braking' || stats.status.status === 'warning'}
-                />
-              </Box>
-            </Box>
-
-            {/* Professional layout for sensor readings and analytics */}
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: theme.spacing(1), 
-              width: '100%',
-              flex: 1,
-              overflow: 'hidden' // Prevent any overflow issues
-            }}>
-              {/* Professional Sensor Readings section */}
-              <Box
-                sx={{
-                  backgroundColor: theme.palette.mode === 'dark'
-                    ? alpha(theme.palette.background.subtle, 0.4)
-                    : alpha(theme.palette.background.paper, 0.8),
-                  borderRadius: theme.shape.borderRadius,
-                  border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-                    theme.palette.primary.main,
-                    theme.palette.mode === 'dark' ? 0.15 : 0.1
-                  )}`,
-                  p: theme.spacing(1),
-                  boxShadow: theme.palette.mode === 'dark'
-                    ? `0 2px 4px ${alpha('#000', 0.2)}`
-                    : `0 2px 4px ${alpha('#000', 0.05)}`,
-                  transition: animationsEnabled ? theme.transitions.create(['box-shadow', 'border-color'], {
-                    duration: theme.transitions.duration.standard
-                  }) : 'none'
-                }}
-              >
-                <Typography
-                  variant="subtitle2"
-                  sx={{ 
-                    color: theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.main,
-                    fontSize: '0.75rem',
-                    flexShrink: 0,
-                    mb: theme.spacing(0.75),
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: theme.spacing(0.5),
-                    fontWeight: theme.typography.fontWeightSemiBold,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.02em',
-                    borderBottom: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-                      theme.palette.primary.main, 
-                      theme.palette.mode === 'dark' ? 0.15 : 0.1
-                    )}`,
-                    paddingBottom: theme.spacing(0.5)
-                  }}
-                >
-                  <Info size={14} /> Sensor Readings
-                </Typography>
-                
-                <Box sx={{ 
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: theme.spacing(0.75)
-                }}>
-                  {/* APPS1 */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: theme.spacing(0.5),
-                    px: theme.spacing(0.5),
-                    py: theme.spacing(0.35),
-                    borderRadius: theme.shape.borderRadius,
-                    backgroundColor: theme.palette.mode === 'dark' 
-                      ? alpha(theme.palette.background.default, 0.4) 
-                      : alpha(theme.palette.background.subtle, 0.5),
-                    border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-                      theme.palette.info.main, 
-                      theme.palette.mode === 'dark' ? 0.2 : 0.1
-                    )}`,
-                    boxShadow: `inset 0 1px 2px ${alpha('#000', 0.05)}`,
-                    transition: animationsEnabled ? theme.transitions.create(['background-color', 'border-color'], {
-                      duration: theme.transitions.duration.short
-                    }) : 'none'
-                  }}>
-                    <Box sx={{ 
-                      bgcolor: colors.APPS, 
-                      borderRadius: '50%', 
-                      p: theme.spacing(0.5), 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      boxShadow: `0 1px 2px ${alpha('#000', 0.2)}`
-                    }}>
-                      <ArrowUp size={10} color="white" />
-                    </Box>
-                    <Typography variant="caption" sx={{ 
-                      color: colors.APPS, 
-                      fontSize: '0.7rem',
-                      fontWeight: theme.typography.fontWeightSemiBold
-                    }}>
-                      APPS1:
-                    </Typography>
-                    <Typography variant="body2" sx={{ 
-                      fontSize: '0.75rem', 
-                      fontWeight: theme.typography.fontWeightMedium,
-                      ml: 'auto',
-                      color: apps1 > 5 ? colors.APPS : theme.palette.text.primary,
-                      transition: animationsEnabled ? theme.transitions.create('color', {
-                        duration: theme.transitions.duration.shortest
-                      }) : 'none'
-                    }}>
-                      {`${apps1.toFixed(1)}%`}
-                    </Typography>
-                  </Box>
-                  
-                  {/* APPS2 */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: theme.spacing(0.5),
-                    px: theme.spacing(0.5),
-                    py: theme.spacing(0.35),
-                    borderRadius: theme.shape.borderRadius,
-                    backgroundColor: theme.palette.mode === 'dark' 
-                      ? alpha(theme.palette.background.default, 0.4) 
-                      : alpha(theme.palette.background.subtle, 0.5),
-                    border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-                      theme.palette.info.main, 
-                      theme.palette.mode === 'dark' ? 0.2 : 0.1
-                    )}`,
-                    boxShadow: `inset 0 1px 2px ${alpha('#000', 0.05)}`,
-                    transition: animationsEnabled ? theme.transitions.create(['background-color', 'border-color'], {
-                      duration: theme.transitions.duration.short
-                    }) : 'none'
-                  }}>
-                    <Box sx={{ 
-                      bgcolor: colors.APPS, 
-                      borderRadius: '50%', 
-                      p: theme.spacing(0.5), 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      boxShadow: `0 1px 2px ${alpha('#000', 0.2)}`
-                    }}>
-                      <ArrowUp size={10} color="white" />
-                    </Box>
-                    <Typography variant="caption" sx={{ 
-                      color: colors.APPS, 
-                      fontSize: '0.7rem',
-                      fontWeight: theme.typography.fontWeightSemiBold
-                    }}>
-                      APPS2:
-                    </Typography>
-                    <Typography variant="body2" sx={{ 
-                      fontSize: '0.75rem', 
-                      fontWeight: theme.typography.fontWeightMedium,
-                      ml: 'auto',
-                      color: apps2 > 5 ? colors.APPS : theme.palette.text.primary,
-                      transition: animationsEnabled ? theme.transitions.create('color', {
-                        duration: theme.transitions.duration.shortest
-                      }) : 'none'
-                    }}>
-                      {`${apps2.toFixed(1)}%`}
-                    </Typography>
-                  </Box>
-                  
-                  {/* Brake */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: theme.spacing(0.5),
-                    px: theme.spacing(0.5),
-                    py: theme.spacing(0.35),
-                    borderRadius: theme.shape.borderRadius,
-                    backgroundColor: theme.palette.mode === 'dark' 
-                      ? alpha(theme.palette.background.default, 0.4) 
-                      : alpha(theme.palette.background.subtle, 0.5),
-                    border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-                      theme.palette.error.main, 
-                      theme.palette.mode === 'dark' ? 0.2 : 0.1
-                    )}`,
-                    boxShadow: `inset 0 1px 2px ${alpha('#000', 0.05)}`,
-                    transition: animationsEnabled ? theme.transitions.create(['background-color', 'border-color'], {
-                      duration: theme.transitions.duration.short
-                    }) : 'none'
-                  }}>
-                    <Box sx={{ 
-                      bgcolor: colors.BSE, 
-                      borderRadius: '50%', 
-                      p: theme.spacing(0.5), 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      boxShadow: `0 1px 2px ${alpha('#000', 0.2)}`
-                    }}>
-                      <ArrowDown size={10} color="white" />
-                    </Box>
-                    <Typography variant="caption" sx={{ 
-                      color: colors.BSE, 
-                      fontSize: '0.7rem',
-                      fontWeight: theme.typography.fontWeightSemiBold
-                    }}>
-                      Brake:
-                    </Typography>
-                    <Typography variant="body2" sx={{ 
-                      fontSize: '0.75rem', 
-                      fontWeight: theme.typography.fontWeightMedium,
-                      ml: 'auto',
-                      color: bse > 5 ? colors.BSE : theme.palette.text.primary,
-                      transition: animationsEnabled ? theme.transitions.create('color', {
-                        duration: theme.transitions.duration.shortest
-                      }) : 'none'
-                    }}>
-                      {`${bse.toFixed(1)}%`}
-                    </Typography>
-                  </Box>
-                  
-                  {/* Max Values */}
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: theme.spacing(0.5),
-                    px: theme.spacing(0.5),
-                    py: theme.spacing(0.35),
-                    borderRadius: theme.shape.borderRadius,
-                    backgroundColor: theme.palette.mode === 'dark' 
-                      ? alpha(theme.palette.background.default, 0.4) 
-                      : alpha(theme.palette.background.subtle, 0.5),
-                    border: `${theme.custom?.borderWidth?.thin || 1}px solid ${alpha(
-                      theme.palette.primary.main, 
-                      theme.palette.mode === 'dark' ? 0.2 : 0.1
-                    )}`,
-                    boxShadow: `inset 0 1px 2px ${alpha('#000', 0.05)}`,
-                    transition: animationsEnabled ? theme.transitions.create(['background-color', 'border-color'], {
-                      duration: theme.transitions.duration.short
-                    }) : 'none'
-                  }}>
-                    <Box sx={{ 
-                      bgcolor: theme.palette.info.main, 
-                      borderRadius: '50%', 
-                      p: theme.spacing(0.5), 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      boxShadow: `0 1px 2px ${alpha('#000', 0.2)}`
-                    }}>
-                      <Info size={10} color="white" />
-                    </Box>
-                    <Typography variant="caption" sx={{ 
-                      color: theme.palette.info.main, 
-                      fontSize: '0.7rem',
-                      fontWeight: theme.typography.fontWeightSemiBold
-                    }}>
-                      Max:
-                    </Typography>
-                    <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: theme.spacing(0.75) }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(0.25) }}>
-                        <ArrowUp size={10} color={colors.APPS} />
-                        <Typography variant="body2" sx={{ 
-                          fontSize: '0.75rem', 
-                          color: colors.APPS, 
-                          fontWeight: theme.typography.fontWeightMedium 
-                        }}>
-                          {`${stats.maxAcceleration.toFixed(1)}%`}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(0.25) }}>
-                        <ArrowDown size={10} color={colors.BSE} />
-                        <Typography variant="body2" sx={{ 
-                          fontSize: '0.75rem', 
-                          color: colors.BSE, 
-                          fontWeight: theme.typography.fontWeightMedium 
-                        }}>
-                          {`${stats.maxBrake.toFixed(1)}%`}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-                
-                {/* Metrics with progress bars */}
-                <Box sx={{ mt: theme.spacing(0.75), display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: theme.spacing(0.75) }}>
-                  {/* Deviation */}
-                  <Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="caption" sx={{ 
-                        color: theme.palette.text.secondary, 
-                        fontSize: '0.65rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: theme.spacing(0.25)
-                      }}>
-                        <Info size={10} /> Deviation
-                      </Typography>
-                      <Box sx={{ 
-                        bgcolor: stats.sensorDeviation > 8 
-                          ? alpha(theme.palette.error.main, 0.2)
-                          : stats.sensorDeviation > 3 
-                            ? alpha(theme.palette.warning.main, 0.2)
-                            : alpha(theme.palette.info.main, 0.2),
-                        px: theme.spacing(0.75),
-                        py: theme.spacing(0.15),
-                        borderRadius: theme.shape.borderRadius,
-                        display: 'inline-block'
-                      }}>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color:
-                              stats.sensorDeviation > 8
-                                ? theme.palette.error.main
-                                : stats.sensorDeviation > 3
-                                ? theme.palette.warning.main
-                                : theme.palette.info.main,
-                            fontSize: '0.7rem',
-                            fontWeight: theme.typography.fontWeightSemiBold
-                          }}
-                        >
-                          {`${stats.sensorDeviation.toFixed(1)}%`}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Tooltip title={`Difference between APPS1 and APPS2: ${stats.sensorDeviation.toFixed(1)}%`} arrow>
-                      <LinearProgress
-                        variant="determinate"
-                        value={sensorDeviationPercent}
-                        sx={{
-                          height: theme.spacing(0.5),
-                          borderRadius: theme.shape.borderRadius,
-                          mt: theme.spacing(0.25),
-                          backgroundColor: alpha(
-                            theme.palette.mode === 'dark' ? '#fff' : '#000',
-                            theme.palette.mode === 'dark' ? 0.08 : 0.08
-                          ),
-                          boxShadow: `inset 0 1px 2px ${alpha('#000', 0.1)}`,
-                          '& .MuiLinearProgress-bar': {
-                            borderRadius: theme.shape.borderRadius,
-                            backgroundImage:
-                              stats.sensorDeviation > 8
-                                ? `linear-gradient(90deg, ${theme.palette.error.light} 0%, ${theme.palette.error.main} 100%)`
-                                : stats.sensorDeviation > 3
-                                ? `linear-gradient(90deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 100%)`
-                                : `linear-gradient(90deg, ${theme.palette.info.light} 0%, ${theme.palette.info.main} 100%)`,
-                            boxShadow: stats.sensorDeviation > 3 ? `0 0 4px ${alpha('#000', 0.2)}` : 'none',
-                            transition: animationsEnabled ? theme.transitions.create(['transform', 'background-image'], {
-                              duration: theme.transitions.duration.short
-                            }) : 'none'
-                          }
-                        }}
-                      />
-                    </Tooltip>
-                  </Box>
-                  
-                  {/* Consistency */}
-                  <Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="caption" sx={{ 
-                        color: theme.palette.text.secondary, 
-                        fontSize: '0.65rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: theme.spacing(0.25)
-                      }}>
-                        <Info size={10} /> Consistency
-                      </Typography>
-                      <Box sx={{ 
-                        bgcolor: stats.appsConsistency < 80 
-                          ? alpha(theme.palette.error.main, 0.2)
-                          : stats.appsConsistency < 90 
-                            ? alpha(theme.palette.warning.main, 0.2)
-                            : alpha(theme.palette.success.main, 0.2),
-                        px: theme.spacing(0.75),
-                        py: theme.spacing(0.15),
-                        borderRadius: theme.shape.borderRadius,
-                        display: 'inline-block'
-                      }}>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color:
-                              stats.appsConsistency < 80
-                                ? theme.palette.error.main
-                                : stats.appsConsistency < 90
-                                ? theme.palette.warning.main
-                                : theme.palette.success.main,
-                            fontSize: '0.7rem',
-                            fontWeight: theme.typography.fontWeightSemiBold
-                          }}
-                        >
-                          {`${stats.appsConsistency.toFixed(1)}%`}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Tooltip title={`APPS sensor consistency: ${stats.appsConsistency.toFixed(1)}%`} arrow>
-                      <LinearProgress
-                        variant="determinate"
-                        value={stats.appsConsistency}
-                        sx={{
-                          height: theme.spacing(0.5),
-                          borderRadius: theme.shape.borderRadius,
-                          mt: theme.spacing(0.25),
-                          backgroundColor: alpha(
-                            theme.palette.mode === 'dark' ? '#fff' : '#000',
-                            theme.palette.mode === 'dark' ? 0.08 : 0.08
-                          ),
-                          boxShadow: `inset 0 1px 2px ${alpha('#000', 0.1)}`,
-                          '& .MuiLinearProgress-bar': {
-                            borderRadius: theme.shape.borderRadius,
-                            backgroundImage:
-                              stats.appsConsistency < 80
-                                ? `linear-gradient(90deg, ${theme.palette.error.light} 0%, ${theme.palette.error.main} 100%)`
-                                : stats.appsConsistency < 90
-                                ? `linear-gradient(90deg, ${theme.palette.warning.light} 0%, ${theme.palette.warning.main} 100%)`
-                                : `linear-gradient(90deg, ${theme.palette.success.light} 0%, ${theme.palette.success.main} 100%)`,
-                            boxShadow: stats.appsConsistency < 90 
-                              ? `0 0 4px ${alpha('#000', 0.2)}` 
-                              : `0 0 6px ${alpha('#008000', 0.2)}`,
-                            transition: animationsEnabled ? theme.transitions.create(['transform', 'background-image'], {
-                              duration: theme.transitions.duration.short
-                            }) : 'none'
-                          }
-                        }}
-                      />
-                    </Tooltip>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-          </>
-        )}
+        {renderContent()}
       </CardContent>
+      
+      {/* Error info if needed */}
+      {renderErrorInfo()}
     </Card>
   );
 };

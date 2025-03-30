@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Telemetry Dashboard for real-time data visualization" />
     <meta name="theme-color" content="#0F1C2E" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
     
     <!-- Preconnect to API domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     
-    <!-- Preload critical assets -->
-    <link rel="preload" href="/src/main.jsx" as="script" type="module" />
-    
     <!-- Defer non-critical CSS with fallback -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
@@ -36,7 +32,7 @@
         padding: 0;
         width: 100%;
         height: 100%;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
         overscroll-behavior: none;
@@ -72,35 +68,53 @@
         animation: spin 0.8s linear infinite;
       }
       
-      /* Detect Raspberry Pi for performance optimizations */
-      @media (prefers-reduced-motion), (max-width: 800px) {
+      @media (prefers-reduced-motion) {
         .loading-spinner {
-          animation: none; /* Disable animation for better performance */
+          animation: none;
           border: 3px solid var(--primary-color);
           opacity: 0.8;
+        }
+      }
+      
+      @media (max-width: 800px) {
+        .loading-spinner {
+          width: 30px;
+          height: 30px;
+          border-width: 2px;
         }
       }
       
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
+      
+      .no-js-warning {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+      }
     </style>
     
-    <!-- Add script to detect Raspberry Pi -->
+    <!-- Performance optimization detection script -->
     <script type="text/javascript">
       (function() {
-        // Simple detection of Raspberry Pi or low-power devices
-        if (
-          /Raspberry Pi/i.test(navigator.userAgent) || 
-          /Linux arm/i.test(navigator.userAgent) ||
-          navigator.hardwareConcurrency <= 4 // Low CPU core count
-        ) {
-          // Set flag for optimizations
-          localStorage.setItem('forceRaspberryPiMode', 'true');
+        try {
+          // Detect low-performance devices
+          const isLowPowerDevice = 
+            /Raspberry Pi|Linux arm/i.test(navigator.userAgent) || 
+            (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+            (navigator.deviceMemory && navigator.deviceMemory <= 4);
           
-          // Add class to body for CSS optimizations
-          document.documentElement.classList.add('raspberry-pi-mode');
-          console.log('Raspberry Pi mode enabled for performance optimization');
+          if (isLowPowerDevice) {
+            // Set flag for optimizations
+            window.localStorage.setItem('lowPerformanceMode', 'true');
+            
+            // Add class to document for CSS optimizations
+            document.documentElement.classList.add('low-performance-mode');
+          }
+        } catch (e) {
+          // Fallback if detection fails
+          console.warn('Performance detection failed:', e);
         }
       })();
     </script>
@@ -113,6 +127,11 @@
       <div class="loading-indicator">
         <div class="loading-spinner"></div>
       </div>
+      <noscript>
+        <div class="no-js-warning">
+          This application requires JavaScript to function properly. Please enable JavaScript to continue.
+        </div>
+      </noscript>
     </div>
     
     <script type="module" src="/src/main.jsx"></script>

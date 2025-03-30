@@ -7,6 +7,7 @@ import { Box, CircularProgress, useTheme, alpha } from '@mui/material';
 import { DESIGN_TOKENS } from '../../theme';
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 
+// Constants moved outside component to prevent recreation on every render
 const FONT_SIZES = {
   base: 16,
   title: 18,
@@ -21,6 +22,10 @@ const LINE_COLORS = [
   '#9edae5', '#f7b6d2', '#c49c94', '#dbdb8d',
 ];
 
+/**
+ * Formats timestamp in MST timezone
+ * Moved outside component to prevent recreation on every render
+ */
 const formatTimeMST = (timestamp) => {
   const date = new Date(timestamp);
   const utc = date.getTime() + date.getTimezoneOffset() * 60000;
@@ -31,35 +36,52 @@ const formatTimeMST = (timestamp) => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
+/**
+ * Downsamples data array by factor
+ * Moved outside component to prevent recreation on every render
+ */
 const downsampleData = (data, factor) => {
-  if (factor <= 1) return data;
+  if (!data || factor <= 1) return data;
   return data.filter((_, i) => i % factor === 0);
 };
 
-// Create a standard component instead of forwardRef
 const HistoricalChart = ({ endpoint, data = null, config }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const renderedDataRef = useRef(null);
+  const resizeObserverRef = useRef(null);
+  const resizeHandlerRef = useRef(null);
+  const updateChartRef = useRef(null);
+  
   const [isRendering, setIsRendering] = useState(false);
+  
   const muiTheme = useTheme();
   const { settings } = useContext(ChartSettingsContext);
-  const histSettings = settings.historical;
-  const globalSettings = settings.global;
-  const theme = globalSettings.theme;
-  const backgroundColor = theme === 'dark' 
-    ? muiTheme.palette.background.paper 
-    : muiTheme.palette.background.default;
-  const fontColor = theme === 'dark' 
-    ? muiTheme.palette.text.primary 
-    : muiTheme.palette.text.primary;
-  const gridLineColor = theme === 'dark'
-    ? alpha(muiTheme.palette.divider, 0.3)
-    : alpha(muiTheme.palette.divider, 0.7);
   
-  const isCellSliced = endpoint.includes('/cellData');
+  // Destructure settings with defaults to prevent undefined access
+  const histSettings = settings?.historical || {};
+  const globalSettings = settings?.global || {};
+  const theme = globalSettings.theme || 'light';
+  
+  // Memoize theme-dependent values to prevent recalculation
+  const themeValues = useMemo(() => ({
+    backgroundColor: theme === 'dark' 
+      ? muiTheme.palette.background.paper 
+      : muiTheme.palette.background.default,
+    fontColor: muiTheme.palette.text.primary,
+    gridLineColor: theme === 'dark'
+      ? alpha(muiTheme.palette.divider, 0.3)
+      : alpha(muiTheme.palette.divider, 0.7)
+  }), [theme, muiTheme.palette]);
+  
+  // Check if this is a cell data chart
+  const isCellSliced = useMemo(() => 
+    endpoint.includes('/cellData'), 
+  [endpoint]);
+  
   const groupSize = config?.groupSize || 16;
   
+  // Check if data has changed to prevent unnecessary rerenders
   const hasDataChanged = useMemo(() => {
     if (!data || !renderedDataRef.current) return true;
     if (data.length !== renderedDataRef.current.length) return true;
@@ -68,72 +90,94 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
       const firstOld = renderedDataRef.current[0]?.time;
       const lastNew = data[data.length - 1]?.time;
       const lastOld = renderedDataRef.current[renderedDataRef.current.length - 1]?.time;
-      if (firstNew !== firstOld || lastNew !== lastOld) return true;
+      return firstNew !== firstOld || lastNew !== lastOld;
     }
     return false;
   }, [data]);
   
-  // Method to resize chart - expose via ref.current directly
-  React.useEffect(() => {
-    if (chartRef.current) {
-      chartRef.current.resize = () => {
-        if (chartInstanceRef.current) {
-          chartInstanceRef.current.resize();
-        }
-      };
+  // Memoize chart data processing to avoid redundant calculations
+  const processedData = useMemo(() => {
+    if (!data || data.length === 0) return { chartData: [], xData: [], keys: [], legendData: [] };
+    
+    let chartData = data;
+    const downsampleThreshold = histSettings.downsampleThreshold || 1000;
+    const downsampleFactor = histSettings.downsampleFactor || 2;
+    
+    // Apply downsampling if data exceeds threshold
+    if (data.length > downsampleThreshold) {
+      chartData = downsampleData(data, downsampleFactor);
+    }
+    
+    // Extract x-axis timestamps
+    const xData = chartData.map((dp) => formatTimeMST(dp.time));
+    
+    // Get numeric keys excluding time property
+    const keys = chartData[0] ? Object.keys(chartData[0]).filter(
+      (k) => k !== 'time' && !isNaN(Number(chartData[0][k]))
+    ) : [];
+    
+    return { chartData, xData, keys, legendData: keys };
+  }, [data, histSettings.downsampleThreshold, histSettings.downsampleFactor]);
+  
+  // Method to resize chart - expose via ref
+  const handleChartResize = useCallback(() => {
+    if (chartInstanceRef.current) {
+      chartInstanceRef.current.resize();
     }
   }, []);
   
-  const renderStandardChart = useCallback(() => {
-    if (!chartRef.current || !data || data.length === 0) return;
-    if (!hasDataChanged && chartInstanceRef.current) return;
-    setIsRendering(true);
-    if (!chartInstanceRef.current) {
-      chartInstanceRef.current = echarts.init(chartRef.current, null, {
-        renderer: 'canvas',
-        useDirtyRect: true,
-      });
+  // Expose resize method via ref
+  useEffect(() => {
+    if (chartRef.current) {
+      chartRef.current.resize = handleChartResize;
     }
     
-    let chartData = data;
-    if (data.length > histSettings.downsampleThreshold) {
-      const factor = histSettings.downsampleFactor;
-      chartData = downsampleData(data, factor);
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.resize = null;
+      }
+    };
+  }, [handleChartResize]);
+  
+  // Create chart options - memoized to prevent recreation on every render
+  const createChartOptions = useCallback((chartData, xData, keys) => {
+    if (!chartData || !xData || !keys || keys.length === 0) {
+      return null;
     }
     
-    renderedDataRef.current = chartData;
-    const xData = chartData.map((dp) => formatTimeMST(dp.time));
-    const keys = Object.keys(chartData[0]).filter(
-      (k) => k !== 'time' && !isNaN(Number(chartData[0][k]))
-    );
-    const legendData = keys;
+    const { backgroundColor, fontColor, gridLineColor } = themeValues;
+    const maxAxisTicks = histSettings.maxAxisTicks || 10;
+    const enableSmoothing = histSettings.enableSmoothing || false;
+    const lineWidth = settings?.realTime?.lineWidth || 2;
+    const animationDuration = globalSettings.animationDuration || 0;
+    const dataZoomEnabled = histSettings.dataZoomEnabled !== false;
+    
+    // Calculate appropriate tick interval
+    const tickInterval = Math.max(1, Math.ceil(xData.length / maxAxisTicks));
+    
+    // Create series array
     const series = keys.map((key, idx) => ({
       name: key,
       type: 'line',
       showSymbol: false,
       sampling: 'lttb',
-      smooth: histSettings.enableSmoothing,
+      smooth: enableSmoothing,
       lineStyle: { 
-        width: settings.realTime?.lineWidth,
+        width: lineWidth,
         color: LINE_COLORS[idx % LINE_COLORS.length] 
       },
       emphasis: {
         focus: 'series',
         lineStyle: {
-          width: (settings.realTime?.lineWidth) + 1
+          width: lineWidth + 1
         }
       },
-      animation: !!globalSettings.animationDuration,
-      animationDuration: globalSettings.animationDuration || 0,
+      animation: !!animationDuration,
+      animationDuration: animationDuration,
       data: chartData.map((dp) => Number(dp[key])),
     }));
     
-    const tickInterval = Math.max(
-      1,
-      Math.ceil(xData.length / (histSettings.maxAxisTicks || 4))
-    );
-    
-    const option = {
+    return {
       backgroundColor,
       textStyle: { fontSize: FONT_SIZES.base, color: fontColor },
       useUTC: false,
@@ -173,31 +217,31 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
       },
       legend: {
         orient: 'horizontal',
-        bottom: 0,  // Moved closer to the bottom of the chart
+        bottom: 0,
         left: 'center',
-        data: legendData,
+        data: keys,
         textStyle: { fontSize: FONT_SIZES.tick, color: fontColor },
-        type: legendData.length > 15 ? 'scroll' : 'plain', 
+        type: keys.length > 15 ? 'scroll' : 'plain', 
         pageIconSize: 12,
         pageButtonItemGap: 5,
         pageButtonGap: 5,
         pageButtonPosition: 'end',
-        selector: legendData.length > 8, 
+        selector: keys.length > 8, 
         selectorLabel: {
           show: true
         },
         selectorPosition: 'end'
       },
       grid: {
-        top: 65,        // Reduced slightly
-        left: 75,       // Keep enough room for y-axis labels
+        top: 65,
+        left: 75,
         right: 30,
-        bottom: 65,     // Significantly reduced to bring legend closer to chart
+        bottom: 65,
         containLabel: true,
       },
       dataZoom: [{
         type: 'inside',
-        show: histSettings.dataZoomEnabled,
+        show: dataZoomEnabled,
         xAxisIndex: 0,
         start: 0,
         end: 100,
@@ -205,9 +249,9 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
         throttle: 100,
       }, {
         type: 'slider',
-        show: histSettings.dataZoomEnabled,
+        show: dataZoomEnabled,
         xAxisIndex: 0,
-        bottom: 40,    // Moved closer to the chart
+        bottom: 40,
         height: 20,
         start: 0,
         end: 100,
@@ -228,7 +272,7 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
         type: 'category',
         data: xData,
         nameLocation: 'middle',
-        nameGap: 35,     
+        nameGap: 35,
         axisLabel: {
           rotate: 45,
           interval: tickInterval - 1,
@@ -246,7 +290,7 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
         type: 'value',
         name: config?.axisTitles?.y || 'Value',
         nameLocation: 'middle',
-        nameGap: 75,     
+        nameGap: 75,
         axisLabel: { 
           fontSize: FONT_SIZES.tick, 
           color: fontColor,
@@ -261,63 +305,154 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
       },
       series,
     };
+  }, [
+    config, 
+    themeValues, 
+    histSettings.maxAxisTicks, 
+    histSettings.enableSmoothing, 
+    histSettings.dataZoomEnabled,
+    settings?.realTime?.lineWidth, 
+    globalSettings.animationDuration
+  ]);
+  
+  // Create chart update function - memoized to prevent recreation
+  const createUpdateChartFunction = useCallback((option, chartData) => {
+    if (!option) return () => {};
     
-    const updateChart = chartData.length > 1000
-      ? throttle(() => {
-          if (chartInstanceRef.current) {
-            chartInstanceRef.current.setOption(option, { notMerge: true });
-            setIsRendering(false);
-            
-            // Force resize to ensure proper display
-            setTimeout(() => {
-              if (chartInstanceRef.current) {
-                chartInstanceRef.current.resize();
-              }
-            }, 10);
-          }
-        }, 100)
-      : () => {
-          if (chartInstanceRef.current) {
-            chartInstanceRef.current.setOption(option, { notMerge: true });
-            setIsRendering(false);
-            
-            // Force resize to ensure proper display
-            setTimeout(() => {
-              if (chartInstanceRef.current) {
-                chartInstanceRef.current.resize();
-              }
-            }, 10);
-          }
-        };
+    // If many data points, use throttle, otherwise directly update
+    if (chartData && chartData.length > 1000) {
+      return throttle(() => {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.setOption(option, { notMerge: true });
+          setIsRendering(false);
+          
+          // Force resize to ensure proper rendering
+          setTimeout(() => {
+            if (chartInstanceRef.current) {
+              chartInstanceRef.current.resize();
+            }
+          }, 10);
+        }
+      }, 100);
+    } else {
+      return () => {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.setOption(option, { notMerge: true });
+          setIsRendering(false);
+          
+          // Force resize to ensure proper rendering
+          setTimeout(() => {
+            if (chartInstanceRef.current) {
+              chartInstanceRef.current.resize();
+            }
+          }, 10);
+        }
+      };
+    }
+  }, []);
+  
+  // Main function to render the standard chart
+  const renderStandardChart = useCallback(() => {
+    if (!chartRef.current || !data || data.length === 0) return null;
+    if (!hasDataChanged && chartInstanceRef.current) return null;
     
-    updateChart();
+    setIsRendering(true);
     
+    // Initialize chart if needed
+    if (!chartInstanceRef.current) {
+      chartInstanceRef.current = echarts.init(chartRef.current, null, {
+        renderer: 'canvas',
+        useDirtyRect: true,
+      });
+    }
+    
+    const { chartData, xData, keys } = processedData;
+    renderedDataRef.current = chartData;
+    
+    // Create chart options
+    const option = createChartOptions(chartData, xData, keys);
+    if (!option) {
+      setIsRendering(false);
+      return null;
+    }
+    
+    // Cancel any previous update function
+    if (updateChartRef.current && updateChartRef.current.cancel) {
+      updateChartRef.current.cancel();
+    }
+    
+    // Create new update function and store it
+    updateChartRef.current = createUpdateChartFunction(option, chartData);
+    
+    // Execute the update
+    updateChartRef.current();
+    
+    // Return cleanup function
     return () => {
-      if (updateChart.cancel) {
-        updateChart.cancel();
+      if (updateChartRef.current && updateChartRef.current.cancel) {
+        updateChartRef.current.cancel();
       }
     };
-  }, [data, hasDataChanged, histSettings, config, settings, globalSettings, theme]);
+  }, [
+    data, 
+    hasDataChanged, 
+    processedData, 
+    createChartOptions, 
+    createUpdateChartFunction
+  ]);
   
+  // Set up resize observer instead of window event listener
   useEffect(() => {
-    const handleResize = debounce(() => {
+    if (!chartRef.current || !chartInstanceRef.current) return;
+    
+    // Use debounced resize handler
+    const debouncedResize = debounce(() => {
       if (chartInstanceRef.current) {
         chartInstanceRef.current.resize();
       }
     }, 250);
-    window.addEventListener('resize', handleResize);
+    
+    // Create ResizeObserver if supported
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserverRef.current = new ResizeObserver(debouncedResize);
+      resizeObserverRef.current.observe(chartRef.current);
+    } else {
+      // Fallback to window resize event
+      window.addEventListener('resize', debouncedResize);
+      resizeHandlerRef.current = debouncedResize;
+    }
+    
     return () => {
-      window.removeEventListener('resize', handleResize);
-      handleResize.cancel();
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      } else if (resizeHandlerRef.current) {
+        window.removeEventListener('resize', resizeHandlerRef.current);
+        if (resizeHandlerRef.current.cancel) {
+          resizeHandlerRef.current.cancel();
+        }
+        resizeHandlerRef.current = null;
+      }
     };
   }, []);
   
+  // Render or dispose chart based on data and type
   useEffect(() => {
+    // Only render standard chart if not cell sliced and has data
     if (!isCellSliced && data && data.length > 0) {
       const cleanup = renderStandardChart();
-      return cleanup;
+      return () => {
+        if (cleanup) cleanup();
+      };
     }
+    
+    // Clean up chart if data changes or component unmounts
     return () => {
+      if (updateChartRef.current && updateChartRef.current.cancel) {
+        updateChartRef.current.cancel();
+        updateChartRef.current = null;
+      }
+      
       if (chartInstanceRef.current) {
         chartInstanceRef.current.dispose();
         chartInstanceRef.current = null;
@@ -325,6 +460,35 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
     };
   }, [data, isCellSliced, renderStandardChart]);
   
+  // Component cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (updateChartRef.current && updateChartRef.current.cancel) {
+        updateChartRef.current.cancel();
+        updateChartRef.current = null;
+      }
+      
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.dispose();
+        chartInstanceRef.current = null;
+      }
+      
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+      
+      if (resizeHandlerRef.current) {
+        window.removeEventListener('resize', resizeHandlerRef.current);
+        if (resizeHandlerRef.current.cancel) {
+          resizeHandlerRef.current.cancel();
+        }
+        resizeHandlerRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Render cell sliced chart if needed
   if (isCellSliced) {
     return (
       <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -358,8 +522,8 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
           {data && data.length > 0 ? (
             Array.from({ length: Math.ceil(128 / groupSize) }, (_, i) => (
               <CellSliceChart
-                key={i}
-                xData={data.map((row) => formatTimeMST(row.time))}
+                key={`group-${i}`}
+                xData={processedData.xData}
                 data={data}
                 groupIndex={i}
                 groupSize={groupSize}
@@ -384,6 +548,7 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
     );
   }
   
+  // Render standard chart
   return (
     <Box sx={{ width: '100%', height: '100%', position: 'relative', flexGrow: 1 }}>
       {isRendering && (
@@ -407,8 +572,20 @@ const HistoricalChart = ({ endpoint, data = null, config }) => {
 
 HistoricalChart.propTypes = {
   endpoint: PropTypes.string.isRequired,
-  data: PropTypes.array,
-  config: PropTypes.object,
+  data: PropTypes.arrayOf(PropTypes.object),
+  config: PropTypes.shape({
+    title: PropTypes.string,
+    axisTitles: PropTypes.shape({
+      x: PropTypes.string,
+      y: PropTypes.string
+    }),
+    showDataLabels: PropTypes.bool,
+    dimensions: PropTypes.shape({
+      width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      height: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    }),
+    groupSize: PropTypes.number
+  })
 };
 
 export default React.memo(HistoricalChart);

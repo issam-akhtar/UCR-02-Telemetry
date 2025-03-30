@@ -117,8 +117,16 @@ const Weather = () => {
   const [loading, setLoading] = useState(true);
   const [fetchingWeather, setFetchingWeather] = useState(false);
 
+  // Use refs to track values to avoid infinite loop issues
   const firstGpsUpdateRef = useRef(false);
   const lastFetchTimeRef = useRef(0);
+  const coordsRef = useRef(coords);
+  const inViewFirstUpdateRef = useRef(false);
+
+  // Update refs when values change
+  useEffect(() => {
+    coordsRef.current = coords;
+  }, [coords]);
 
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
@@ -136,6 +144,7 @@ const Weather = () => {
   const animationsEnabled = settings?.global?.enableTransitions !== false;
   const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
 
+  // GPS data handler with safeguards against infinite loops
   const handleGPSData = useCallback((data) => {
     if (!inView) return;
     
@@ -144,16 +153,20 @@ const Weather = () => {
         const { gnss_lat, gnss_long } = data.fields;
         
         if (typeof gnss_lat === 'number' && typeof gnss_long === 'number') {
+          // Only update coordinates if they've changed meaningfully
+          const currentCoords = coordsRef.current;
           const coordsChanged = 
-            !coords || 
-            Math.abs(gnss_lat - coords.latitude) > 0.001 || 
-            Math.abs(gnss_long - coords.longitude) > 0.001;
+            !currentCoords || 
+            Math.abs(gnss_lat - currentCoords.latitude) > 0.001 || 
+            Math.abs(gnss_long - currentCoords.longitude) > 0.001;
           
           if (coordsChanged) {
-            setCoords({ latitude: gnss_lat, longitude: gnss_long });
+            const newCoords = { latitude: gnss_lat, longitude: gnss_long };
+            setCoords(newCoords);
+            
             if (!firstGpsUpdateRef.current) {
               firstGpsUpdateRef.current = true;
-              fetchWeather({ latitude: gnss_lat, longitude: gnss_long });
+              fetchWeather(newCoords);
             }
           }
         }
@@ -161,7 +174,7 @@ const Weather = () => {
     } catch (err) {
       console.error('Error processing GPS data:', err);
     }
-  }, [coords, inView]);
+  }, [inView]); // Don't include coords in dependency array to avoid loops
 
   const { ref: gpsRef } = useRealTimeData(
     'ins_gps', 
@@ -169,10 +182,12 @@ const Weather = () => {
     { customInterval: updateInterval, threshold: 0.1 }
   );
 
-  const fetchWeather = useCallback(async (coordsToUse = coords) => {
+  // Fetch weather data with rate limiting and without state-derived dependencies
+  const fetchWeather = useCallback(async (coordsToUse = coordsRef.current) => {
     if (!inView) return;
     
     const now = Date.now();
+    // Rate limit to once every 30 seconds
     if (now - lastFetchTimeRef.current < 30000 && lastFetchTimeRef.current !== 0) {
       return;
     }
@@ -198,47 +213,52 @@ const Weather = () => {
     } finally {
       setFetchingWeather(false);
     }
-  }, [coords, inView]);
+  }, [inView]); // Only depend on inView
 
+  // Handle manual refresh
   const handleRefresh = useCallback(() => {
     fetchWeather();
   }, [fetchWeather]);
 
+  // Delay GPS-triggered fetch by 2 seconds to allow for multiple GPS updates
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || !firstGpsUpdateRef.current) return;
     
-    if (firstGpsUpdateRef.current) {
-      const timeoutId = setTimeout(() => {
-        fetchWeather();
-      }, 2000);
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [coords, fetchWeather, inView]);
+    const timeoutId = setTimeout(() => {
+      fetchWeather();
+    }, 2000);
+    
+    return () => clearTimeout(timeoutId);
+  }, [fetchWeather, inView]);
 
+  // Periodic refresh (every 2 minutes) and initial fetch 
   useEffect(() => {
     if (!inView) return;
     
+    // Don't initiate duplicate fetches if already loading/fetching
     if (!weather && !loading && !fetchingWeather) {
       fetchWeather();
     }
     
+    // Set up periodic refresh with a long interval
     const intervalId = setInterval(() => {
-      if (inView) fetchWeather();
-    }, 120000);
+      if (inView && !fetchingWeather) fetchWeather();
+    }, 120000); // 2 minutes
     
     return () => {
       clearInterval(intervalId);
     };
   }, [fetchWeather, weather, loading, fetchingWeather, inView]);
 
-  // **New Effect:** Automatically fetch fresh weather data when the component becomes visible.
+  // Fetch when component becomes visible
   useEffect(() => {
-    if (inView) {
+    if (inView && !inViewFirstUpdateRef.current) {
+      inViewFirstUpdateRef.current = true;
       fetchWeather();
     }
   }, [inView, fetchWeather]);
 
+  // Format temperature with memoization to avoid recalculations
   const formatTemperature = useCallback((temp) => {
     if (temp === undefined || temp === null) return 'N/A';
     
@@ -252,23 +272,27 @@ const Weather = () => {
     showTempInF ? '°F' : '°C'
   ), [showTempInF]);
 
+  // Get weather info with memoization
   const weatherInfo = useMemo(() => {
     if (!weather) return { icon: Cloud, description: 'Unknown', color: theme.palette.primary.main };
     return WEATHER_CODES[weather.weathercode] || { icon: Cloud, description: 'Unknown', color: theme.palette.primary.main };
   }, [weather, theme.palette.primary.main]);
 
+  // Combine refs
   const setRefs = useCallback(node => {
     resizeRef(node);
     inViewRef(node);
     if (gpsRef) gpsRef(node);
   }, [resizeRef, inViewRef, gpsRef]);
 
+  // Format time helper
   const formatTime = (timeString) => {
     if (!timeString) return '';
     const date = new Date(timeString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Render appropriate content based on state
   const renderContent = () => {
     if (loading) {
       return (
@@ -300,6 +324,7 @@ const Weather = () => {
 
     const { icon: WeatherIcon, description, color } = weatherInfo;
 
+    // Compact view for small containers
     if (height < 200) {
       return (
         <Box sx={{ p: theme.spacing(1) }}>
@@ -324,6 +349,7 @@ const Weather = () => {
       );
     }
 
+    // Standard view
     return (
       <Box sx={{ p: theme.spacing(2) }}>
         <Box 

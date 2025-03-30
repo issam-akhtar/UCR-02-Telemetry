@@ -4,7 +4,7 @@ import useRealTimeData from '../../hooks/useRealTimeData';
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 import PropTypes from 'prop-types';
 
-// Enhanced visual styles
+// Enhanced visual styles - moved outside component to prevent recreation
 const FONT_SIZES = {
   base: 14,
   title: 18,
@@ -21,6 +21,7 @@ const LINE_COLORS = [
 
 /**
  * Converts a timestamp into a valid ISO-like string in MST (UTC-7).
+ * Moved outside component to prevent recreation on every render.
  */
 function formatTimeMST(timestamp) {
   const date = new Date(timestamp);
@@ -33,6 +34,7 @@ function formatTimeMST(timestamp) {
 
 /**
  * Returns an appropriate Y-axis label based on chart type
+ * Moved outside component to prevent recreation on every render.
  */
 function getYAxisLabel(chartType) {
   const labels = {
@@ -80,10 +82,10 @@ const RealTimeChart = ({ chartType, config, isPaused, isVisible = true }) => {
 
   // Get settings from context
   const { settings } = useContext(ChartSettingsContext);
-  const { global, realTime: rtSettings, dashboard } = settings;
+  const { global = {}, realTime: rtSettings = {}, dashboard = {} } = settings;
   
   // Extract settings
-  const theme = global.theme;
+  const theme = global.theme || 'light';
   const enableHardwareAcceleration = global.enableHardwareAcceleration !== false;
   const enableTransitions = global.enableTransitions !== false;
   const backgroundColor = theme === 'dark' ? '#1a1a2e' : '#ffffff';
@@ -92,9 +94,11 @@ const RealTimeChart = ({ chartType, config, isPaused, isVisible = true }) => {
   const significantChangeThreshold = dashboard.significantChangeThreshold || 1.0;
   
   // Ensure update interval is at least 16ms (60fps) to be physically achievable
-  const updateInterval = Math.max(16, rtSettings.updateInterval || 16);
+  const updateInterval = useMemo(() => 
+    Math.max(16, rtSettings.updateInterval || 16),
+  [rtSettings.updateInterval]);
   
-  // If user requested less than 16ms, log a warning
+  // Log warning if requested update interval is too low - only log once
   useEffect(() => {
     if (rtSettings.updateInterval && rtSettings.updateInterval < 16) {
       console.warn(
@@ -143,7 +147,7 @@ const RealTimeChart = ({ chartType, config, isPaused, isVisible = true }) => {
       yanchor: 'top',
       pad: { b: 10 },
     },
-    margin: { l: 60, r: 20, b: 100, t: 60 }, // Reduced bottom margin from 180 to 80
+    margin: { l: 60, r: 20, b: 100, t: 60 },
     paper_bgcolor: backgroundColor,
     plot_bgcolor: backgroundColor,
     font: { color: fontColor, size: FONT_SIZES.base, family: 'Inter, system-ui, sans-serif' },
@@ -151,7 +155,7 @@ const RealTimeChart = ({ chartType, config, isPaused, isVisible = true }) => {
       orientation: 'h',
       x: 0.5,
       xanchor: 'center',
-      y: -0.4, // Moved up from -0.6 to -0.15 to reduce empty space
+      y: -0.4,
       yanchor: 'top',
       font: { size: FONT_SIZES.tick, color: fontColor },
       bgcolor: theme === 'dark' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.7)',
@@ -771,9 +775,11 @@ const RealTimeChart = ({ chartType, config, isPaused, isVisible = true }) => {
   }, []);
 
   // Determine if we should render with CSS opacity transition
-  const transitionStyle = enableTransitions
-    ? { transition: 'opacity 0.2s ease-in-out' }
-    : { transition: 'none' };
+  const transitionStyle = useMemo(() => (
+    enableTransitions
+      ? { transition: 'opacity 0.2s ease-in-out' }
+      : { transition: 'none' }
+  ), [enableTransitions]);
 
   return (
     <div

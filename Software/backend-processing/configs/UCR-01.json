@@ -6320,7 +6320,7 @@
         "length": 48,
         "signals": [
             {
-                "name": "gnss_week",
+                "name": "GNSSWeek",
                 "start_bit": 0,
                 "length": 32,
                 "byte_order": "little_endian",
@@ -6334,7 +6334,7 @@
                 "choices": {}
             },
             {
-                "name": "gnss_seconds",
+                "name": "GNSSSeconds",
                 "start_bit": 32,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6348,7 +6348,7 @@
                 "choices": {}
             },
             {
-                "name": "gnss_lat",
+                "name": "GNSSLat",
                 "start_bit": 96,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6362,7 +6362,7 @@
                 "choices": {}
             },
             {
-                "name": "gnss_long",
+                "name": "GNSSLong",
                 "start_bit": 160,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6376,7 +6376,7 @@
                 "choices": {}
             },
             {
-                "name": "gnss_height",
+                "name": "GNSSHeight",
                 "start_bit": 224,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6398,7 +6398,7 @@
         "length": 64,
         "signals": [
             {
-                "name": "north_vel",
+                "name": "NorthVel",
                 "start_bit": 0,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6412,7 +6412,7 @@
                 "choices": {}
             },
             {
-                "name": "east_vel",
+                "name": "EastVel",
                 "start_bit": 64,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6426,7 +6426,7 @@
                 "choices": {}
             },
             {
-                "name": "up_vel",
+                "name": "UpVel",
                 "start_bit": 128,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6440,7 +6440,7 @@
                 "choices": {}
             },
             {
-                "name": "roll",
+                "name": "Roll",
                 "start_bit": 192,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6454,7 +6454,7 @@
                 "choices": {}
             },
             {
-                "name": "pitch",
+                "name": "Pitch",
                 "start_bit": 256,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6468,7 +6468,7 @@
                 "choices": {}
             },
             {
-                "name": "azimuth",
+                "name": "Azimuth",
                 "start_bit": 320,
                 "length": 64,
                 "byte_order": "little_endian",
@@ -6482,7 +6482,7 @@
                 "choices": {}
             },
             {
-                "name": "status",
+                "name": "Status",
                 "start_bit": 384,
                 "length": 8,
                 "byte_order": "little_endian",

@@ -1,19 +1,17 @@
 import React, {
+  useState,
   useEffect,
   useRef,
-  useState,
   memo,
-  useMemo,
+  useContext,
   useCallback,
-  useContext
+  useMemo
 } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
   Typography,
   Grid,
-  FormControlLabel,
-  Switch,
   useTheme,
   Tooltip,
   alpha,
@@ -23,10 +21,8 @@ import {
   Divider
 } from '@mui/material';
 import useRealTimeData from '../../hooks/useRealTimeData';
-import useResizeObserver from 'use-resize-observer';
 import {
   Battery,
-  BatteryCharging,
   BatteryWarning,
   TriangleAlert,
   Zap,
@@ -38,16 +34,19 @@ import {
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 import { useInView } from 'react-intersection-observer';
 
-// Constants for grid dimensions and thresholds for maintainability
+// Constants (moved outside component to prevent recreation)
 const ROWS = 8;
 const COLS = 16;
 const TOTAL_CELLS = ROWS * COLS;
+
+// Thresholds used for color-coding and status determination
 const VOLTAGE_THRESHOLDS = {
   CRITICAL: 2.8,
   WARNING: 3.2,
   NORMAL: 3.5,
   GOOD: 3.8
 };
+
 const HEALTH_THRESHOLDS = {
   EXCELLENT: 0.1,
   GOOD: 0.2,
@@ -55,9 +54,7 @@ const HEALTH_THRESHOLDS = {
   POOR: Infinity
 };
 
-/**
- * Returns a CSS color based on the cell value and display mode.
- */
+// Utility functions (moved outside component to prevent recreation)
 const getCellColor = (value, min, max, avg, isRelative, theme) => {
   if (value === 0) {
     return theme.palette.mode === 'dark'
@@ -72,17 +69,13 @@ const getCellColor = (value, min, max, avg, isRelative, theme) => {
     if (percentDiff < 3) return alpha(theme.palette.info.main, 0.85);
     return alpha(theme.palette.success.main, 0.85);
   } else {
-    const { CRITICAL, WARNING, NORMAL } = VOLTAGE_THRESHOLDS;
-    if (value < CRITICAL) return alpha(theme.palette.error.main, 0.85);
-    if (value < WARNING) return alpha(theme.palette.warning.main, 0.85);
-    if (value < NORMAL) return alpha(theme.palette.info.main, 0.85);
+    if (value < VOLTAGE_THRESHOLDS.CRITICAL) return alpha(theme.palette.error.main, 0.85);
+    if (value < VOLTAGE_THRESHOLDS.WARNING) return alpha(theme.palette.warning.main, 0.85);
+    if (value < VOLTAGE_THRESHOLDS.NORMAL) return alpha(theme.palette.info.main, 0.85);
     return alpha(theme.palette.success.main, 0.85);
   }
 };
 
-/**
- * Provides a text description for cell health based on voltage difference.
- */
 const getHealthText = (deltaV) => {
   if (deltaV > HEALTH_THRESHOLDS.FAIR) return 'Poor';
   if (deltaV > HEALTH_THRESHOLDS.GOOD) return 'Fair';
@@ -90,9 +83,6 @@ const getHealthText = (deltaV) => {
   return 'Excellent';
 };
 
-/**
- * Efficiently calculates statistics for cell data.
- */
 const calculateStats = (data) => {
   const { CRITICAL, WARNING } = VOLTAGE_THRESHOLDS;
   let min = Infinity;
@@ -144,35 +134,18 @@ const calculateStats = (data) => {
   };
 };
 
-/**
- * Individual cell component - memoized to prevent unnecessary re-renders
- */
+// Individual cell component - memoized for performance
 const Cell = memo(
-  ({
-    value,
-    row,
-    col,
-    min,
-    max,
-    avg,
-    isRelative,
-    showOutliers,
-    stdDev,
-    onCellClick,
-    isSelected
-  }) => {
+  ({ value, row, col, min, max, avg, isRelative, showOutliers, stdDev, onCellClick, isSelected }) => {
     const theme = useTheme();
     const color = getCellColor(value, min, max, avg, isRelative, theme);
-    const isOutlier =
-      showOutliers && value > 0 && Math.abs(value - avg) > 2 * stdDev;
+    const isOutlier = showOutliers && value > 0 && Math.abs(value - avg) > 2 * stdDev;
     const percentDiff = value > 0 ? ((value - avg) / avg) * 100 : 0;
 
-    // Tooltip text provides clear, concise information.
     const tooltipText = value > 0
       ? `Cell ${row * COLS + col + 1}: ${value.toFixed(3)}V (${percentDiff.toFixed(2)}% from avg)`
       : 'No data';
 
-    // Memoized click handler to prevent re-creation on every render.
     const handleClick = useCallback(() => {
       if (value > 0 && onCellClick) {
         onCellClick({
@@ -187,7 +160,6 @@ const Cell = memo(
       }
     }, [value, row, col, percentDiff, isOutlier, color, onCellClick]);
 
-    // Enables keyboard navigation (Enter/Space to trigger click).
     const handleKeyDown = useCallback(
       (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -199,7 +171,7 @@ const Cell = memo(
     );
 
     return (
-      <Tooltip title={tooltipText} arrow placement="top" enterDelay={200} leaveDelay={0}>
+      <Tooltip title={tooltipText} arrow placement="top" enterDelay={200}>
         <Box
           role="button"
           tabIndex={value > 0 ? 0 : -1}
@@ -211,23 +183,19 @@ const Cell = memo(
             height: '100%',
             backgroundColor: color,
             border: isSelected
-              ? `${theme.custom?.borderWidth?.medium || 2}px solid ${theme.palette.primary.main}`
+              ? `2px solid ${theme.palette.primary.main}`
               : isOutlier
-                ? `${theme.custom?.borderWidth?.medium || 2}px solid ${theme.palette.error.dark}`
-                : `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.mode === 'dark'
-                  ? 'rgba(255,255,255,0.05)'
-                  : 'rgba(0,0,0,0.05)'}`,
+                ? `2px solid ${theme.palette.error.dark}`
+                : `1px solid ${alpha(theme.palette.divider, 0.2)}`,
             borderRadius: theme.shape.borderRadius * 0.5,
-            boxSizing: 'border-box', // Ensure borders are included in dimensions
-            transition: theme.transitions.create(['transform', 'opacity', 'box-shadow'], {
-              duration: theme.transitions.duration.shorter
-            }),
+            boxSizing: 'border-box',
+            transition: 'transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease',
             opacity: value > 0 ? 1 : 0.5,
             cursor: value > 0 ? 'pointer' : 'default',
             boxShadow: isSelected
-              ? `0 0 ${theme.spacing(1.5)} ${theme.palette.primary.main}`
+              ? `0 0 8px ${theme.palette.primary.main}`
               : isOutlier
-                ? `0 0 ${theme.spacing(1)} ${alpha(theme.palette.error.main, 0.4)}`
+                ? `0 0 6px ${alpha(theme.palette.error.main, 0.4)}`
                 : 'none',
             '&:hover': value > 0 && {
               opacity: 0.85,
@@ -236,18 +204,17 @@ const Cell = memo(
               boxShadow: `0 2px 8px ${alpha(color, 0.9)}`
             },
             '&:focus-visible': value > 0 && {
-              outline: `${theme.custom?.borderWidth?.medium || 2}px solid ${theme.palette.primary.main}`,
+              outline: `2px solid ${theme.palette.primary.main}`,
               opacity: 0.85,
               transform: 'scale(1.05)',
               zIndex: 1
-            },
-            transform: 'translateZ(0)' // GPU acceleration for smoother transitions
+            }
           }}
         />
       </Tooltip>
     );
   },
-  // Custom comparison function for deep prop comparison to avoid unnecessary rerenders
+  // Deep equality check to prevent unnecessary re-renders
   (prevProps, nextProps) => {
     return (
       prevProps.value === nextProps.value &&
@@ -274,9 +241,7 @@ Cell.propTypes = {
   isSelected: PropTypes.bool
 };
 
-/**
- * Legend item component that shows a color box with a label.
- */
+// Legend item component
 const LegendItem = memo(({ color, label }) => {
   const theme = useTheme();
   return (
@@ -298,9 +263,7 @@ const LegendItem = memo(({ color, label }) => {
           display: 'inline-block',
           mr: theme.spacing(0.5),
           borderRadius: theme.shape.borderRadius * 0.25,
-          border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.mode === 'dark'
-            ? 'rgba(255,255,255,0.1)'
-            : 'rgba(0,0,0,0.1)'}`
+          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`
         }}
         aria-hidden="true"
       />
@@ -314,9 +277,7 @@ LegendItem.propTypes = {
   label: PropTypes.string.isRequired
 };
 
-/**
- * Displays details for a selected cell.
- */
+// Cell details panel
 const CellDetailPanel = memo(({ cellInfo }) => {
   const theme = useTheme();
 
@@ -330,13 +291,9 @@ const CellDetailPanel = memo(({ cellInfo }) => {
         p: theme.spacing(1),
         mb: theme.spacing(1),
         borderColor: theme.palette.divider,
-        backgroundColor:
-          theme.palette.mode === 'dark'
-            ? alpha(theme.palette.background.default, 0.6)
-            : alpha(theme.palette.background.default, 0.3),
+        backgroundColor: alpha(theme.palette.background.default, 0.4),
         borderRadius: theme.shape.borderRadius,
-        boxShadow: theme.custom?.shadows?.subtle || 'none',
-        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`
+        border: `1px solid ${theme.palette.divider}`
       }}
       role="region"
       aria-label={`Details for Cell ${cellNumber}`}
@@ -346,7 +303,7 @@ const CellDetailPanel = memo(({ cellInfo }) => {
           <Typography variant="caption" color="text.secondary">
             Cell
           </Typography>
-          <Typography variant="body2" color="text.primary" sx={{ fontWeight: theme.typography.fontWeightMedium }}>
+          <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
             {cellNumber}
           </Typography>
         </Grid>
@@ -365,7 +322,7 @@ const CellDetailPanel = memo(({ cellInfo }) => {
           <Typography
             variant="body2"
             color={value < VOLTAGE_THRESHOLDS.WARNING ? 'warning.main' : 'text.primary'}
-            sx={{ fontWeight: value < VOLTAGE_THRESHOLDS.WARNING ? theme.typography.fontWeightBold : theme.typography.fontWeightMedium }}
+            sx={{ fontWeight: value < VOLTAGE_THRESHOLDS.WARNING ? 600 : 500 }}
           >
             {value.toFixed(3)}V
           </Typography>
@@ -377,7 +334,7 @@ const CellDetailPanel = memo(({ cellInfo }) => {
           <Typography
             variant="body2"
             color={percentDiff < -2 ? 'error.main' : percentDiff > 2 ? 'success.main' : 'text.primary'}
-            sx={{ fontWeight: Math.abs(percentDiff) > 2 ? theme.typography.fontWeightBold : theme.typography.fontWeightMedium }}
+            sx={{ fontWeight: Math.abs(percentDiff) > 2 ? 600 : 500 }}
           >
             {percentDiff.toFixed(2)}%
           </Typography>
@@ -399,9 +356,7 @@ CellDetailPanel.propTypes = {
   })
 };
 
-/**
- * Displays summary statistics for the cell data.
- */
+// Statistics summary component
 const StatsSummary = memo(({ stats }) => {
   const theme = useTheme();
   const deltaV = stats.maxVoltage - stats.minVoltage;
@@ -414,12 +369,9 @@ const StatsSummary = memo(({ stats }) => {
         py: theme.spacing(0.75),
         px: theme.spacing(1.5),
         mb: theme.spacing(1),
-        backgroundColor: alpha(
-          theme.palette.background.paper,
-          theme.palette.mode === 'dark' ? 0.2 : 0.05
-        ),
+        backgroundColor: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.2 : 0.05),
         borderRadius: theme.shape.borderRadius,
-        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`
+        border: `1px solid ${theme.palette.divider}`
       }}
       role="region"
       aria-label="Battery cell statistics"
@@ -504,33 +456,56 @@ StatsSummary.propTypes = {
   }).isRequired
 };
 
-/**
- * Main component that visualizes the battery cell heatmap.
- * Optimized for React-Grid-Layout integration and responsive design.
- */
+// Main component
 const CellHeatmap = ({ className }) => {
   const theme = useTheme();
   const { settings } = useContext(ChartSettingsContext);
-  const { ref: containerRef, width, height } = useResizeObserver();
-  const lastTimestampRef = useRef(null);
-  const [cellData, setCellData] = useState(new Array(TOTAL_CELLS).fill(0));
-  const [selectedCell, setSelectedCell] = useState(null);
-  const [showRelative, setShowRelative] = useState(false);
-  const [showOutliers, setShowOutliers] = useState(true);
-
+  
   // Intersection Observer for visibility detection
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
     triggerOnce: false
   });
 
-  // Hardware acceleration setting
+  // State using individual hooks for better control and performance
+  const [cellData, setCellData] = useState(new Array(TOTAL_CELLS).fill(0));
+  const [selectedCell, setSelectedCell] = useState(null);
+  const [showRelative, setShowRelative] = useState(false);
+  const [showOutliers, setShowOutliers] = useState(true);
+  
+  // Refs for optimization
+  const isComponentMounted = useRef(true);
+  const lastTimestampRef = useRef(null);
+  const statsRef = useRef(calculateStats(cellData));
+  const cellDataRef = useRef(cellData);
+  
+  // Settings from context
+  const updateInterval = settings?.dashboard?.updateInterval || 300;
+  const changeThreshold = settings?.dashboard?.significantChangeThreshold || 0.5;
   const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
-
-  // Animations setting
   const animationsEnabled = settings?.global?.enableTransitions !== false;
+  
+  // Component lifecycle management
+  useEffect(() => {
+    isComponentMounted.current = true;
+    return () => {
+      isComponentMounted.current = false;
+    };
+  }, []);
 
-  // Arrange cellData into rows for grid rendering.
+  // Update refs when state changes
+  useEffect(() => {
+    cellDataRef.current = cellData;
+  }, [cellData]);
+
+  // Calculate statistics from cellData - memoized for performance
+  const stats = useMemo(() => {
+    const calculatedStats = calculateStats(cellData);
+    statsRef.current = calculatedStats; // Update stats ref
+    return calculatedStats;
+  }, [cellData]);
+
+  // Arrange data into rows for grid rendering - memoized
   const arrangedData = useMemo(() => {
     const rows = [];
     for (let r = 0; r < ROWS; r++) {
@@ -539,104 +514,510 @@ const CellHeatmap = ({ className }) => {
     return rows;
   }, [cellData]);
 
-  // Compute statistics from cellData.
-  const stats = useMemo(() => calculateStats(cellData), [cellData]);
-
+  // Event handlers
   const handleCellClick = useCallback((cellInfo) => {
-    // Toggle selection: deselect if the same cell is clicked.
-    setSelectedCell((prev) => (prev && prev.row === cellInfo.row && prev.col === cellInfo.col ? null : cellInfo));
+    setSelectedCell(prev => {
+      // If same cell is clicked, deselect it
+      if (prev && prev.row === cellInfo.row && prev.col === cellInfo.col) {
+        return null;
+      }
+      return cellInfo;
+    });
   }, []);
 
-  const handleRelativeToggle = useCallback((e) => {
-    setShowRelative(e.target.checked);
+  const handleRelativeToggle = useCallback(() => {
+    setShowRelative(prev => !prev);
   }, []);
 
-  const handleOutliersToggle = useCallback((e) => {
-    setShowOutliers(e.target.checked);
+  const handleOutliersToggle = useCallback(() => {
+    setShowOutliers(prev => !prev);
   }, []);
 
   const clearSelection = useCallback(() => {
     setSelectedCell(null);
   }, []);
 
-  // Real-time data updates using visibility detection.
-  const { ref: visibilityRef } = useRealTimeData(
-    'cell',
-    (msg) => {
-      // Skip updates if component is not in view
-      if (!inView) return;
-
-      try {
-        const fields = msg.payload?.fields;
-        if (!fields) return;
-
-        const newTimestamp = fields.timestamp?.numberValue || 0;
-        lastTimestampRef.current = newTimestamp;
-
-        // Parse new cell data.
-        const newData = new Array(TOTAL_CELLS).fill(0);
-        for (let i = 1; i <= TOTAL_CELLS; i++) {
-          const field = fields[`cell${i}`];
-          if (field) {
-            const raw = field.stringValue ?? field.numberValue;
-            newData[i - 1] = parseFloat(raw) || 0;
-          }
-        }
-
-        // Update state only if significant changes are detected.
-        setCellData((prevData) => {
-          let shouldUpdate = false;
-          for (let i = 0; i < TOTAL_CELLS; i++) {
-            const changeThreshold = settings?.dashboard?.significantChangeThreshold || 0.5;
-            if (Math.abs(newData[i] - prevData[i]) > changeThreshold / 100) {
-              shouldUpdate = true;
-              break;
-            }
-          }
-          return shouldUpdate ? newData : prevData;
-        });
-
-        // If a cell is selected, update its details.
-        if (selectedCell) {
-          const cellIndex = selectedCell.row * COLS + selectedCell.col;
-          const newValue = newData[cellIndex];
-          if (newValue > 0) {
-            const avgFromStats = stats.avgVoltage;
-            setSelectedCell(prev => ({
-              ...prev,
-              value: newValue,
-              percentDiff: ((newValue - avgFromStats) / avgFromStats) * 100
-            }));
-          }
-        }
-      } catch (err) {
-        console.error('Error processing cell data:', err);
-      }
-    },
-    {
-      // Use settings from context for update interval
-      customInterval: settings?.dashboard?.updateInterval,
-      threshold: 0.1 // Update only when the component is in view
-    }
-  );
-
-  // Combine refs
-  const setRefs = useCallback(
-    (node) => {
-      if (containerRef) containerRef(node);
-      if (visibilityRef) visibilityRef(node);
-      if (inViewRef) inViewRef(node);
-    },
-    [containerRef, visibilityRef, inViewRef]
-  );
-
-  // Handler for closing the cell detail panel via keyboard.
   const handleCloseDetailKeyDown = useCallback((e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       clearSelection();
       e.preventDefault();
     }
   }, [clearSelection]);
+
+  // Process incoming data with batched updates for performance
+  const handleDataMessage = useCallback((msg) => {
+    if (!inView || !isComponentMounted.current) return;
+
+    try {
+      const fields = msg.payload?.fields;
+      if (!fields) return;
+
+      // Get timestamp
+      const newTimestamp = fields.timestamp?.numberValue || 0;
+      if (lastTimestampRef.current === newTimestamp) return;
+      lastTimestampRef.current = newTimestamp;
+
+      // Parse new cell data
+      const newData = new Array(TOTAL_CELLS).fill(0);
+      let hasChanges = false;
+      
+      for (let i = 1; i <= TOTAL_CELLS; i++) {
+        const field = fields[`cell${i}`];
+        if (field) {
+          const raw = field.stringValue ?? field.numberValue;
+          const parsedValue = parseFloat(raw) || 0;
+          newData[i - 1] = parsedValue;
+          
+          // Check if value differs significantly from current value
+          const threshold = changeThreshold / 100;
+          if (Math.abs(parsedValue - cellDataRef.current[i - 1]) > threshold) {
+            hasChanges = true;
+          }
+        }
+      }
+
+      // Only update state if there were significant changes
+      if (hasChanges && isComponentMounted.current) {
+        setCellData(newData);
+        
+        // If a cell is selected, update its details
+        if (selectedCell) {
+          const cellIndex = selectedCell.row * COLS + selectedCell.col;
+          const newValue = newData[cellIndex];
+          
+          if (newValue > 0) {
+            // Calculate new percentage difference using latest stats
+            const avgVoltage = statsRef.current.avgVoltage;
+            const newPercentDiff = ((newValue - avgVoltage) / avgVoltage) * 100;
+            
+            setSelectedCell(prev => ({
+              ...prev,
+              value: newValue,
+              percentDiff: newPercentDiff
+            }));
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error processing cell data:', err);
+    }
+  }, [inView, changeThreshold, selectedCell]);
+
+  // Subscribe to real-time data
+  const { ref: dataRef } = useRealTimeData(
+    'cell',
+    handleDataMessage,
+    { customInterval: updateInterval }
+  );
+
+  // Combine refs
+  const setRefs = useCallback((node) => {
+    if (node) {
+      inViewRef(node);
+      if (dataRef && typeof dataRef === 'function') dataRef(node);
+    }
+  }, [inViewRef, dataRef]);
+
+  // Legend - memoized to prevent recreation
+  const renderLegend = useMemo(() => (
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: { xs: theme.spacing(1), sm: theme.spacing(2) },
+        justifyContent: 'center'
+      }}
+    >
+      <Tooltip
+        title={showRelative ? 'Cell voltage significantly below average' : 'Critical voltage level (<2.8V)'}
+        arrow
+        placement="top"
+      >
+        <Box component="span">
+          <LegendItem
+            color={theme.palette.error.main}
+            label={showRelative ? 'Below avg' : 'Critical'}
+          />
+        </Box>
+      </Tooltip>
+      <Tooltip
+        title={showRelative ? 'Cell voltage slightly below average' : 'Warning voltage level (<3.2V)'}
+        arrow
+        placement="top"
+      >
+        <Box component="span">
+          <LegendItem
+            color={theme.palette.warning.main}
+            label={showRelative ? 'Slightly below' : 'Warning'}
+          />
+        </Box>
+      </Tooltip>
+      <Tooltip
+        title={showRelative ? 'Cell voltage slightly above average' : 'Normal voltage level (<3.5V)'}
+        arrow
+        placement="top"
+      >
+        <Box component="span">
+          <LegendItem
+            color={theme.palette.info.main}
+            label={showRelative ? 'Slightly above' : 'Normal'}
+          />
+        </Box>
+      </Tooltip>
+      <Tooltip
+        title={showRelative ? 'Cell voltage significantly above average' : 'Good voltage level (≥3.5V)'}
+        arrow
+        placement="top"
+      >
+        <Box component="span">
+          <LegendItem
+            color={theme.palette.success.main}
+            label={showRelative ? 'Above avg' : 'Good'}
+          />
+        </Box>
+      </Tooltip>
+    </Box>
+  ), [theme, showRelative]);
+
+  // Grid content - memoized to prevent recreation
+  const renderGridContent = useMemo(() => {
+    if (!inView) {
+      return (
+        <Box 
+          sx={{ 
+            flex: 1, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            color: theme.palette.text.secondary
+          }}
+        >
+          <Typography variant="body2">
+            Loading...
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <>
+        {/* Stats summary */}
+        {stats.avgVoltage > 0 && <StatsSummary stats={stats} />}
+
+        {/* Cell details panel */}
+        {selectedCell && (
+          <Box sx={{ position: 'relative' }}>
+            <CellDetailPanel cellInfo={selectedCell} />
+            <Tooltip title="Close details" arrow>
+              <X
+                size={14}
+                onClick={clearSelection}
+                onKeyDown={handleCloseDetailKeyDown}
+                style={{
+                  position: 'absolute',
+                  top: theme.spacing(1),
+                  right: theme.spacing(1),
+                  cursor: 'pointer',
+                  color: theme.palette.text.secondary
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label="Close cell details"
+              />
+            </Tooltip>
+          </Box>
+        )}
+
+        {/* Controls for display mode - IMPROVED TOGGLE BUTTONS */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: theme.spacing(0.75)
+          }}
+        >
+          <Typography
+            variant="subtitle2"
+            color="text.primary"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: theme.spacing(0.5),
+              fontSize: '0.8rem'
+            }}
+          >
+            <Tooltip title="Grid visualization of all battery cells" arrow placement="top">
+              <Layers size={16} color={theme.palette.text.secondary} aria-hidden="true" />
+            </Tooltip>
+            Grid
+          </Typography>
+          <Box sx={{ display: 'flex', gap: theme.spacing(3), alignItems: 'center' }}>
+            {/* Relative mode toggle */}
+            <Tooltip
+              title="Toggle between relative (compared to average) and absolute voltage coloring"
+              arrow
+              placement="top"
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: theme.spacing(0.75),
+                  borderRadius: theme.shape.borderRadius,
+                  padding: theme.spacing(0.5, 1),
+                  bgcolor: showRelative ? alpha(theme.palette.warning.main, 0.15) : 'transparent',
+                  border: `1px solid ${showRelative ? theme.palette.warning.main : alpha(theme.palette.divider, 0.5)}`,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onClick={handleRelativeToggle}
+                role="checkbox"
+                aria-checked={showRelative}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleRelativeToggle();
+                  }
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.8rem',
+                    fontWeight: showRelative ? 600 : 400,
+                    color: showRelative ? theme.palette.warning.main : theme.palette.text.secondary
+                  }}
+                >
+                  Relative
+                </Typography>
+                <Box
+                  sx={{
+                    width: theme.spacing(3.5),
+                    height: theme.spacing(1.75),
+                    borderRadius: theme.spacing(1),
+                    bgcolor: showRelative ? theme.palette.warning.main : alpha(theme.palette.text.disabled, 0.3),
+                    position: 'relative',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      width: theme.spacing(1.5),
+                      height: theme.spacing(1.5),
+                      borderRadius: '50%',
+                      top: '50%',
+                      left: showRelative ? '60%' : '10%',
+                      transform: 'translateY(-50%)',
+                      bgcolor: theme.palette.common.white,
+                      transition: 'left 0.2s ease',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Tooltip>
+            
+            {/* Outliers toggle */}
+            <Tooltip
+              title="Highlight cells that deviate significantly from the average (>2σ)"
+              arrow
+              placement="top"
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: theme.spacing(0.75),
+                  borderRadius: theme.shape.borderRadius,
+                  padding: theme.spacing(0.5, 1),
+                  bgcolor: showOutliers ? alpha(theme.palette.error.main, 0.15) : 'transparent',
+                  border: `1px solid ${showOutliers ? theme.palette.error.main : alpha(theme.palette.divider, 0.5)}`,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onClick={handleOutliersToggle}
+                role="checkbox"
+                aria-checked={showOutliers}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleOutliersToggle();
+                  }
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.8rem',
+                    fontWeight: showOutliers ? 600 : 400,
+                    color: showOutliers ? theme.palette.error.main : theme.palette.text.secondary
+                  }}
+                >
+                  Outliers
+                </Typography>
+                <Box
+                  sx={{
+                    width: theme.spacing(3.5),
+                    height: theme.spacing(1.75),
+                    borderRadius: theme.spacing(1),
+                    bgcolor: showOutliers ? theme.palette.error.main : alpha(theme.palette.text.disabled, 0.3),
+                    position: 'relative',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      width: theme.spacing(1.5),
+                      height: theme.spacing(1.5),
+                      borderRadius: '50%',
+                      top: '50%',
+                      left: showOutliers ? '60%' : '10%',
+                      transform: 'translateY(-50%)',
+                      bgcolor: theme.palette.common.white,
+                      transition: 'left 0.2s ease',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Tooltip>
+          </Box>
+        </Box>
+
+        {/* Grid visualization */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            position: 'relative',
+            mb: theme.spacing(1),
+          }}
+          role="grid"
+          aria-label="Battery Cell Grid"
+        >
+          {/* Header with column numbers */}
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: `${theme.spacing(3)} repeat(${COLS}, 1fr)`,
+              mb: theme.spacing(0.5),
+              fontSize: '0.7rem',
+              color: theme.palette.text.secondary,
+            }}
+          >
+            {/* Empty corner cell */}
+            <Box />
+
+            {/* Column headers */}
+            {Array.from({ length: COLS }, (_, i) => (
+              <Box
+                key={`col-${i}`}
+                sx={{ textAlign: 'center', fontWeight: 500, pl: theme.spacing(1.2) }}
+                aria-hidden="true"
+              >
+                {i + 1}
+              </Box>
+            ))}
+          </Box>
+
+          {/* Main grid */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              width: '100%',
+              position: 'relative',
+              overflow: 'visible',
+            }}
+          >
+            {/* Grid using CSS Grid */}
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateRows: `repeat(${ROWS}, minmax(0, 1fr))`,
+                width: '100%',
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                gap: theme.spacing(1.2),
+              }}
+            >
+              {arrangedData.map((rowData, rowIndex) => (
+                <Box
+                  key={`row-${rowIndex}`}
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: `${theme.spacing(3)} repeat(${COLS}, 1fr)`,
+                    gap: theme.spacing(1.2),
+                    minHeight: 0,
+                  }}
+                >
+                  {/* Row label */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.7rem',
+                      color: theme.palette.text.secondary,
+                      fontWeight: 500,
+                    }}
+                    aria-hidden="true"
+                  >
+                    {rowIndex + 1}
+                  </Box>
+
+                  {/* Cells in row */}
+                  {rowData.map((value, colIndex) => (
+                    <Box
+                      key={`cell-${rowIndex}-${colIndex}`}
+                      sx={{
+                        aspectRatio: '1/1',
+                        width: '100%',
+                        minWidth: 0,
+                        minHeight: 0,
+                      }}
+                    >
+                      <Cell
+                        value={value}
+                        row={rowIndex}
+                        col={colIndex}
+                        min={stats.minVoltage}
+                        max={stats.maxVoltage}
+                        avg={stats.avgVoltage}
+                        isRelative={showRelative}
+                        showOutliers={showOutliers}
+                        stdDev={stats.stdDeviation}
+                        onCellClick={handleCellClick}
+                        isSelected={
+                          selectedCell &&
+                          selectedCell.row === rowIndex &&
+                          selectedCell.col === colIndex
+                        }
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </>
+    );
+  }, [
+    inView, stats, theme, arrangedData, showRelative, showOutliers, selectedCell,
+    handleCellClick, clearSelection, handleRelativeToggle, handleOutliersToggle,
+    handleCloseDetailKeyDown
+  ]);
 
   return (
     <Card
@@ -646,13 +1027,8 @@ const CellHeatmap = ({ className }) => {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        boxShadow: theme.custom?.shadows?.medium || theme.shadows[3],
-        '&:hover': {
-          boxShadow: theme.custom?.shadows?.strong || theme.shadows[5]
-        },
-        transition: theme.transitions.create(['box-shadow'], {
-          duration: theme.transitions.duration.short
-        }),
+        boxShadow: theme.custom?.shadows?.md || '0 2px 8px rgba(0,0,0,0.15)',
+        transition: animationsEnabled ? 'box-shadow 0.3s ease' : 'none',
         transform: hardwareAcceleration ? 'translateZ(0)' : 'none'
       }}
       className={className}
@@ -665,7 +1041,6 @@ const CellHeatmap = ({ className }) => {
             <Battery size={20} color={theme.palette.primary.main} aria-hidden="true" />
             <Typography
               variant="h6"
-              color="text.primary"
               sx={{
                 fontWeight: theme.typography.fontWeightMedium,
                 lineHeight: 1.2,
@@ -679,8 +1054,7 @@ const CellHeatmap = ({ className }) => {
         sx={{
           p: theme.spacing(0.5),
           '& .MuiCardHeader-action': {
-            m: 0,
-            alignSelf: 'center'
+            m: 0
           }
         }}
       />
@@ -691,384 +1065,22 @@ const CellHeatmap = ({ className }) => {
           p: theme.spacing(1.5),
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'visible' // Allow all content to be visible
+          overflow: 'visible'
         }}
       >
-        {!inView ? (
-          // Simple loading message when not in view
-          <Box 
-            sx={{ 
-              flex: 1, 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              textAlign: 'center',
-              color: theme.palette.text.secondary
-            }}
-          >
-            <Typography variant="body2">
-              Loading...
-            </Typography>
-          </Box>
-        ) : (
-          <>
-            {stats.avgVoltage > 0 && <StatsSummary stats={stats} />}
-
-            {/* Display cell details with close button */}
-            {selectedCell && (
-              <Box sx={{ position: 'relative' }}>
-                <CellDetailPanel cellInfo={selectedCell} />
-                <Tooltip title="Close details" arrow>
-                  <X
-                    size={14}
-                    onClick={clearSelection}
-                    onKeyDown={handleCloseDetailKeyDown}
-                    style={{
-                      position: 'absolute',
-                      top: theme.spacing(1),
-                      right: theme.spacing(1),
-                      cursor: 'pointer',
-                      color: theme.palette.text.secondary
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Close cell details"
-                  />
-                </Tooltip>
-              </Box>
-            )}
-
-            {/* Toggle controls for display mode */}
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: theme.spacing(0.75)
-              }}
-            >
-              <Typography
-                variant="subtitle2"
-                color="text.primary"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: theme.spacing(0.5),
-                  fontSize: '0.8rem'
-                }}
-              >
-                <Tooltip title="Grid visualization of all battery cells" arrow placement="top">
-                  <Layers size={16} color={theme.palette.text.secondary} aria-hidden="true" />
-                </Tooltip>
-                Grid
-              </Typography>
-              <Box sx={{ display: 'flex', gap: theme.spacing(2), alignItems: 'center' }}>
-                <Tooltip
-                  title="Toggle between relative (compared to average) and absolute voltage coloring"
-                  arrow
-                  placement="top"
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={showRelative}
-                        onChange={handleRelativeToggle}
-                        size="small"
-                        sx={{
-                          width: 44,
-                          height: 24,
-                          padding: 0,
-                          '& .MuiSwitch-switchBase': {
-                            padding: 0,
-                            margin: '2px',
-                            transitionDuration: '300ms',
-                            '&.Mui-checked': {
-                              transform: 'translateX(20px)',
-                              color: '#fff',
-                              '& + .MuiSwitch-track': {
-                                backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.main, 0.5) : theme.palette.primary.main,
-                                opacity: 1,
-                                border: 0,
-                              },
-                            },
-                          },
-                          '& .MuiSwitch-thumb': {
-                            boxSizing: 'border-box',
-                            width: 20,
-                            height: 20,
-                            backgroundColor: '#fff',
-                          },
-                          '& .MuiSwitch-track': {
-                            borderRadius: 26 / 2,
-                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.3)',
-                            opacity: 1,
-                          },
-                        }}
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" color={theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'text.secondary'} sx={{ fontSize: '0.85rem' }}>
-                        Relative
-                      </Typography>
-                    }
-                    sx={{ m: 0 }}
-                  />
-                </Tooltip>
-                <Tooltip
-                  title="Highlight cells that deviate significantly from the average (>2σ)"
-                  arrow
-                  placement="top"
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={showOutliers}
-                        onChange={handleOutliersToggle}
-                        size="small"
-                        sx={{
-                          width: 44,
-                          height: 24,
-                          padding: 0,
-                          '& .MuiSwitch-switchBase': {
-                            padding: 0,
-                            margin: '2px',
-                            transitionDuration: '300ms',
-                            '&.Mui-checked': {
-                              transform: 'translateX(20px)',
-                              color: '#fff',
-                              '& + .MuiSwitch-track': {
-                                backgroundColor: theme.palette.mode === 'dark' ? alpha(theme.palette.secondary.main, 0.5) : theme.palette.secondary.main,
-                                opacity: 1,
-                                border: 0,
-                              },
-                            },
-                          },
-                          '& .MuiSwitch-thumb': {
-                            boxSizing: 'border-box',
-                            width: 20,
-                            height: 20,
-                            backgroundColor: '#fff',
-                          },
-                          '& .MuiSwitch-track': {
-                            borderRadius: 26 / 2,
-                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.3)',
-                            opacity: 1,
-                          },
-                        }}
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" color={theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'text.secondary'} sx={{ fontSize: '0.85rem' }}>
-                        Outliers
-                      </Typography>
-                    }
-                    sx={{ m: 0 }}
-                  />
-                </Tooltip>
-              </Box>
-            </Box>
-
-            {/* Grid visualization with CSS Grid */}
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                flex: 1,
-                position: 'relative',
-                overflow: 'visible',
-                mb: theme.spacing(1),
-              }}
-              role="grid"
-              aria-label="Battery Cell Grid"
-            >
-              {/* Header with column numbers */}
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: `${theme.spacing(3)} repeat(${COLS}, 1fr)`,
-                  mb: theme.spacing(0.5),
-                  fontSize: '0.7rem',
-                  color: theme.palette.text.secondary,
-                }}
-              >
-                {/* Empty cell for top-left corner */}
-                <Box />
-
-                {/* Column headers */}
-                {Array.from({ length: COLS }, (_, i) => (
-                  <Box
-                    key={`col-${i}`}
-                    sx={{
-                      textAlign: 'center',
-                      fontWeight: theme.typography.fontWeightMedium,
-                      pl: theme.spacing(1.2),
-                    }}
-                    aria-hidden="true"
-                  >
-                    {i + 1}
-                  </Box>
-                ))}
-              </Box>
-
-              {/* Main grid container */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  flex: 1,
-                  width: '100%',
-                  position: 'relative',
-                  overflow: 'visible',
-                }}
-              >
-                {/* Grid with cells using CSS Grid */}
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateRows: `repeat(${ROWS}, minmax(0, 1fr))`,
-                    width: '100%',
-                    position: 'absolute',
-                    top: 0,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    gap: theme.spacing(1.2),
-                  }}
-                >
-                  {arrangedData.map((rowData, rowIndex) => (
-                    <Box
-                      key={`row-${rowIndex}`}
-                      sx={{
-                        display: 'grid',
-                        gridTemplateColumns: `${theme.spacing(3)} repeat(${COLS}, 1fr)`,
-                        gap: theme.spacing(1.2),
-                        minHeight: 0,
-                      }}
-                    >
-                      {/* Row label */}
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '0.7rem',
-                          color: theme.palette.text.secondary,
-                          fontWeight: theme.typography.fontWeightMedium,
-                        }}
-                        aria-hidden="true"
-                      >
-                        {rowIndex + 1}
-                      </Box>
-
-                      {/* Cells in the row */}
-                      {rowData.map((value, colIndex) => (
-                        <Box
-                          key={`cell-${rowIndex}-${colIndex}`}
-                          sx={{
-                            aspectRatio: '1/1',
-                            width: '100%',
-                            minWidth: 0,
-                            minHeight: 0,
-                          }}
-                        >
-                          <Cell
-                            value={value}
-                            row={rowIndex}
-                            col={colIndex}
-                            min={stats.minVoltage}
-                            max={stats.maxVoltage}
-                            avg={stats.avgVoltage}
-                            isRelative={showRelative}
-                            showOutliers={showOutliers}
-                            stdDev={stats.stdDeviation}
-                            onCellClick={handleCellClick}
-                            isSelected={
-                              selectedCell &&
-                              selectedCell.row === rowIndex &&
-                              selectedCell.col === colIndex
-                            }
-                          />
-                        </Box>
-                      ))}
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            </Box>
-          </>
-        )}
+        {renderGridContent}
       </CardContent>
       <Divider />
-      {/* Footer legend for color coding */}
+      {/* Footer legend */}
       <Box
         sx={{
           p: theme.spacing(1.5),
-          borderTop: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
-          backgroundColor: alpha(
-            theme.palette.background.paper,
-            theme.palette.mode === 'dark' ? 0.2 : 0.05
-          )
+          backgroundColor: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.2 : 0.05)
         }}
         role="presentation"
         aria-label="Color Legend"
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: { xs: theme.spacing(1), sm: theme.spacing(2) },
-            justifyContent: 'center'
-          }}
-        >
-          <Tooltip
-            title={showRelative ? 'Cell voltage significantly below average' : 'Critical voltage level (<2.8V)'}
-            arrow
-            placement="top"
-          >
-            <Box component="span">
-              <LegendItem
-                color={theme.palette.error.main}
-                label={showRelative ? 'Below avg' : 'Critical'}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip
-            title={showRelative ? 'Cell voltage slightly below average' : 'Warning voltage level (<3.2V)'}
-            arrow
-            placement="top"
-          >
-            <Box component="span">
-              <LegendItem
-                color={theme.palette.warning.main}
-                label={showRelative ? 'Slightly below' : 'Warning'}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip
-            title={showRelative ? 'Cell voltage slightly above average' : 'Normal voltage level (<3.5V)'}
-            arrow
-            placement="top"
-          >
-            <Box component="span">
-              <LegendItem
-                color={theme.palette.info.main}
-                label={showRelative ? 'Slightly above' : 'Normal'}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip
-            title={showRelative ? 'Cell voltage significantly above average' : 'Good voltage level (≥3.5V)'}
-            arrow
-            placement="top"
-          >
-            <Box component="span">
-              <LegendItem
-                color={theme.palette.success.main}
-                label={showRelative ? 'Above avg' : 'Good'}
-              />
-            </Box>
-          </Tooltip>
-        </Box>
+        {renderLegend}
       </Box>
     </Card>
   );

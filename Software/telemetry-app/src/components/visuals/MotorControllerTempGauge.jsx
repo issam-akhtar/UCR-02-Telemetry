@@ -26,7 +26,7 @@ import useRealTimeData from '../../hooks/useRealTimeData';
 import { ChartSettingsContext } from '../../contexts/ChartSettingsContext';
 import { useInView } from 'react-intersection-observer';
 
-// Temperature thresholds used for color coding and gauge scaling
+// Constants defined outside component to prevent recreation
 const TEMP_THRESHOLDS = {
   NORMAL: 60,
   WARNING: 80,
@@ -34,8 +34,7 @@ const TEMP_THRESHOLDS = {
   MAX_SCALE: 150
 };
 
-// Pre-calculated lookup table for efficient sensor-to-temperature conversion.
-// Uses caching to avoid repeated heavy calculations.
+// Pre-calculated temperature lookup table
 const createTempLookup = () => {
   const lookupData = [
     { temp: -60, value: 10000 },
@@ -78,15 +77,10 @@ const createTempLookup = () => {
     { temp: 125, value: 28480 }
   ];
 
-  // Exact lookup table mapping sensor values to temperatures.
-  const table = new Map();
-  lookupData.forEach(entry => table.set(entry.value, entry.temp));
-
-  // Cache for interpolation results.
+  // Cache for interpolation results
   const cache = new Map();
 
   return {
-    exactLookup: (sensorValue) => table.get(sensorValue),
     lookup: (sensorValue) => {
       if (!sensorValue) return 0;
       if (cache.has(sensorValue)) return cache.get(sensorValue);
@@ -122,34 +116,31 @@ const createTempLookup = () => {
   };
 };
 
+// Create the lookup table once
 const TEMP_LOOKUP = createTempLookup();
 
-// Format a timestamp into a locale-specific time string.
-const formatTimestamp = (timestamp) => {
-  if (!timestamp) return 'N/A';
-  return new Date(timestamp).toLocaleTimeString();
-};
-
-// Determine the color based on temperature thresholds using the theme palette.
+// Utility functions (outside component to prevent recreation)
 const getTempColor = (temp, theme) => {
   if (temp >= TEMP_THRESHOLDS.CRITICAL) return theme.palette.error.main;
   if (temp >= TEMP_THRESHOLDS.WARNING) return theme.palette.warning.main;
   return theme.palette.success.main;
 };
 
-// Get a status message based on the current temperature.
 const getStatusMessage = (temp) => {
   if (temp >= TEMP_THRESHOLDS.CRITICAL) return 'CRITICAL';
   if (temp >= TEMP_THRESHOLDS.WARNING) return 'WARNING';
   return 'NORMAL';
 };
 
-// StatusIcon component visually represents the current status.
-// Uses memoization to avoid unnecessary re-renders.
+const convertTemp = (temp, showInF) => {
+  if (showInF) return (temp * 9) / 5 + 32;
+  return temp;
+};
+
+// Status icon component
 const StatusIcon = memo(({ temp, size = 16 }) => {
   const theme = useTheme();
   const color = getTempColor(temp, theme);
-  // Use CheckCircle for all statuses to simplify
   return <CheckCircle size={size} color={color} aria-hidden="true" />;
 });
 
@@ -158,349 +149,368 @@ StatusIcon.propTypes = {
   size: PropTypes.number
 };
 
-// TempCard component displays the temperature reading along with min and max values.
-const TempCard = memo(
-  ({ label, temp, icon: Icon, minTemp, minTimestamp, maxTemp, maxTimestamp }) => {
-    const theme = useTheme();
-    const { settings } = useContext(ChartSettingsContext);
+// Temperature card component
+const TempCard = memo(({ label, temp, minTemp, maxTemp }) => {
+  const theme = useTheme();
+  const { settings } = useContext(ChartSettingsContext);
+  const showTempInF = settings?.dashboard?.showTempInF || false;
+  const animationsEnabled = settings?.global?.enableTransitions !== false;
 
-    // Check if settings exist and use showTempInF if available, otherwise default to false
-    const showTempInF = settings?.dashboard?.showTempInF || false;
-    const animationsEnabled = settings?.global?.enableTransitions !== false;
+  // Convert temperatures for display
+  const displayTemp = convertTemp(temp, showTempInF);
+  const tempUnit = showTempInF ? '°F' : '°C';
+  const displayMinTemp = minTemp !== null && minTemp !== undefined
+    ? convertTemp(minTemp, showTempInF).toFixed(1)
+    : 'N/A';
+  const displayMaxTemp = maxTemp !== null && maxTemp !== undefined
+    ? convertTemp(maxTemp, showTempInF).toFixed(1)
+    : 'N/A';
 
-    // Convert temperature to Fahrenheit if required.
-    const displayTemp = showTempInF ? (temp * 9) / 5 + 32 : temp;
-    const tempUnit = showTempInF ? '°F' : '°C';
+  const color = getTempColor(temp, theme);
+  const status = getStatusMessage(temp);
 
-    const color = getTempColor(temp, theme);
-    const status = getStatusMessage(temp);
-
-    // Format min and max temperatures for display.
-    const displayMinTemp =
-      minTemp !== null && minTemp !== undefined
-        ? showTempInF
-          ? ((minTemp * 9) / 5 + 32).toFixed(1)
-          : minTemp.toFixed(1)
-        : 'N/A';
-    const displayMaxTemp =
-      maxTemp !== null && maxTemp !== undefined
-        ? showTempInF
-          ? ((maxTemp * 9) / 5 + 32).toFixed(1)
-          : maxTemp.toFixed(1)
-        : 'N/A';
-
-    return (
+  return (
+    <Box
+      sx={{
+        p: theme.spacing(2),
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: alpha(theme.palette.background.paper, 0.2),
+        border: `1px solid ${theme.palette.divider}`,
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: theme.custom?.shadows?.sm
+      }}
+      role="region"
+      aria-label={`${label} temperature reading`}
+    >
+      {/* Status indicator bar */}
       <Box
-        elevation={0}
-        // Use theme-based spacing and colors for consistency.
         sx={{
-          p: theme.spacing(2),
-          borderRadius: theme.shape.borderRadius,
-          backgroundColor: theme.palette.mode === 'dark'
-            ? alpha(theme.palette.background.paper, 0.2)
-            : alpha(theme.palette.background.default, 0.8),
-          border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
-          textAlign: 'center',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: theme.spacing(0.5),
+          backgroundColor: color,
+          transition: animationsEnabled ? 'background-color 0.3s' : 'none'
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Temperature label */}
+      <Typography
+        variant="subtitle2"
+        sx={{
+          color: theme.palette.text.secondary,
+          mb: theme.spacing(1),
+          fontWeight: theme.typography.fontWeightMedium
+        }}
+      >
+        {label}
+      </Typography>
+
+      {/* Current temperature display */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: theme.spacing(1),
+          mb: theme.spacing(1),
+        }}
+        aria-live="polite"
+      >
+        <Thermometer size={20} color={color} aria-hidden="true" />
+        <Typography
+          variant="h3"
+          component="div"
+          sx={{ 
+            color, 
+            fontWeight: theme.typography.fontWeightBold
+          }}
+        >
+          {displayTemp.toFixed(1)}
+        </Typography>
+        <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
+          {tempUnit}
+        </Typography>
+      </Box>
+
+      {/* Min/Max temperature section */}
+      <Box
+        sx={{
+          mt: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: theme.custom?.shadows?.sm,
-          transition: animationsEnabled ? 
-            theme.transitions.create(['box-shadow', 'background-color'], {
-              duration: theme.transitions.duration.short
-            }) : 'none',
-          '&:hover': animationsEnabled ? {
-            boxShadow: theme.custom?.shadows?.md,
-            backgroundColor: theme.palette.mode === 'dark'
-              ? alpha(theme.palette.background.paper, 0.3)
-              : alpha(theme.palette.background.default, 0.9),
-          } : {}
+          gap: theme.spacing(0.5),
+          backgroundColor: alpha(color, 0.12),
+          py: theme.spacing(0.5),
+          borderRadius: theme.shape.borderRadius * 0.5
         }}
-        role="region"
-        aria-label={`${label} temperature reading`}
       >
-        {/* Top colored bar indicates current status */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: theme.spacing(0.5),
-            backgroundColor: color,
-            transition: animationsEnabled ? 
-              theme.transitions.create('background-color', {
-                duration: theme.transitions.duration.short
-              }) : 'none'
-          }}
-          aria-hidden="true"
-        />
-
-        <Typography
-          variant="subtitle2"
-          sx={{
-            color: theme.palette.text.secondary,
-            mb: theme.spacing(1),
-            fontWeight: theme.typography.fontWeightMedium
-          }}
-        >
-          {label}
+        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+          Min: {displayMinTemp}{tempUnit}
         </Typography>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: theme.spacing(1),
-            mb: theme.spacing(1),
-          }}
-          aria-live="polite"
-        >
-          {Icon && <Icon size={20} color={color} aria-hidden="true" />}
-          <Typography
-            variant="h3"
-            component="div"
-            sx={{ 
-              color, 
-              fontWeight: theme.typography.fontWeightBold,
-              transition: animationsEnabled ? 
-                theme.transitions.create('color', {
-                  duration: theme.transitions.duration.short
-                }) : 'none'
-            }}
-          >
-            {displayTemp.toFixed(1)}
-          </Typography>
-          <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
-            {tempUnit}
-          </Typography>
-        </Box>
-
-        {/* Display the recorded minimum and maximum temperatures */}
-        <Box
-          sx={{
-            mt: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: theme.spacing(0.5),
-            backgroundColor: alpha(color, 0.12),
-            py: theme.spacing(0.5),
-            borderRadius: theme.shape.borderRadius * 0.5,
-            transition: animationsEnabled ? 
-              theme.transitions.create('background-color', {
-                duration: theme.transitions.duration.short
-              }) : 'none'
-          }}
-        >
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-            Min: {displayMinTemp}
-            {tempUnit}
-          </Typography>
-          <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-            Max: {displayMaxTemp}
-            {tempUnit}
-          </Typography>
-        </Box>
-
-        {/* Status icon and corresponding message */}
-        <Box
-          sx={{
-            mt: theme.spacing(1),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: theme.spacing(0.5),
-          }}
-        >
-          <StatusIcon temp={temp} size={14} />
-          <Typography 
-            variant="caption" 
-            sx={{ 
-              color,
-              transition: animationsEnabled ? 
-                theme.transitions.create('color', {
-                  duration: theme.transitions.duration.short
-                }) : 'none'
-            }}
-          >
-            {status}
-          </Typography>
-        </Box>
+        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+          Max: {displayMaxTemp}{tempUnit}
+        </Typography>
       </Box>
-    );
-  }
-);
+
+      {/* Status indicator */}
+      <Box
+        sx={{
+          mt: theme.spacing(1),
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: theme.spacing(0.5),
+        }}
+      >
+        <StatusIcon temp={temp} size={14} />
+        <Typography variant="caption" sx={{ color }}>
+          {status}
+        </Typography>
+      </Box>
+    </Box>
+  );
+});
 
 TempCard.propTypes = {
   label: PropTypes.string.isRequired,
   temp: PropTypes.number.isRequired,
-  icon: PropTypes.elementType,
   minTemp: PropTypes.number,
-  minTimestamp: PropTypes.number,
-  maxTemp: PropTypes.number,
-  maxTimestamp: PropTypes.number,
+  maxTemp: PropTypes.number
 };
 
-// Main component that subscribes to real-time temperature data and displays both motor and controller gauges.
+// Main component
 const MotorControllerTempGauge = () => {
   const theme = useTheme();
   const { settings } = useContext(ChartSettingsContext);
-
-  // Use InView for visibility detection
   const { ref: inViewRef, inView } = useInView({
     threshold: 0.1,
     triggerOnce: false
   });
 
-  // State for current temperatures as well as historical min and max values.
+  // State with individual hooks for better performance
   const [motorTemp, setMotorTemp] = useState(0);
   const [controllerTemp, setControllerTemp] = useState(0);
-  const [maxMotorTemp, setMaxMotorTemp] = useState(null);
-  const [maxControllerTemp, setMaxControllerTemp] = useState(null);
   const [minMotorTemp, setMinMotorTemp] = useState(null);
+  const [maxMotorTemp, setMaxMotorTemp] = useState(null);
   const [minControllerTemp, setMinControllerTemp] = useState(null);
-  const [maxMotorTimestamp, setMaxMotorTimestamp] = useState(null);
-  const [maxControllerTimestamp, setMaxControllerTimestamp] = useState(null);
-  const [minMotorTimestamp, setMinMotorTimestamp] = useState(null);
-  const [minControllerTimestamp, setMinControllerTimestamp] = useState(null);
+  const [maxControllerTemp, setMaxControllerTemp] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Refs to store last known temperature values.
-  const lastMotorTempRef = useRef(motorTemp);
-  const lastControllerTempRef = useRef(controllerTemp);
+  // Refs for optimization
+  const isComponentMounted = useRef(true);
+  const lastMotorTempRef = useRef(0);
+  const lastControllerTempRef = useRef(0);
 
-  // Update interval from dashboard settings.
-  const updateInterval = useMemo(
-    () => settings?.dashboard?.updateInterval,
-    [settings?.dashboard?.updateInterval]
-  );
-
-  // Check for hardware acceleration setting
+  // Settings
+  const updateInterval = settings?.dashboard?.updateInterval || 300;
+  const changeThreshold = settings?.dashboard?.significantChangeThreshold || 0.5;
+  const animationsEnabled = settings?.global?.enableTransitions !== false;
   const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
 
-  // Check for animations setting
-  const animationsEnabled = settings?.global?.enableTransitions !== false;
+  // Set up and clean up
+  useEffect(() => {
+    isComponentMounted.current = true;
+    return () => { isComponentMounted.current = false; };
+  }, []);
 
-  // Extract change threshold from settings
-  const changeThreshold = useMemo(
-    () => settings?.dashboard?.significantChangeThreshold || 0.5,
-    [settings?.dashboard?.significantChangeThreshold]
-  );
+  // Update motor temperature and track min/max
+  const updateMotorTemp = useCallback((temp, timestamp) => {
+    if (!isComponentMounted.current) return;
+    
+    setMotorTemp(temp);
+    lastMotorTempRef.current = temp;
+    
+    // Update min
+    setMinMotorTemp(prev => {
+      if (prev === null || temp < prev) return temp;
+      return prev;
+    });
+    
+    // Update max
+    setMaxMotorTemp(prev => {
+      if (prev === null || temp > prev) return temp;
+      return prev;
+    });
+    
+    // Clear loading state if both values are non-zero
+    if (temp !== 0 || lastControllerTempRef.current !== 0) {
+      setIsLoading(false);
+    }
+  }, []);
 
-  // Subscribe to real-time temperature data when the component is visible.
-  const { ref: dataRef } = useRealTimeData(
-    'bamo_car_re_transmit',
-    (msg) => {
-      // Skip updates if component is not in view
-      if (!inView) return;
+  // Update controller temperature and track min/max
+  const updateControllerTemp = useCallback((temp, timestamp) => {
+    if (!isComponentMounted.current) return;
+    
+    setControllerTemp(temp);
+    lastControllerTempRef.current = temp;
+    
+    // Update min
+    setMinControllerTemp(prev => {
+      if (prev === null || temp < prev) return temp;
+      return prev;
+    });
+    
+    // Update max
+    setMaxControllerTemp(prev => {
+      if (prev === null || temp > prev) return temp;
+      return prev;
+    });
+    
+    // Clear loading state if both values are non-zero
+    if (lastMotorTempRef.current !== 0 || temp !== 0) {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Handle incoming temperature data
+  const handleTemperatureData = useCallback((msg) => {
+    if (!inView || !isComponentMounted.current) return;
+    
+    try {
+      const fields = msg?.fields;
+      if (!fields) return;
+
+      const rawMotor = fields.motor_temp?.numberValue;
+      const rawController = fields.controller_temp?.numberValue;
       
-      try {
-        const fields = msg.fields;
-        if (!fields) return;
+      if (rawMotor === undefined || rawController === undefined) return;
 
-        const rawMotor = fields.motor_temp?.numberValue;
-        const rawController = fields.controller_temp?.numberValue;
-        if (rawMotor === undefined || rawController === undefined) return;
+      const now = Date.now();
+      const newMotorTemp = TEMP_LOOKUP.lookup(Number(rawMotor));
+      const newControllerTemp = TEMP_LOOKUP.lookup(Number(rawController));
 
-        const now = Date.now();
-        const newMotorTemp = TEMP_LOOKUP.lookup(Number(rawMotor));
-        const newControllerTemp = TEMP_LOOKUP.lookup(Number(rawController));
+      // Update motor temperature if significant change
+      if (Math.abs(newMotorTemp - lastMotorTempRef.current) > changeThreshold) {
+        updateMotorTemp(newMotorTemp, now);
+      }
 
-        // Update motor temperature if the new reading differs significantly.
-        if (Math.abs(newMotorTemp - lastMotorTempRef.current) > changeThreshold) {
-          setMotorTemp(newMotorTemp);
-          lastMotorTempRef.current = newMotorTemp;
-          // Update min and max values (initialize if currently null)
-          setMinMotorTemp((prev) =>
-            prev === null || newMotorTemp < prev ? newMotorTemp : prev
-          );
-          setMaxMotorTemp((prev) =>
-            prev === null || newMotorTemp > prev ? newMotorTemp : prev
-          );
-          if (minMotorTemp === null || newMotorTemp < minMotorTemp) {
-            setMinMotorTimestamp(now);
-          }
-          if (maxMotorTemp === null || newMotorTemp > maxMotorTemp) {
-            setMaxMotorTimestamp(now);
-          }
-        }
+      // Update controller temperature if significant change
+      if (Math.abs(newControllerTemp - lastControllerTempRef.current) > changeThreshold) {
+        updateControllerTemp(newControllerTemp, now);
+      }
 
-        // Update controller temperature if the new reading differs significantly.
-        if (Math.abs(newControllerTemp - lastControllerTempRef.current) > changeThreshold) {
-          setControllerTemp(newControllerTemp);
-          lastControllerTempRef.current = newControllerTemp;
-          setMinControllerTemp((prev) =>
-            prev === null || newControllerTemp < prev ? newControllerTemp : prev
-          );
-          setMaxControllerTemp((prev) =>
-            prev === null || newControllerTemp > prev ? newControllerTemp : prev
-          );
-          if (minControllerTemp === null || newControllerTemp < minControllerTemp) {
-            setMinControllerTimestamp(now);
-          }
-          if (maxControllerTemp === null || newControllerTemp > maxControllerTemp) {
-            setMaxControllerTimestamp(now);
-          }
-        }
-
-        if (isLoading && (newMotorTemp !== 0 || newControllerTemp !== 0)) {
-          setIsLoading(false);
-        }
-
-        if (error) setError(null);
-      } catch (err) {
-        console.error('Error processing temperature data:', err);
+      // Clear any error
+      if (error) setError(null);
+    } catch (err) {
+      console.error('Error processing temperature data:', err);
+      if (isComponentMounted.current) {
         setError('Failed to process temperature data');
       }
-    },
-    { customInterval: updateInterval, threshold: 0.1 } // Subscribe when the component is in view
+    }
+  }, [inView, changeThreshold, error, updateMotorTemp, updateControllerTemp]);
+
+  // Subscribe to real-time data
+  const { ref: dataRef } = useRealTimeData(
+    'bamo_car_re_transmit',
+    handleTemperatureData,
+    { customInterval: updateInterval }
   );
 
   // Combine refs
-  const setRefs = useCallback((node) => {
-    inViewRef(node);
-    if (dataRef) dataRef(node);
+  const setRefs = useCallback(node => {
+    if (node) {
+      inViewRef(node);
+      if (dataRef && typeof dataRef === 'function') dataRef(node);
+    }
   }, [inViewRef, dataRef]);
+
+  // Render content based on state
+  const renderContent = useCallback(() => {
+    if (!inView) {
+      return (
+        <Box 
+          sx={{ 
+            flex: 1, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            color: theme.palette.text.secondary
+          }}
+        >
+          <Typography variant="body2">
+            Temperature monitoring paused
+          </Typography>
+        </Box>
+      );
+    }
+    
+    if (isLoading) {
+      return (
+        <Box
+          sx={{ 
+            flex: 1,
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center'
+          }}
+        >
+          <Typography variant="body1">Loading...</Typography>
+        </Box>
+      );
+    }
+    
+    return (
+      <>
+        <TempCard
+          label="MOTOR TEMPERATURE"
+          temp={motorTemp}
+          minTemp={minMotorTemp}
+          maxTemp={maxMotorTemp}
+        />
+        <TempCard
+          label="CONTROLLER TEMPERATURE"
+          temp={controllerTemp}
+          minTemp={minControllerTemp}
+          maxTemp={maxControllerTemp}
+        />
+      </>
+    );
+  }, [
+    inView, isLoading, theme.palette.text.secondary,
+    motorTemp, controllerTemp,
+    minMotorTemp, maxMotorTemp,
+    minControllerTemp, maxControllerTemp
+  ]);
 
   return (
     <Card
       ref={setRefs}
-      elevation={0}
       sx={{
         width: '100%',
         height: '100%',
         backgroundColor: theme.palette.background.paper,
         borderRadius: theme.shape.borderRadius,
         overflow: 'hidden',
-        border: `${theme.custom?.borderWidth?.thin || 1}px solid ${theme.palette.divider}`,
+        border: `1px solid ${theme.palette.divider}`,
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: theme.custom?.shadows?.md,
-        transform: hardwareAcceleration ? 'translateZ(0)' : 'none',
-        transition: animationsEnabled ? 
-          theme.transitions.create(['box-shadow', 'transform'], {
-            duration: theme.transitions.duration.short
-          }) : 'none'
+        transform: hardwareAcceleration ? 'translateZ(0)' : 'none'
       }}
       role="region"
       aria-label="Motor and Controller Temperature Monitor"
     >
-      {/* Header with title */}
+      {/* Header */}
       <CardHeader
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: theme.spacing(1) }}>
             <Thermometer size={20} color={theme.palette.primary.main} aria-hidden="true" />
             <Typography
               variant="h6"
-              color="text.primary"
-              sx={{ fontWeight: theme.typography.fontWeightMedium,
+              sx={{
+                fontWeight: theme.typography.fontWeightMedium,
                 lineHeight: 1.2,
                 m: 0.5
-               }}
+              }}
             >
               Temperature Monitor
             </Typography>
@@ -509,73 +519,23 @@ const MotorControllerTempGauge = () => {
         sx={{
           p: theme.spacing(0.5),
           '& .MuiCardHeader-action': {
-            m: 0,
-            alignSelf: 'center'
+            m: 0
           }
         }}
       />
       <Divider />
 
-      {/* Main content area rendering the temperature cards */}
+      {/* Content */}
       <CardContent
         sx={{
           p: theme.spacing(1.5),
-          flexGrow: 1,
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: theme.spacing(3),
+          gap: theme.spacing(3)
         }}
       >
-        {!inView ? (
-          // Minimal content when not in view
-          <Box 
-            sx={{ 
-              flex: 1, 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              textAlign: 'center',
-              color: theme.palette.text.secondary
-            }}
-          >
-            <Typography variant="body2">
-              Temperature monitoring paused
-            </Typography>
-          </Box>
-        ) : isLoading ? (
-          <Box
-            sx={{ 
-              flex: 1,
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center'
-            }}
-            aria-label="Loading temperature data"
-          >
-            <Typography variant="body1">Loading...</Typography>
-          </Box>
-        ) : (
-          <>
-            <TempCard
-              label="MOTOR TEMPERATURE"
-              temp={motorTemp}
-              icon={Thermometer}
-              minTemp={minMotorTemp}
-              minTimestamp={minMotorTimestamp}
-              maxTemp={maxMotorTemp}
-              maxTimestamp={maxMotorTimestamp}
-            />
-            <TempCard
-              label="CONTROLLER TEMPERATURE"
-              temp={controllerTemp}
-              icon={Thermometer}
-              minTemp={minControllerTemp}
-              minTimestamp={minControllerTimestamp}
-              maxTemp={maxControllerTemp}
-              maxTimestamp={maxControllerTimestamp}
-            />
-          </>
-        )}
+        {renderContent()}
       </CardContent>
     </Card>
   );

@@ -42,7 +42,7 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   
-  /* Border radius (kept intact) */
+  /* Border radius */
   --border-radius-sm: 2px;
   --border-radius-md: 4px;
   --border-radius-lg: 6px;
@@ -54,7 +54,7 @@
   --shadow-lg: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* --- Minimal Reset (Only what’s necessary) --- */
+/* --- Minimal Reset --- */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -87,4 +87,64 @@ html, body {
 *::-webkit-scrollbar-thumb {
   background-color: var(--color-secondary-light);
   border-radius: var(--border-radius-sm);
+}
+
+/* --- Optimizations for transitions --- */
+body.page-transitioning {
+  pointer-events: none; /* Prevent interaction during transition */
+}
+
+/* Slow spinner animation for loading state */
+.spin-slow {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Optimization for low-power devices */
+@media (prefers-reduced-motion) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Remove animations for Raspberry Pi */
+.raspberry-pi-mode * {
+  transition: none !important;
+  animation: none !important;
+  transform-style: flat !important;
+}
+
+/* Preload optimization for navigation */
+.preload {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+/* Improve page transition fluidity */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 150ms, transform 150ms;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 100ms;
 }

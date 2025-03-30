@@ -1,29 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Box,
-  TextField,
   Typography,
   IconButton,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  InputAdornment,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  InputBase,
   Button,
-  ButtonGroup,
-  Tooltip,
   Chip,
-  Divider,
-  Paper,
-  MenuItem,
 } from '@mui/material';
 import { 
-  Close, 
-  ExpandMore, 
   Star, 
   StarBorder,
+  Search as SearchIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import {
   Cpu, Navigation, MapPin, Satellite, BatteryCharging,
@@ -34,32 +22,227 @@ import {
 } from 'lucide-react';
 import { useChartSelection } from '../../contexts/ChartSelectionContext';
 
-// Enhanced icon mapping
+// Icon mapping with yellow color for the icons
 const iconMapping = {
-  Cpu: <Cpu size={16} />,
-  BatteryCharging: <BatteryCharging size={16} />,
-  BarChart: <BarChartHorizontal size={16} />,
-  Thermostat: <ThermometerSun size={16} />,
-  DirectionsCar: <Navigation size={16} />,
-  Send: <Send size={16} />,
-  Autorenew: <RotateCw size={16} />,
-  FlashOn: <Flashlight size={16} />,
-  Repeat: <Repeat size={16} />,
-  Dashboard: <LayoutDashboard size={16} />,
-  LocationOn: <MapPin size={16} />,
-  Vibration: <Vibrate size={16} />,
-  Speed: <Zap size={16} />,
-  Air: <Wind size={16} />,
-  Settings: <LucideSettings size={16} />,
-  Download: <LucideDownload size={16} />,
-  Activity: <Activity size={16} />,
-  HelpCircle: <HelpCircle size={16} />,
-  Gauge: <Gauge size={16} />,
-  Thermometer: <Thermometer size={16} />,
-  Battery: <Battery size={16} />,
-  Circuit: <CircuitBoard size={16} />,
-  Satellite: <Satellite size={16} />,
+  Cpu: <Cpu size={20} strokeWidth={1.5} color="#FFD700" />,
+  BatteryCharging: <BatteryCharging size={20} strokeWidth={1.5} color="#FFD700" />,
+  BarChart: <BarChartHorizontal size={20} strokeWidth={1.5} color="#FFD700" />,
+  Thermostat: <ThermometerSun size={20} strokeWidth={1.5} color="#FFD700" />,
+  DirectionsCar: <Navigation size={20} strokeWidth={1.5} color="#FFD700" />,
+  Send: <Send size={20} strokeWidth={1.5} color="#FFD700" />,
+  Autorenew: <RotateCw size={20} strokeWidth={1.5} color="#FFD700" />,
+  FlashOn: <Flashlight size={20} strokeWidth={1.5} color="#FFD700" />,
+  Repeat: <Repeat size={20} strokeWidth={1.5} color="#FFD700" />,
+  Dashboard: <LayoutDashboard size={20} strokeWidth={1.5} color="#FFD700" />,
+  LocationOn: <MapPin size={20} strokeWidth={1.5} color="#FFD700" />,
+  Vibration: <Vibrate size={20} strokeWidth={1.5} color="#FFD700" />,
+  Speed: <Zap size={20} strokeWidth={1.5} color="#FFD700" />,
+  Air: <Wind size={20} strokeWidth={1.5} color="#FFD700" />,
+  Settings: <LucideSettings size={20} strokeWidth={1.5} color="#FFD700" />,
+  Download: <LucideDownload size={20} strokeWidth={1.5} color="#FFD700" />,
+  Activity: <Activity size={20} strokeWidth={1.5} color="#FFD700" />,
+  HelpCircle: <HelpCircle size={20} strokeWidth={1.5} color="#FFD700" />,
+  Gauge: <Gauge size={20} strokeWidth={1.5} color="#FFD700" />,
+  Thermometer: <Thermometer size={20} strokeWidth={1.5} color="#FFD700" />,
+  Battery: <Battery size={20} strokeWidth={1.5} color="#FFD700" />,
+  Circuit: <CircuitBoard size={20} strokeWidth={1.5} color="#FFD700" />,
+  Satellite: <Satellite size={20} strokeWidth={1.5} color="#FFD700" />,
+  MapPin: <MapPin size={20} strokeWidth={1.5} color="#FFD700" />,
 };
+
+// Chart option item component
+const ChartOption = React.memo(({ 
+  option, 
+  isChecked, 
+  isFavorite,
+  onToggle, 
+  onToggleFavorite,
+  getIconForOption
+}) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: '#333333',
+      padding: 2,
+      borderRadius: 3,
+      mb: 1.5,
+      transition: 'background-color 0.2s',
+      '&:hover': {
+        backgroundColor: '#3A3A3A',
+      }
+    }}
+  >
+    <Box
+      onClick={onToggle}
+      sx={{
+        width: 20,
+        height: 20,
+        border: '1px solid #FF3B30',
+        borderRadius: 0.5,
+        bgcolor: isChecked ? '#FF3B30' : 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mr: 2,
+        cursor: 'pointer',
+        '&::after': isChecked ? {
+          content: '""',
+          display: 'block',
+          width: 10,
+          height: 6,
+          borderLeft: '2px solid white',
+          borderBottom: '2px solid white',
+          transform: 'rotate(-45deg) translate(1px, -1px)',
+        } : {}
+      }}
+    />
+    
+    <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+      {getIconForOption(option)}
+    </Box>
+    
+    <Typography 
+      variant="body1" 
+      sx={{ 
+        color: 'white',
+        flexGrow: 1,
+        fontWeight: 400,
+      }}
+    >
+      {option.label}
+    </Typography>
+    
+  </Box>
+));
+
+// Category component
+const Category = React.memo(({
+  category,
+  options,
+  selected,
+  isFavorite,
+  onToggle,
+  onToggleFavorite,
+  onSelectAll,
+  onUnselectAll,
+  getIconForOption
+}) => {
+  // Count selected items in this category
+  const selectedCount = options.filter(opt => selected.includes(opt.value)).length;
+  const totalCount = options.length;
+
+  return (
+    <Box sx={{ mb: 4 }}>
+      {/* Category header */}
+      <Box sx={{ mb: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 2
+        }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              color: '#FF3B30',
+              fontWeight: 'bold',
+              fontSize: '1.25rem' 
+            }}
+          >
+            {category}
+          </Typography>
+          
+          <Box
+            sx={{
+              backgroundColor: '#FF3B30',
+              borderRadius: 1,
+              px: 2,
+              py: 0.5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography
+              sx={{
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '0.875rem'
+              }}
+            >
+              {selectedCount}/{totalCount}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Action buttons */}
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          mb: 2 
+        }}>
+          <Button
+            onClick={onSelectAll}
+            fullWidth
+            sx={{
+              py: 1.5,
+              border: '1px solid rgba(255, 255, 255, 0.23)',
+              color: 'white',
+              borderRadius: 1,
+              textTransform: 'none',
+              bgcolor: '#333333',
+              '&:hover': {
+                backgroundColor: '#3A3A3A',
+                border: '1px solid rgba(255, 255, 255, 0.23)',
+              }
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+              Select All
+            </Typography>
+          </Button>
+          
+          <Button
+            onClick={onUnselectAll}
+            fullWidth
+            sx={{
+              py: 1.5,
+              border: '1px solid rgba(255, 255, 255, 0.23)',
+              color: '#FF9500',
+              borderRadius: 1,
+              textTransform: 'none',
+              bgcolor: '#333333',
+              '&:hover': {
+                backgroundColor: '#3A3A3A',
+                border: '1px solid rgba(255, 255, 255, 0.23)',
+              }
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+              Unselect All
+            </Typography>
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Options list */}
+      <Box>
+        {options.map((option) => (
+          <ChartOption
+            key={option.value}
+            option={option}
+            isChecked={selected.includes(option.value)}
+            isFavorite={isFavorite(option.value)}
+            onToggle={() => onToggle(option.value)}
+            onToggleFavorite={(e) => onToggleFavorite(e, option.value)}
+            getIconForOption={getIconForOption}
+          />
+        ))}
+      </Box>
+    </Box>
+  );
+});
 
 const GraphSelector = ({ groupedOptions, viewType = 'realTime' }) => {
   const { 
@@ -67,56 +250,63 @@ const GraphSelector = ({ groupedOptions, viewType = 'realTime' }) => {
     setRealTimeSelectedCharts,
     historicalSelectedCharts,
     setHistoricalSelectedCharts,
-    favorites,
     toggleFavorite,
-    isFavorite,
-    clearSelection,
-    selectAll,
-    unselectAll,
+    isFavorite
   } = useChartSelection();
   
   // Use the correct state based on viewType
   const selected = viewType === 'realTime' ? realTimeSelectedCharts : historicalSelectedCharts;
   const setSelected = viewType === 'realTime' ? setRealTimeSelectedCharts : setHistoricalSelectedCharts;
-    
-  const [searchQuery, setSearchQuery] = useState('');
-  const [expandedCategories, setExpandedCategories] = useState({});
   
-  // Set first category as expanded by default
-  useEffect(() => {
-    if (groupedOptions?.length > 0) {
-      setExpandedCategories({ [groupedOptions[0].category]: true });
-    }
-  }, [groupedOptions]);
-
-  const handleToggle = (value) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Memoize handlers to prevent recreation on every render
+  const handleToggle = useCallback((value) => {
     setSelected((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
-  };
-
-  const handleSelectAllInCategory = (group) => {
-    selectAll(group, viewType);
-  };
-
-  const handleUnselectAllInCategory = (group) => {
-    unselectAll(group, viewType);
-  };
-
-  const handleClearSelection = () => {
-    clearSelection(viewType);
-  };
+  }, [setSelected]);
   
-  const handleAccordionChange = (category) => (_, isExpanded) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: isExpanded
-    }));
-  };
-  
-  const handleToggleFavorite = (value) => {
+  const handleToggleFavorite = useCallback((event, value) => {
+    // Stop propagation to prevent the checkbox from toggling
+    event.stopPropagation();
+    event.preventDefault();
     toggleFavorite(value, viewType);
-  };
+  }, [toggleFavorite, viewType]);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('');
+  }, []);
+
+  // Get icon for option with fallback - memoized
+  const getIconForOption = useCallback((option) => {
+    const icon = option.icon;
+    return iconMapping[icon] || iconMapping.HelpCircle;
+  }, []);
+
+  // Handler for selecting all items in a category
+  const handleSelectAllInCategory = useCallback((options) => {
+    const optionValues = options.map(opt => opt.value);
+    setSelected(prev => {
+      const newSelection = [...prev];
+      optionValues.forEach(value => {
+        if (!newSelection.includes(value)) {
+          newSelection.push(value);
+        }
+      });
+      return newSelection;
+    });
+  }, [setSelected]);
+
+  // Handler for unselecting all items in a category
+  const handleUnselectAllInCategory = useCallback((options) => {
+    const optionValues = options.map(opt => opt.value);
+    setSelected(prev => prev.filter(value => !optionValues.includes(value)));
+  }, [setSelected]);
 
   // Calculate filtered options based on search query
   const filteredOptions = useMemo(() => {
@@ -130,282 +320,196 @@ const GraphSelector = ({ groupedOptions, viewType = 'realTime' }) => {
           option.value.toLowerCase().includes(searchQuery.toLowerCase())
       );
   }, [searchQuery, groupedOptions]);
-  
-  
-  // Calculate selection counts per category
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    
-    groupedOptions.forEach(group => {
-      const totalInCategory = group.options.length;
-      const selectedInCategory = group.options.filter(opt => 
-        selected.includes(opt.value)
-      ).length;
-      
-      counts[group.category] = {
-        total: totalInCategory,
-        selected: selectedInCategory
-      };
-    });
-    
-    return counts;
-  }, [groupedOptions, selected]);
+
+  // Get total selected count and total option count
+  const totalSelected = useMemo(() => 
+    selected.length
+  , [selected]);
+
+  const totalOptions = useMemo(() => 
+    groupedOptions.reduce((sum, group) => sum + group.options.length, 0)
+  , [groupedOptions]);
+
+  // Get title based on view type
+  const pageTitle = useMemo(() => {
+    if (viewType === 'realTime') {
+      return searchQuery ? 'Search Results' : 'Vehicle Control';
+    } else {
+      return searchQuery ? 'Search Results' : 'Historical Data';
+    }
+  }, [viewType, searchQuery]);
 
   return (
     <Box
       sx={{
         width: '100%',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-        p: 1,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#1A1A1A',
       }}
     >
-      <Box sx={{ mb: 2 }}>
-        <TextField
-          label="Search Charts"
-          size="small"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                {searchQuery && (
-                  <IconButton
-                    onClick={() => setSearchQuery('')}
-                    sx={{ color: 'action.active', p: '3px' }}
-                  >
-                    <Close fontSize="small" />
-                  </IconButton>
-                )}
-              </InputAdornment>
-            ),
+      {/* Header */}
+      <Box 
+        sx={{ 
+          p: 2,
+          mb: 1
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2
           }}
-          sx={{ 
-            bgcolor: 'action.hover', 
-            borderRadius: '6px',
-            '& .MuiOutlinedInput-root': {
-              '&:hover fieldset': {
-                borderColor: 'primary.main',
-              },
-            }
-          }}
-        />
-      </Box>
-      
-      {/* Selection actions and stats */}
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Button 
-          variant="contained" 
-          size="small" 
-          onClick={handleClearSelection}
-          disabled={selected.length === 0}
         >
-          Clear All
-        </Button>
-        
-        <Chip 
-          label={`${selected.length} selected`} 
-          color="primary" 
-          size="small"
-          variant={selected.length > 0 ? "filled" : "outlined"}
-        />
-      </Box>
-      
-      
-      {/* Search Results */}
-      {searchQuery ? (
-        <Box>
-          <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>
-            Search Results
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              color: '#FF3B30',
+              fontWeight: 'bold'
+            }}
+          >
+            {pageTitle}
           </Typography>
           
-          {filteredOptions.length === 0 ? (
+          <Box
+            sx={{
+              backgroundColor: '#FF3B30',
+              borderRadius: 1,
+              px: 2,
+              py: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <Typography
-              variant="body2"
-              sx={{ mt: 2, color: 'text.secondary', textAlign: 'center' }}
+              variant="body1"
+              sx={{
+                color: 'white',
+                fontWeight: 'bold',
+              }}
             >
-              No charts found matching "{searchQuery}"
+              {totalSelected}/{totalOptions}
             </Typography>
-          ) : (
-            <FormGroup sx={{ flexDirection: 'column', gap: 0.5 }}>
-              {filteredOptions.map((option) => {
-                const isChecked = selected.includes(option.value);
-                const isFav = isFavorite(option.value, viewType);
-                
-                return (
-                  <FormControlLabel
-                    key={`search-${option.value}`}
-                    sx={{
-                      m: 0,
-                      borderRadius: '4px',
-                      transition: 'background-color 0.2s',
-                      bgcolor: isChecked ? 'primary.dark' : 'background.default',
-                      color: isChecked ? 'primary.contrastText' : 'inherit',
-                      '&:hover': {
-                        bgcolor: isChecked ? 'primary.dark' : 'action.hover',
-                      },
-                    }}
-                    control={
-                      <Checkbox
-                        checked={isChecked}
-                        onChange={() => handleToggle(option.value)}
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          {iconMapping[option.icon] || iconMapping.HelpCircle}
-                          <Typography variant="body2" sx={{ ml: 0.5 }}>
-                            {option.label}
-                          </Typography>
-                        </Box>
-                        <IconButton 
-                          size="small" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleToggleFavorite(option.value);
-                          }}
-                          sx={{ 
-                            ml: 1, 
-                            p: 0.5,
-                            color: isFav ? 'warning.main' : 'action.active'
-                          }}
-                        >
-                          {isFav ? <Star fontSize="small" /> : <StarBorder fontSize="small" />}
-                        </IconButton>
-                      </Box>
-                    }
-                  />
-                );
-              })}
-            </FormGroup>
+          </Box>
+        </Box>
+
+        {/* Search field */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            bgcolor: '#333333',
+            borderRadius: 2,
+            px: 2,
+            py: 1.5,
+            mb: 2
+          }}
+        >
+          <SearchIcon sx={{ color: 'rgba(255, 255, 255, 0.5)', mr: 1 }} />
+          <InputBase
+            placeholder="Search charts..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            fullWidth
+            sx={{
+              color: 'white',
+              '&::placeholder': {
+                color: '#FFD700',
+                opacity: 0.7
+              },
+              '& input': {
+                color: 'white',
+                '&::placeholder': {
+                  color: '#FFD700',
+                  opacity: 0.7
+                }
+              }
+            }}
+          />
+          {searchQuery && (
+            <IconButton
+              size="small"
+              onClick={handleClearSearch}
+              sx={{ color: 'rgba(255, 255, 255, 0.5)' }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
           )}
         </Box>
-      ) : (
-        // Categories
-        <Box>
-          {groupedOptions.map((group) => {
-            const categoryCount = categoryCounts[group.category];
-            const isExpanded = expandedCategories[group.category] || false;
-            
-            return (
-              <Accordion
-                key={group.category}
+      </Box>
+
+      {/* Content area with categories or search results */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          px: 2,
+          pb: 2,
+          '&::-webkit-scrollbar': {
+            width: '8px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: '#1A1A1A',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: '#1E88E5',
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            background: '#1976D2',
+          },
+        }}
+      >
+        {searchQuery ? (
+          // Search results
+          <Box>
+            {filteredOptions.length === 0 ? (
+              <Typography
+                variant="body1"
                 sx={{
-                  mb: 1,
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  '&::before': { display: 'none' },
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  textAlign: 'center',
+                  mt: 4
                 }}
-                expanded={isExpanded}
-                onChange={handleAccordionChange(group.category)}
               >
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  sx={{ 
-                    bgcolor: 'action.disabledBackground',
-                    '&:hover': { bgcolor: 'action.hover' }
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                      {group.category}
-                    </Typography>
-                    <Tooltip title={`${categoryCount.selected} of ${categoryCount.total} selected`}>
-                      <Chip 
-                        label={`${categoryCount.selected}/${categoryCount.total}`}
-                        size="small"
-                        color={categoryCount.selected > 0 ? "primary" : "default"}
-                        variant={categoryCount.selected > 0 ? "filled" : "outlined"}
-                        sx={{ ml: 1, minWidth: 45 }}
-                      />
-                    </Tooltip>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails sx={{ bgcolor: 'background.default', p: 1 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                    <ButtonGroup variant="contained" size="small">
-                      <Button 
-                        onClick={() => handleSelectAllInCategory(group)}
-                        disabled={categoryCount.selected === categoryCount.total}
-                      >
-                        Select All
-                      </Button>
-                      <Button 
-                        onClick={() => handleUnselectAllInCategory(group)}
-                        disabled={categoryCount.selected === 0}
-                      >
-                        Unselect All
-                      </Button>
-                    </ButtonGroup>
-                  </Box>
-                  <FormGroup sx={{ flexDirection: 'column', gap: 0.5 }}>
-                    {group.options.map((option) => {
-                      const isChecked = selected.includes(option.value);
-                      const isFav = isFavorite(option.value, viewType);
-                      
-                      return (
-                        <FormControlLabel
-                          key={option.value}
-                          sx={{
-                            m: 0,
-                            borderRadius: '4px',
-                            transition: 'background-color 0.2s',
-                            bgcolor: isChecked ? 'primary.dark' : 'background.default',
-                            color: isChecked ? 'primary.contrastText' : 'inherit',
-                            '&:hover': {
-                              bgcolor: isChecked ? 'primary.dark' : 'action.hover',
-                            },
-                          }}
-                          control={
-                            <Checkbox
-                              size="small"
-                              checked={isChecked}
-                              onChange={() => handleToggle(option.value)}
-                              color="primary"
-                            />
-                          }
-                          label={
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                {iconMapping[option.icon] || iconMapping.HelpCircle}
-                                <Typography variant="body2" sx={{ ml: 0.5 }}>
-                                  {option.label}
-                                </Typography>
-                              </Box>
-                              <IconButton 
-                                size="small" 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleToggleFavorite(option.value);
-                                }}
-                                sx={{ 
-                                  ml: 1, 
-                                  p: 0.5,
-                                  color: isFav ? 'warning.main' : 'action.active'
-                                }}
-                              >
-                                {isFav ? <Star fontSize="small" /> : <StarBorder fontSize="small" />}
-                              </IconButton>
-                            </Box>
-                          }
-                        />
-                      );
-                    })}
-                  </FormGroup>
-                </AccordionDetails>
-              </Accordion>
-            );
-          })}
-        </Box>
-      )}
+                No charts found matching "{searchQuery}"
+              </Typography>
+            ) : (
+              filteredOptions.map((option) => (
+                <ChartOption
+                  key={`search-${option.value}`}
+                  option={option}
+                  isChecked={selected.includes(option.value)}
+                  isFavorite={isFavorite(option.value, viewType)}
+                  onToggle={() => handleToggle(option.value)}
+                  onToggleFavorite={(e) => handleToggleFavorite(e, option.value)}
+                  getIconForOption={getIconForOption}
+                />
+              ))
+            )}
+          </Box>
+        ) : (
+          // Categories
+          groupedOptions.map((group) => (
+            <Category
+              key={group.category}
+              category={group.category}
+              options={group.options}
+              selected={selected}
+              isFavorite={(value) => isFavorite(value, viewType)}
+              onToggle={handleToggle}
+              onToggleFavorite={handleToggleFavorite}
+              onSelectAll={() => handleSelectAllInCategory(group.options)}
+              onUnselectAll={() => handleUnselectAllInCategory(group.options)}
+              getIconForOption={getIconForOption}
+            />
+          ))
+        )}
+      </Box>
     </Box>
   );
 };

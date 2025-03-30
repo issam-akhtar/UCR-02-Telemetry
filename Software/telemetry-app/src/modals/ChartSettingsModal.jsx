@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { ChartSettingsContext } from '../contexts/ChartSettingsContext';
 import {
   Modal,
@@ -54,56 +54,177 @@ const SettingField = React.memo(({ label, tooltip, children }) => (
   </Box>
 ));
 
+/**
+ * Improved deep clone function that handles all types correctly
+ */
+const deepClone = (obj) => {
+  // Handle simple types and null/undefined
+  if (obj === null || obj === undefined || typeof obj !== 'object') {
+    return obj;
+  }
+  
+  // Handle Date objects
+  if (obj instanceof Date) {
+    return new Date(obj.getTime());
+  }
+  
+  // Handle Array objects
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClone(item));
+  }
+  
+  // Handle plain objects
+  const result = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      result[key] = deepClone(obj[key]);
+    }
+  }
+  
+  return result;
+};
+
+// Default settings as fallback
+const DEFAULT_SETTINGS = {
+  realTime: {
+    window: 30000,
+    updateInterval: 100
+  },
+  historical: {
+    downsampleThreshold: 1000,
+    downsampleFactor: 3,
+    pageSize: 1000,
+    refreshRate: 0,
+    dataZoomEnabled: true,
+    brushEnabled: false
+  },
+  dashboard: {
+    updateInterval: 500,
+    significantChangeThreshold: 1,
+    useImperialUnits: false,
+    showTempInF: false,
+    chartLayout: 'grid',
+    chartSize: 'medium'
+  },
+  global: {
+    enableTransitions: true,
+    animationDuration: 300,
+    enableHardwareAcceleration: true
+  }
+};
+
 // Performance-optimized modal component with improved design
 const ChartSettingsModal = ({ isOpen, onClose }) => {
   const theme = useTheme();
+  const hasUnsavedChanges = useRef(false);
   
-  // Get settings from context
-  const { settings, setSettings, resetToDefaults: contextResetToDefaults } = useContext(ChartSettingsContext);
+  // Get settings from context with safeguards
+  const settingsContext = useContext(ChartSettingsContext);
   
-  // Memoize initial local settings to avoid re-renders
-  const initialLocalSettings = useMemo(() => settings, [isOpen]);
+  // Ensure we have valid context values or use defaults
+  const contextSettings = useMemo(() => {
+    return settingsContext?.settings || DEFAULT_SETTINGS;
+  }, [settingsContext?.settings]);
   
-  // Local settings state that will only be applied when saved
-  const [localSettings, setLocalSettings] = useState(initialLocalSettings);
+  const setContextSettings = useCallback((newSettings) => {
+    if (typeof settingsContext?.setSettings === 'function') {
+      settingsContext.setSettings(newSettings);
+    }
+  }, [settingsContext]);
+  
+  const resetToDefaults = useCallback(() => {
+    if (typeof settingsContext?.resetToDefaults === 'function') {
+      settingsContext.resetToDefaults();
+    }
+  }, [settingsContext]);
+  
+  // Local settings state, initialized with deep clone to avoid reference issues
+  const [localSettings, setLocalSettings] = useState(() => deepClone(contextSettings));
   
   // Track active tab
   const [activeTab, setActiveTab] = useState(TABS.REALTIME);
   
-  // Reset local settings when modal opens (or settings change externally)
+  // Reset local settings when modal opens or context settings change
   useEffect(() => {
     if (isOpen) {
-      setLocalSettings(settings);
+      // Deep clone to avoid reference issues
+      const clonedSettings = deepClone(contextSettings);
+      console.log('Resetting local settings from context:', clonedSettings);
+      setLocalSettings(clonedSettings);
+      
+      // Reset the unsaved changes flag
+      hasUnsavedChanges.current = false;
     }
-  }, [isOpen, settings]);
+  }, [isOpen, contextSettings]);
 
   // Skip rendering if modal is closed for performance
   if (!isOpen) return null;
 
   // Change handlers with proper memoization
-  const handleChange = useCallback((section, field, value) => {
-    setLocalSettings(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
+  const handleChange = (section, field, value) => {
+    hasUnsavedChanges.current = true;
+    setLocalSettings(prev => {
+      // Create new objects to ensure React detects the change
+      const newSettings = deepClone(prev);
+      
+      if (!newSettings[section]) {
+        newSettings[section] = {};
       }
-    }));
-  }, []);
+      
+      if (field !== undefined) {
+        newSettings[section][field] = value;
+      } else if (typeof value === 'object') {
+        newSettings[section] = { ...newSettings[section], ...value };
+      }
+      
+      return newSettings;
+    });
+  };
 
   // Reset to defaults
-  const handleReset = useCallback(() => {
+  const handleReset = () => {
     // First reset to context defaults
-    contextResetToDefaults();
-    // Then update local state
-    setLocalSettings(initialLocalSettings);
-  }, [initialLocalSettings, contextResetToDefaults]);
+    resetToDefaults();
+    
+    // Then update local state with fresh copy from context
+    // Use timeout to ensure context has updated first
+    setTimeout(() => {
+      setLocalSettings(deepClone(contextSettings));
+      hasUnsavedChanges.current = false;
+    }, 50);
+  };
 
   // Save changes and close modal
-  const handleSave = useCallback(() => {
-    setSettings(localSettings);
+  const handleSave = () => {
+    console.log('Saving settings:', localSettings);
+    
+    // Create a fresh deep clone to avoid any reference issues
+    const settingsToSave = deepClone(localSettings);
+    
+    // Always update context to ensure settings are saved
+    setContextSettings(settingsToSave);
+    
+    // Notify the entire application about the settings changes
+    document.dispatchEvent(new CustomEvent('settings-updated', { 
+      detail: { settings: settingsToSave },
+      bubbles: true 
+    }));
+    
+    // Close modal immediately
     onClose();
-  }, [localSettings, onClose, setSettings]);
+    
+    // Force a UI update after closing to ensure changes are visible
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('force-ui-update', {
+        detail: { timestamp: Date.now() }
+      }));
+    }, 100);
+  };
+
+  // Handle tab change
+  const handleTabChange = (_, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <Modal 
@@ -177,7 +298,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
         {/* Tabs */}
         <Tabs 
           value={activeTab} 
-          onChange={(_, newValue) => setActiveTab(newValue)}
+          onChange={handleTabChange}
           variant="fullWidth"
           sx={{ 
             borderBottom: 1, 
@@ -231,7 +352,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 tooltip="Amount of time (ms) to display in real-time charts"
               >
                 <Slider
-                  value={localSettings.realTime.window}
+                  value={localSettings.realTime?.window ?? DEFAULT_SETTINGS.realTime.window}
                   onChange={(_, value) => handleChange('realTime', 'window', value)}
                   min={1000}
                   max={60000}
@@ -259,7 +380,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 tooltip="How frequently (ms) the charts update with new data. Higher values improve performance."
               >
                 <Slider
-                  value={localSettings.realTime.updateInterval}
+                  value={localSettings.realTime?.updateInterval ?? DEFAULT_SETTINGS.realTime.updateInterval}
                   onChange={(_, value) => handleChange('realTime', 'updateInterval', value)}
                   min={10}
                   max={500}
@@ -282,33 +403,6 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 />
               </SettingField>
               
-              <SettingField 
-                label="Line Width" 
-                tooltip="Thickness of chart lines. Thinner lines may improve performance."
-              >
-                <Slider
-                  value={localSettings.realTime.lineWidth}
-                  onChange={(_, value) => handleChange('realTime', 'lineWidth', value)}
-                  min={1}
-                  max={5}
-                  step={0.5}
-                  marks={[
-                    { value: 1, label: '1px' },
-                    { value: 3, label: '3px' },
-                    { value: 5, label: '5px' },
-                  ]}
-                  valueLabelDisplay="auto"
-                  valueLabelFormat={(value) => `${value}px`}
-                  sx={{
-                    '& .MuiSlider-thumb': {
-                      transition: 'all 0.1s ease-in-out',
-                      '&:hover, &.Mui-focusVisible': {
-                        boxShadow: `0 0 0 8px ${alpha(theme.palette.primary.main, 0.16)}`
-                      }
-                    }
-                  }}
-                />
-              </SettingField>
             </Stack>
           )}
 
@@ -321,10 +415,13 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
               >
                 <TextField
                   type="number"
-                  value={localSettings.historical.downsampleThreshold}
-                  onChange={(e) => 
-                    handleChange('historical', 'downsampleThreshold', Number(e.target.value))
-                  }
+                  value={localSettings.historical?.downsampleThreshold ?? DEFAULT_SETTINGS.historical.downsampleThreshold}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (!isNaN(value) && value >= 100 && value <= 10000) {
+                      handleChange('historical', 'downsampleThreshold', value);
+                    }
+                  }}
                   fullWidth
                   inputProps={{ min: 100, max: 10000 }}
                   variant="outlined"
@@ -344,7 +441,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 tooltip="How aggressively to reduce data points (higher = more reduction)"
               >
                 <Slider
-                  value={localSettings.historical.downsampleFactor}
+                  value={localSettings.historical?.downsampleFactor ?? DEFAULT_SETTINGS.historical.downsampleFactor}
                   onChange={(_, value) => handleChange('historical', 'downsampleFactor', value)}
                   min={1}
                   max={10}
@@ -371,7 +468,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 tooltip="Number of data points to fetch per request (lower = better performance)"
               >
                 <Slider
-                  value={localSettings.historical.pageSize}
+                  value={localSettings.historical?.pageSize ?? DEFAULT_SETTINGS.historical.pageSize}
                   onChange={(_, value) => handleChange('historical', 'pageSize', value)}
                   min={100}
                   max={10000}
@@ -400,10 +497,13 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
               >
                 <TextField
                   type="number"
-                  value={localSettings.historical.refreshRate}
-                  onChange={(e) => 
-                    handleChange('historical', 'refreshRate', Number(e.target.value))
-                  }
+                  value={localSettings.historical?.refreshRate ?? DEFAULT_SETTINGS.historical.refreshRate}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (!isNaN(value) && value >= 0) {
+                      handleChange('historical', 'refreshRate', value);
+                    }
+                  }}
                   fullWidth
                   inputProps={{ min: 0, step: 1000 }}
                   variant="outlined"
@@ -435,7 +535,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={localSettings.historical.dataZoomEnabled}
+                      checked={localSettings.historical?.dataZoomEnabled ?? DEFAULT_SETTINGS.historical.dataZoomEnabled}
                       onChange={(e) => 
                         handleChange('historical', 'dataZoomEnabled', e.target.checked)
                       }
@@ -457,7 +557,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={localSettings.historical.brushEnabled}
+                      checked={localSettings.historical?.brushEnabled ?? DEFAULT_SETTINGS.historical.brushEnabled}
                       onChange={(e) => 
                         handleChange('historical', 'brushEnabled', e.target.checked)
                       }
@@ -497,7 +597,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                   tooltip="How frequently (ms) the dashboard components update. Higher values improve performance."
                 >
                   <Slider
-                    value={localSettings.dashboard.updateInterval}
+                    value={localSettings.dashboard?.updateInterval ?? DEFAULT_SETTINGS.dashboard.updateInterval}
                     onChange={(_, value) => handleChange('dashboard', 'updateInterval', value)}
                     min={100}
                     max={1000}
@@ -525,7 +625,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                   tooltip="Only update visuals when values change by this percentage (higher = better performance)"
                 >
                   <Slider
-                    value={localSettings.dashboard.significantChangeThreshold}
+                    value={localSettings.dashboard?.significantChangeThreshold ?? DEFAULT_SETTINGS.dashboard.significantChangeThreshold}
                     onChange={(_, value) => handleChange('dashboard', 'significantChangeThreshold', value)}
                     min={0}
                     max={5}
@@ -562,7 +662,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={localSettings.dashboard.useImperialUnits}
+                      checked={localSettings.dashboard?.useImperialUnits ?? DEFAULT_SETTINGS.dashboard.useImperialUnits}
                       onChange={(e) => 
                         handleChange('dashboard', 'useImperialUnits', e.target.checked)
                       }
@@ -580,7 +680,7 @@ const ChartSettingsModal = ({ isOpen, onClose }) => {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={localSettings.dashboard.showTempInF}
+                      checked={localSettings.dashboard?.showTempInF ?? DEFAULT_SETTINGS.dashboard.showTempInF}
                       onChange={(e) => 
                         handleChange('dashboard', 'showTempInF', e.target.checked)
                       }

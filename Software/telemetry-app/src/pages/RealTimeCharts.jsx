@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -18,13 +18,10 @@ import {
   Skeleton,
   Fade,
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
+import { useTheme, alpha } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import SettingsIcon from '@mui/icons-material/Settings';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import GridViewIcon from '@mui/icons-material/GridView';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
@@ -113,37 +110,56 @@ const groupedChartOptions = [
   },
 ];
 
+// Simple debounce utility
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 const RealTimeCharts = () => {
   const theme = useTheme();
-  const { settings, updateSettings, toggleTheme } = useContext(ChartSettingsContext);
+  const { settings, updateSettings } = useContext(ChartSettingsContext);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   
-  // Use the enhanced chart selection context
+  // Refs for timers and resources
+  const resizeTimerRef = useRef(null);
+  
+  // Use the chart selection context
   const {
     realTimeSelectedCharts,
     setRealTimeSelectedCharts,
     realTimeSidebarCollapsed,
     setRealTimeSidebarCollapsed,
     savedViews,
-    loadView,
     activeView,
   } = useChartSelection();
 
-  // Define scrollbar styles based on the current theme
-  const scrollbarStyles = {
-    scrollbarWidth: 'thin', // Firefox
-    scrollbarColor: theme.palette.mode === 'dark' ? '#666 #222' : '#aaa #eee',
-    '&::-webkit-scrollbar': { width: '8px' }, // Chrome, Safari
-    '&::-webkit-scrollbar-track': { backgroundColor: theme.palette.mode === 'dark' ? '#222' : '#eee' },
-    '&::-webkit-scrollbar-thumb': { backgroundColor: theme.palette.mode === 'dark' ? '#666' : '#aaa', borderRadius: '4px' },
-  };
+  // Define scrollbar styles
+  const scrollbarStyles = useMemo(() => ({
+    '&::-webkit-scrollbar': {
+      width: '8px',
+      height: '8px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#1A1A1A',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#1E88E5',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#1976D2',
+    },
+  }), []);
 
   // Local state
   const [isPaused, setIsPaused] = useState(false);
-  const [settingsMenuAnchor, setSettingsMenuAnchor] = useState(null);
   const [visibleCharts, setVisibleCharts] = useState(realTimeSelectedCharts);
-  const [layoutMode, setLayoutMode] = useState(settings.dashboard.chartLayout || 'grid');
-  const [chartSize, setChartSize] = useState(settings.dashboard.chartSize || 'medium');
+  const [layoutMode, setLayoutMode] = useState(settings.dashboard?.chartLayout || 'grid');
+  const [chartSize, setChartSize] = useState(settings.dashboard?.chartSize || 'medium');
   const [isLoading, setIsLoading] = useState(false);
   
   // Get active view details
@@ -151,6 +167,17 @@ const RealTimeCharts = () => {
     if (!activeView.realTime) return null;
     return savedViews.realTime.find(v => v.id === activeView.realTime);
   }, [activeView.realTime, savedViews.realTime]);
+
+  // Detect low power mode
+  const isLowPowerMode = useMemo(() => {
+    return (
+      localStorage.getItem('forceRaspberryPiMode') === 'true' ||
+      navigator.deviceMemory < 4 ||
+      navigator.hardwareConcurrency < 4 ||
+      /Raspberry Pi/i.test(navigator.userAgent) || 
+      /Linux arm/i.test(navigator.userAgent)
+    );
+  }, []);
 
   // Effect to update settings when layout or size changes
   useEffect(() => {
@@ -163,7 +190,6 @@ const RealTimeCharts = () => {
 
   // Update visible charts when selected charts change
   useEffect(() => {
-    // Use a slight delay to create a smoother transition
     const timer = setTimeout(() => {
       setVisibleCharts(realTimeSelectedCharts);
       setIsLoading(false);
@@ -171,70 +197,47 @@ const RealTimeCharts = () => {
     return () => clearTimeout(timer);
   }, [realTimeSelectedCharts]);
 
-  // Controls
-  const togglePause = () => setIsPaused((p) => !p);
+  // Controls - memoized to prevent recreation on every render
+  const togglePause = useCallback(() => {
+    setIsPaused(prev => !prev);
+  }, []);
 
-  const handleSettingsClick = (event) => {
-    setSettingsMenuAnchor(event.currentTarget);
-  };
-
-  const handleSettingsClose = () => {
-    setSettingsMenuAnchor(null);
-  };
-
-  const handleToggleLayout = () => {
+  const handleToggleLayout = useCallback(() => {
     setLayoutMode(prev => prev === 'grid' ? 'list' : 'grid');
-  };
+  }, []);
 
-  const handleChartSizeChange = (event) => {
+  const handleChartSizeChange = useCallback((event) => {
     setChartSize(event.target.value);
-  };
-
-  // Detect low power mode from system information or localStorage override
-  const isLowPowerMode = useMemo(() => {
-    return (
-      localStorage.getItem('forceRaspberryPiMode') === 'true' ||
-      navigator.deviceMemory < 4 ||
-      navigator.hardwareConcurrency < 4 ||
-      /Raspberry Pi/i.test(navigator.userAgent) || 
-      /Linux arm/i.test(navigator.userAgent)
-    );
   }, []);
 
   // Get chart title from options
-  const getTitle = (chartType) => {
+  const getTitle = useCallback((chartType) => {
     for (const group of groupedChartOptions) {
       const found = group.options.find((opt) => opt.value === chartType);
       if (found) return found.label;
     }
     return chartType;
-  };
+  }, []);
 
   // Calculate chart height based on size setting
-  const getChartHeight = () => {
+  const getChartHeight = useCallback(() => {
     switch (chartSize) {
       case 'large': return 650;
       case 'medium':
       default: return 500;
     }
-  };
+  }, [chartSize]);
 
   // Calculate grid columns based on chart size and layout
-  const getGridColumns = () => {
+  const getGridColumns = useCallback(() => {
     if (layoutMode === 'list') return 1;
-
-    // For grid mode, adjust columns based on chart size
     if (isSmallScreen) return 1;
 
-    switch (chartSize) {
-      case 'large': return 1;
-      case 'medium':
-      default: return 2;
-    }
-  };
+    return chartSize === 'large' ? 1 : 2;
+  }, [layoutMode, isSmallScreen, chartSize]);
 
   // Render chart items for list layout (virtualized for performance)
-  const renderChartRow = ({ index, key, style }) => {
+  const renderChartRow = useCallback(({ index, key, style }) => {
     const chartType = visibleCharts[index];
     const title = getTitle(chartType);
     const height = getChartHeight();
@@ -250,12 +253,25 @@ const RealTimeCharts = () => {
         />
       </div>
     );
-  };
+  }, [visibleCharts, getTitle, getChartHeight, isPaused]);
 
-  // Fire a resize event after sidebar transitions so charts fill the new space
+  // Fire a resize event after sidebar transitions
   useEffect(() => {
-    const timer = setTimeout(() => window.dispatchEvent(new Event('resize')), 310);
-    return () => clearTimeout(timer);
+    if (resizeTimerRef.current) {
+      clearTimeout(resizeTimerRef.current);
+    }
+    
+    resizeTimerRef.current = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+      resizeTimerRef.current = null;
+    }, 310);
+    
+    return () => {
+      if (resizeTimerRef.current) {
+        clearTimeout(resizeTimerRef.current);
+        resizeTimerRef.current = null;
+      }
+    };
   }, [realTimeSidebarCollapsed]);
 
   // Set responsive sidebar behavior
@@ -265,8 +281,59 @@ const RealTimeCharts = () => {
     }
   }, [isSmallScreen, realTimeSidebarCollapsed, setRealTimeSidebarCollapsed]);
 
+  // Empty state message
+  const emptyStateMessage = useMemo(() => (
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+      gap: 2
+    }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          textAlign: 'center',
+          maxWidth: 600,
+          borderRadius: 2,
+          bgcolor: '#212121',
+          border: '1px solid rgba(255, 255, 255, 0.12)'
+        }}
+      >
+        <AutoAwesomeIcon sx={{ 
+          fontSize: 50, 
+          color: '#FF3B30', 
+          mb: 2,
+          filter: 'drop-shadow(0 0 8px rgba(255, 59, 48, 0.4))'
+        }} />
+        <Typography variant="h5" color="white" gutterBottom>No Charts Selected</Typography>
+        <Typography variant="body1" color="rgba(255, 255, 255, 0.7)" paragraph>
+          Use the sidebar to select charts you want to display in real-time.
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<MenuIcon />}
+          onClick={() => setRealTimeSidebarCollapsed(false)}
+          sx={{
+            bgcolor: '#FF3B30',
+            '&:hover': {
+              bgcolor: '#D32F2F',
+            },
+            textTransform: 'none',
+            px: 3,
+            py: 1
+          }}
+        >
+          Open Chart Selector
+        </Button>
+      </Paper>
+    </Box>
+  ), [setRealTimeSidebarCollapsed]);
+
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden', bgcolor: '#121212' }}>
       {/* Collapsible LEFT SIDEBAR - as a Drawer on mobile */}
       {isSmallScreen ? (
         <Drawer
@@ -276,7 +343,8 @@ const RealTimeCharts = () => {
           PaperProps={{
             sx: {
               width: 350,
-              backgroundColor: theme.palette.background.paper
+              backgroundColor: '#1A1A1A',
+              boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
             }
           }}
         >
@@ -285,17 +353,16 @@ const RealTimeCharts = () => {
               display: 'flex',
               alignItems: 'center',
               p: 2,
-              borderBottom: 1,
-              borderColor: 'divider',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
               justifyContent: 'space-between',
             }}
           >
-            <Typography variant="h6">Chart Selector</Typography>
-            <IconButton onClick={() => setRealTimeSidebarCollapsed(true)}>
+            <Typography variant="h6" sx={{ color: 'white' }}>Graph Selector</Typography>
+            <IconButton onClick={() => setRealTimeSidebarCollapsed(true)} sx={{ color: 'white' }}>
               <CloseIcon />
             </IconButton>
           </Box>
-          <Box sx={{ p: 2, overflowY: 'auto', height: 'calc(100% - 64px)', ...scrollbarStyles }}>
+          <Box sx={{ p: 0, overflowY: 'auto', height: 'calc(100% - 64px)', ...scrollbarStyles }}>
             <GraphSelector
               groupedOptions={groupedChartOptions}
               viewType="realTime"
@@ -306,13 +373,9 @@ const RealTimeCharts = () => {
         <Box
           sx={{
             width: realTimeSidebarCollapsed ? 60 : 350,
-            transition: theme.transitions.create('width', {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.standard,
-            }),
-            borderRight: 1,
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
+            transition: 'width 0.3s ease',
+            borderRight: '1px solid rgba(255, 255, 255, 0.12)',
+            bgcolor: '#1A1A1A',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -323,27 +386,26 @@ const RealTimeCharts = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              p: 1,
-              borderBottom: 1,
-              borderColor: 'divider',
+              p: realTimeSidebarCollapsed ? 1 : 2,
+              borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
               justifyContent: realTimeSidebarCollapsed ? 'center' : 'space-between',
             }}
           >
             {realTimeSidebarCollapsed ? (
-              <IconButton onClick={() => setRealTimeSidebarCollapsed(false)}>
+              <IconButton onClick={() => setRealTimeSidebarCollapsed(false)} sx={{ color: 'white' }}>
                 <MenuIcon />
               </IconButton>
             ) : (
               <>
-                <Typography variant="h6">Chart Selector</Typography>
-                <IconButton onClick={() => setRealTimeSidebarCollapsed(true)}>
+                <Typography variant="h6" sx={{ color: 'white' }}>Graph Selector</Typography>
+                <IconButton onClick={() => setRealTimeSidebarCollapsed(true)} sx={{ color: 'white' }}>
                   <CloseIcon />
                 </IconButton>
               </>
             )}
           </Box>
           {!realTimeSidebarCollapsed && (
-            <Box sx={{ p: 2, overflowY: 'auto', flexGrow: 1, ...scrollbarStyles }}>
+            <Box sx={{ p: 0, overflowY: 'auto', flexGrow: 1, ...scrollbarStyles }}>
               <GraphSelector
                 groupedOptions={groupedChartOptions}
                 viewType="realTime"
@@ -359,52 +421,82 @@ const RealTimeCharts = () => {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        bgcolor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.02)',
+        bgcolor: '#121212',
       }}>
         {/* Toolbar */}
         <Box
           sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            p: 1,
+            borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+            p: 1.5,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: 1,
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: '#1A1A1A',
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {isSmallScreen && (
-              <IconButton onClick={() => setRealTimeSidebarCollapsed(false)}>
+              <IconButton onClick={() => setRealTimeSidebarCollapsed(false)} sx={{ color: 'white' }}>
                 <MenuIcon />
               </IconButton>
             )}
 
-            <Badge badgeContent={realTimeSelectedCharts.length} color="primary">
-              <Typography variant="h6" sx={{ mr: 1 }}>Real-Time Graphs</Typography>
+            <Badge 
+              badgeContent={realTimeSelectedCharts.length} 
+              color="error"
+              sx={{
+                '& .MuiBadge-badge': {
+                  backgroundColor: '#FF3B30',
+                  color: 'white'
+                }
+              }}
+            >
+              <Typography variant="h6" sx={{ color: 'white', mr: 1 }}>Real-Time Graphs</Typography>
             </Badge>
             
             {/* Show active view name if any */}
             {currentActiveView && (
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                 {currentActiveView.name}
               </Typography>
             )}
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            {/* Layout controls - Grid icon and Fullscreen icon */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+            {/* Layout controls - Grid icon */}
             <Tooltip title="Toggle Layout">
-              <IconButton onClick={handleToggleLayout} color="primary" sx={{ color: theme.palette.error.main }}>
+              <IconButton onClick={handleToggleLayout} sx={{ color: '#FF3B30' }}>
                 <GridViewIcon />
               </IconButton>
             </Tooltip>
 
-
             {/* Chart size dropdown */}
-            <FormControl size="small" sx={{ minWidth: 120 }}>
+            <FormControl 
+              size="small" 
+              sx={{ 
+                minWidth: 120,
+                '& .MuiOutlinedInput-root': {
+                  color: 'white',
+                  '& fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.23)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.4)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#FF3B30',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                },
+                '& .MuiSvgIcon-root': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }
+              }}
+            >
               <InputLabel id="chart-size-label">Chart Size</InputLabel>
               <Select
                 labelId="chart-size-label"
@@ -419,29 +511,24 @@ const RealTimeCharts = () => {
               </Select>
             </FormControl>
 
-            <Divider orientation="vertical" flexItem />
+            <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255, 255, 255, 0.12)' }} />
 
             <Button
               variant="contained"
-              color={isPaused ? "primary" : "error"}
+              color="error"
               onClick={togglePause}
               startIcon={isPaused ? <RefreshIcon /> : <CloseIcon />}
               size="small"
+              sx={{
+                bgcolor: isPaused ? '#357a38' : '#FF3B30',
+                '&:hover': {
+                  bgcolor: isPaused ? '#2e7031' : '#D32F2F',
+                },
+                textTransform: 'none'
+              }}
             >
               {isPaused ? 'Resume' : 'Pause All'}
             </Button>
-
-
-            {/* Settings menu */}
-            <Menu
-              anchorEl={settingsMenuAnchor}
-              open={Boolean(settingsMenuAnchor)}
-              onClose={handleSettingsClose}
-              PaperProps={{
-                sx: { width: 250 }
-              }}
-            >
-            </Menu>
           </Box>
         </Box>
 
@@ -453,39 +540,7 @@ const RealTimeCharts = () => {
           p: 2
         }}>
           {/* No charts selected message */}
-          {visibleCharts.length === 0 && !isLoading && (
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              gap: 2
-            }}>
-              <Paper
-                elevation={3}
-                sx={{
-                  p: 4,
-                  textAlign: 'center',
-                  maxWidth: 600,
-                  borderRadius: 2
-                }}
-              >
-                <AutoAwesomeIcon sx={{ fontSize: 50, color: 'primary.main', mb: 2 }} />
-                <Typography variant="h5" gutterBottom>No Charts Selected</Typography>
-                <Typography variant="body1" color="text.secondary" paragraph>
-                  Use the sidebar to select charts you want to display in real-time.
-                </Typography>
-                <Button
-                  variant="contained"
-                  startIcon={<MenuIcon />}
-                  onClick={() => setRealTimeSidebarCollapsed(false)}
-                >
-                  Open Chart Selector
-                </Button>
-              </Paper>
-            </Box>
-          )}
+          {visibleCharts.length === 0 && !isLoading && emptyStateMessage}
 
           {/* Loading state */}
           {isLoading && (
@@ -497,7 +552,7 @@ const RealTimeCharts = () => {
                     width="100%"
                     height={500}
                     animation="wave"
-                    sx={{ borderRadius: 2 }}
+                    sx={{ borderRadius: 2, bgcolor: 'rgba(255, 255, 255, 0.1)' }}
                   />
                 </Grid>
               ))}
@@ -562,4 +617,4 @@ const RealTimeCharts = () => {
   );
 };
 
-export default RealTimeCharts;
+export default React.memo(RealTimeCharts);
