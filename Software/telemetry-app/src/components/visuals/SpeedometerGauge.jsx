@@ -40,7 +40,7 @@ const SPEED_THRESHOLDS = {
   LOW: 20,
   MEDIUM: 45,
   HIGH: 50,
-  MAX: 100
+  MAX: 110
 };
 
 /**
@@ -164,7 +164,7 @@ const SpeedometerGauge = () => {
 
   // Animation settings from global context
   const animationsEnabled = settings?.global?.enableTransitions !== false;
-  const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== false;
+  const hardwareAcceleration = settings?.global?.enableHardwareAcceleration !== true;
 
   // Component state
   const [speed, setSpeed] = useState(0);
@@ -243,7 +243,7 @@ const SpeedometerGauge = () => {
           : Date.now();
 
         // Convert from m/s to km/h
-        const computedSpeed = Math.sqrt(northVel ** 2 + eastVel ** 2) * 3.6;
+        const computedSpeed = Math.sqrt(northVel ** 2 + eastVel ** 2) * 3.6; //compute speed from gps
 
         if (Math.abs(computedSpeed - lastSpeedRef.current) >= changeThreshold) {
           const dt = (newTimestamp - lastTimestampRef.current) / 1000;
@@ -256,7 +256,7 @@ const SpeedometerGauge = () => {
             cancelAnimationFrame(animationFrameRef.current);
           }
           animationFrameRef.current = requestAnimationFrame(() => {
-            setSpeed(computedSpeed);
+            setSpeed(computedSpeed); //set speed here 
             setAcceleration(accel);
             if (computedSpeed > maxSpeed) {
               setMaxSpeed(computedSpeed);

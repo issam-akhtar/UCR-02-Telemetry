@@ -9,6 +9,10 @@ import (
 	"math"
 	"os"
 	"strings"
+	"time"
+
+	"strconv"
+	// "time"
 
 	"telem-system/internal/config"
 	"telem-system/pkg/candecoder"
@@ -18,11 +22,14 @@ import (
 )
 
 var seq uint64 = 0
+var oldTime float64 = 0.000
 //350.csv start at 700000
-var filePath string = "../../testdata/Data/350.csv"
-var start int = 700000
+//issam.csv at 100000
+var filePath string = "../../testdata/issam.csv"
+var start int = 110000
 func main() {
 	// Load configuration
+	
 	cfg, err := config.LoadConfig("../../configs/", "config", "yaml")
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
@@ -69,7 +76,33 @@ func sendCSV(conn *websocket.Conn) {
 		if lineCount <= start {
 			continue
 		}
-		fmt.Printf("\rSending line number: %d", lineCount)
+		
+		// Split the line into fields
+		fields := strings.Split(line, ",") // Assuming CSV is comma-separated
+		if len(fields) == 0 {
+			continue
+		}
+		
+		// Parse the timestamp from the first field
+		currentTime, err := strconv.ParseFloat(fields[0], 64)
+		if err != nil {
+			log.Printf("Error parsing time: %v", err)
+			continue
+		}
+		
+		// Calculate sleep time
+		sleepTime := currentTime - oldTime - 0.000415
+		if sleepTime < 0 {
+			sleepTime = currentTime - oldTime
+		}
+		
+		fmt.Printf("\rstarting sleep: %f", sleepTime)
+		// Sleep for the calculated time
+		time.Sleep(time.Duration(sleepTime))
+		oldTime = currentTime
+
+
+		fmt.Printf("\rSending line number: %d at %f", lineCount, oldTime)
 		if err := conn.WriteMessage(websocket.TextMessage, []byte(line)); err != nil {
 			log.Printf("Error sending CSV line: %v", err)
 			return
