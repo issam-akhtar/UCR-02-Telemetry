@@ -10,27 +10,30 @@ import (
 	"math"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
-	"time"
-
 	"telem-system/internal/config"
 	"telem-system/pkg/candecoder"
 	"telem-system/pkg/types"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
 
 var seq uint64 = 0
+var oldTime float64 = 0.0
 
 // Command line flags for easier configuration
 var (
-	delay      = flag.Float64("delay", 2.5, "Delay between messages in milliseconds (set to 0 for no delay)")
 	configPath = flag.String("config", "../../configs/", "Path to config directory")
 	configName = flag.String("configname", "config", "Name of config file without extension")
 	configType = flag.String("configtype", "yaml", "Config file type (yaml, json, etc)")
 	csvFile    = flag.String("csvfile", "../../testdata/data.csv", "Path to CSV file")
+	startLine  = flag.Int("startline", 960000, "Line number to start sending from")
+	timeAdjust = flag.Float64("timeadjust", 0.000415, "Time adjustment factor (seconds)")
+	liveDelay  = flag.Float64("livedelay", 3, "Delay between messages in live mode (milliseconds)")
 )
 
 // safeConn is a thread-safe connection wrapper.
@@ -76,7 +79,6 @@ func main() {
 	// Construct the telemetry URL using both IP and port from config.
 	telemetryURL := fmt.Sprintf("ws://%s:%d/telemetry", cfg.WebSocket.IP, cfg.WebSocket.Port)
 	log.Printf("Simulated data sender connecting to %s in mode: %s", telemetryURL, cfg.Mode)
-	log.Printf("Message delay: %f ms", *delay)
 
 	// Dial the receiver's telemetry WebSocket endpoint.
 	conn, _, err := websocket.DefaultDialer.Dial(telemetryURL, nil)
@@ -98,16 +100,13 @@ func main() {
 	go func() {
 		<-sigChan
 		fmt.Println("\nReceived termination signal, closing connection...")
-
 		// Send a proper close frame using thread-safe wrapper.
 		closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Sender terminated")
 		if err := safeConnection.writeMessage(websocket.CloseMessage, closeMsg); err != nil {
 			log.Printf("Error sending close message: %v", err)
 		}
-
 		// Close the connection using thread-safe wrapper.
 		safeConnection.close()
-
 		// Signal that we're done.
 		closeDone(done)
 	}()
@@ -115,9 +114,9 @@ func main() {
 	// Stream data based on the configured mode.
 	switch cfg.Mode {
 	case "csv":
-		go sendCSV(safeConnection, *csvFile, *delay, done)
+		go sendCSV(safeConnection, *csvFile, *timeAdjust, *startLine, done)
 	case "live":
-		go sendLive(safeConnection, cfg, *delay, done)
+		go sendLive(safeConnection, cfg, *liveDelay, done)
 	default:
 		log.Fatalf("Invalid mode in configuration")
 	}
@@ -128,8 +127,8 @@ func main() {
 }
 
 // sendCSV reads a CSV file and streams its lines over the WebSocket connection.
-// It skips all lines up to line 10000 without delay, then applies the delay for subsequent lines.
-func sendCSV(conn *safeConn, filePath string, delay float64, done chan struct{}) {
+// It uses timestamp differences from the CSV to determine sleep times.
+func sendCSV(conn *safeConn, filePath string, timeAdjust float64, startLine int, done chan struct{}) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Printf("Error opening CSV file: %v", err)
@@ -140,9 +139,7 @@ func sendCSV(conn *safeConn, filePath string, delay float64, done chan struct{})
 
 	scanner := bufio.NewScanner(file)
 	lineCount := 0
-
-	// We'll create the ticker only when we start sending messages.
-	var ticker *time.Ticker
+	oldTime = 0.0 // Reset the timestamp tracker
 
 	for scanner.Scan() {
 		lineCount++
@@ -154,24 +151,43 @@ func sendCSV(conn *safeConn, filePath string, delay float64, done chan struct{})
 		default:
 		}
 
-		// Skip all lines until reaching the 10000th line.
-		if lineCount < 110000 {
+		// Skip lines until reaching the specified start line
+		if lineCount < startLine {
 			continue
 		}
 
-		// Create ticker once when first sending a line, if delay is enabled.
-		if delay > 0 && ticker == nil {
-			ticker = time.NewTicker(time.Duration(delay * float64(time.Millisecond)))
-			defer ticker.Stop()
-		}
-
-		// Apply delay only for sending phase.
-		if delay > 0 && ticker != nil {
-			<-ticker.C
-		}
-
-		// Send the CSV line.
+		// Get the current line and split into fields
 		line := scanner.Text()
+		fields := strings.Split(line, ",") // Assuming CSV is comma-separated
+
+		if len(fields) == 0 {
+			continue
+		}
+
+		// Parse the timestamp from the first field
+		currentTime, err := strconv.ParseFloat(fields[0], 64)
+		if err != nil {
+			log.Printf("Error parsing time from field '%s': %v", fields[0], err)
+			continue
+		}
+
+		// Calculate sleep time based on timestamp difference
+		if oldTime > 0 {
+			// Only sleep if this isn't the first processed line
+			sleepTime := currentTime - oldTime - timeAdjust
+			if sleepTime < 0 {
+				sleepTime = currentTime - oldTime
+			}
+
+			fmt.Printf("\rSleeping for: %f seconds", sleepTime)
+			time.Sleep(time.Duration(sleepTime * float64(time.Second)))
+		}
+
+		// Update the timestamp for the next iteration
+		oldTime = currentTime
+
+		// Send the CSV line
+		fmt.Printf("\rSending line: %d at timestamp: %f", lineCount, currentTime)
 		if err := conn.writeMessage(websocket.TextMessage, []byte(line)); err != nil {
 			log.Printf("Error sending CSV line: %v", err)
 			closeDone(done)
@@ -186,7 +202,7 @@ func sendCSV(conn *safeConn, filePath string, delay float64, done chan struct{})
 		return
 	}
 
-	log.Printf("Sent all lines from CSV starting from line 10000. Total lines read: %d", lineCount)
+	log.Printf("Sent all lines from CSV starting from line %d. Total lines read: %d", startLine, lineCount)
 	closeMsg := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "All CSV data sent")
 	_ = conn.writeMessage(websocket.CloseMessage, closeMsg)
 	closeDone(done)
@@ -210,7 +226,6 @@ func sendLive(conn *safeConn, cfg *config.Config, delay float64, done chan struc
 	// Round-robin loop over all message definitions.
 	i := 0
 	msgCount := 0
-
 	for {
 		// Check if we should terminate.
 		select {
@@ -235,7 +250,6 @@ func sendLive(conn *safeConn, cfg *config.Config, delay float64, done chan struc
 
 		i = (i + 1) % len(messages)
 		msgCount++
-
 		if msgCount%1000 == 0 {
 			log.Printf("Sent %d CAN packets", msgCount)
 		}

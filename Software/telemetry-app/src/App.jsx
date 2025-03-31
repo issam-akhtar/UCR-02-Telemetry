@@ -1,14 +1,14 @@
 import React, { lazy, Suspense, useState, useMemo, useCallback, memo, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import { 
-  ThemeProvider, 
-  CssBaseline, 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Button, 
-  IconButton, 
-  Box, 
+import {
+  ThemeProvider,
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Box,
   Drawer,
   List,
   ListItem,
@@ -26,7 +26,6 @@ import {
   MenuItem,
   ListItemButton
 } from '@mui/material';
-
 // Core icons imported directly for faster initial render
 import SettingsIcon from '@mui/icons-material/Settings';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -35,39 +34,33 @@ import CloseIcon from '@mui/icons-material/Close';
 import WifiIcon from '@mui/icons-material/Wifi';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StorageIcon from '@mui/icons-material/Storage';
+import BatteryFullIcon from '@mui/icons-material/BatteryFull';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { DESIGN_TOKENS } from './theme';
-
 // Context providers with performance optimizations
 import { NetworkStatusProvider } from './contexts/NetworkStatusContext';
 import { ChartSettingsProvider, ChartSettingsContext } from './contexts/ChartSettingsContext';
 import { ChartSelectionProvider } from './contexts/ChartSelectionContext';
 import { NavigationProvider, useNavigation } from './contexts/NavigationContext';
 import { wsService, animationContext } from './services/websocket';
-
 // Import the enhanced NavigationListener component
 import NavigationListener from './components/navigation/NavigationListener';
-
 // Import the theme once to avoid unnecessary re-imports
 import theme from './theme';
-
 // Error boundary
 import { ErrorBoundary } from 'react-error-boundary';
-
 // Create a context for animation state - memoized
 export const AnimationContext = React.createContext({
   enabled: true,
   duration: 300
 });
-
 // Minimal loading component with reduced animations
 const MinimalLoadingSpinner = memo(() => (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', p: 4, height: '100%' }}>
     <CircularProgress size={20} thickness={4} disableShrink />
   </Box>
 ));
-
 // Store preloaded components in module-level variables
 let preloadedDashboard = null;
 let preloadedRealTimeCharts = null;
@@ -75,40 +68,39 @@ let preloadedHistoricalCharts = null;
 let preloadedWebSocketDataDisplay = null;
 let preloadedNetworkStatusBar = null;
 let preloadedChartSettingsModal = null;
+let preloadedModelViewer = null;
 
-// More effective preloading with promise resolution
+// Modified preloading approach that avoids preloading 3D components
 const preloadComponents = async () => {
   try {
+    // Only preload non-3D components
     const [
       dashboardModule,
       realTimeChartsModule,
       historicalChartsModule,
-      webSocketDataDisplayModule,
       networkStatusBarModule,
-      chartSettingsModalModule
+      chartSettingsModalModule,
+      webSocketDataDisplayModule
     ] = await Promise.all([
-      import('./pages/Dashboard'),
-      import('./pages/RealTimeCharts'),
-      import('./pages/HistoricalCharts'),
-      import('./components/misc/WebSocketDataDisplay'),
-      import('./components/misc/NetworkStatusBar'),
-      import('./modals/ChartSettingsModal')
+      import('./pages/Dashboard').catch(e => ({ default: () => null })),
+      import('./pages/RealTimeCharts').catch(e => ({ default: () => null })),
+      import('./pages/HistoricalCharts').catch(e => ({ default: () => null })),
+      import('./components/misc/NetworkStatusBar').catch(e => ({ default: () => null })),
+      import('./modals/ChartSettingsModal').catch(e => ({ default: () => null })),
+      import('./components/misc/WebSocketDataDisplay').catch(e => ({ default: () => null }))
     ]);
-    
     // Store the preloaded modules
     preloadedDashboard = dashboardModule.default;
     preloadedRealTimeCharts = realTimeChartsModule.default;
     preloadedHistoricalCharts = historicalChartsModule.default;
-    preloadedWebSocketDataDisplay = webSocketDataDisplayModule.default;
     preloadedNetworkStatusBar = networkStatusBarModule.default;
     preloadedChartSettingsModal = chartSettingsModalModule.default;
-    
-    console.log('All route components preloaded successfully');
+    preloadedWebSocketDataDisplay = webSocketDataDisplayModule.default;
+    console.log('Standard components preloaded successfully');
   } catch (error) {
     console.error('Route preloading failure:', error);
   }
 };
-
 // Start preloading immediately
 preloadComponents();
 
@@ -121,7 +113,6 @@ const lazyWithPreload = (importFn, preloadedComponent) => {
     return importFn();
   });
 };
-
 // Use the preloaded components - much faster transitions
 const Dashboard = lazyWithPreload(() => import('./pages/Dashboard'), preloadedDashboard);
 const RealTimeCharts = lazyWithPreload(() => import('./pages/RealTimeCharts'), preloadedRealTimeCharts);
@@ -130,14 +121,17 @@ const WebSocketDataDisplay = lazyWithPreload(() => import('./components/misc/Web
 const NetworkStatusBar = lazyWithPreload(() => import('./components/misc/NetworkStatusBar'), preloadedNetworkStatusBar);
 const ChartSettingsModal = lazyWithPreload(() => import('./modals/ChartSettingsModal'), preloadedChartSettingsModal);
 
+// Lazy load the Model Viewer page - not preloaded because it's heavier
+const ModelViewerPage = lazy(() => import('./pages/ModelViewer'));
+
 // Simplified error fallback component
 const ErrorFallbackComponent = memo(({ error, resetErrorBoundary }) => (
-  <Paper 
-    role="alert" 
-    sx={{ 
-      p: 3, 
-      m: 2, 
-      bgcolor: 'error.main', 
+  <Paper
+    role="alert"
+    sx={{
+      p: 3,
+      m: 2,
+      bgcolor: 'error.main',
       color: 'error.contrastText',
       borderRadius: 1,
       maxWidth: '800px',
@@ -148,19 +142,18 @@ const ErrorFallbackComponent = memo(({ error, resetErrorBoundary }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
       <Typography variant="h6" component="h2">Application Error</Typography>
       <Box sx={{ flexGrow: 1 }} />
-      <IconButton 
-        size="small" 
+      <IconButton
+        size="small"
         onClick={() => window.location.reload()}
         sx={{ color: 'error.contrastText' }}
       >
         <RefreshIcon />
       </IconButton>
     </Box>
-    
-    <Typography 
-      variant="body2" 
-      component="pre" 
-      sx={{ 
+    <Typography
+      variant="body2"
+      component="pre"
+      sx={{
         whiteSpace: 'pre-wrap',
         mb: 2,
         p: 2,
@@ -173,9 +166,8 @@ const ErrorFallbackComponent = memo(({ error, resetErrorBoundary }) => (
     >
       {error.message}
     </Typography>
-    
-    <Button 
-      variant="contained" 
+    <Button
+      variant="contained"
       color="inherit"
       onClick={resetErrorBoundary}
       size="small"
@@ -184,21 +176,18 @@ const ErrorFallbackComponent = memo(({ error, resetErrorBoundary }) => (
     </Button>
   </Paper>
 ));
-
 // MODERNIZED: Enhanced navigation list item for mobile menu
-const NavItem = memo(({ 
-  item, 
-  isActive, 
-  onClick 
+const NavItem = memo(({
+  item,
+  isActive,
+  onClick
 }) => {
   const { navigateTo, isNavigating } = useNavigation();
-  
   const handleClick = useCallback((e) => {
     e.preventDefault();
     onClick(); // Close the drawer
     navigateTo(item.path); // Use the navigation provider
   }, [navigateTo, onClick, item.path]);
-  
   return (
     <ListItemButton
       selected={isActive}
@@ -232,15 +221,15 @@ const NavItem = memo(({
         }
       }}
     >
-      <ListItemIcon sx={{ 
+      <ListItemIcon sx={{
         color: isActive ? 'primary.main' : 'text.secondary',
         minWidth: 36,
         transition: theme => theme.transitions.create(['color'])
       }}>
         {item.icon}
       </ListItemIcon>
-      <ListItemText 
-        primary={item.text} 
+      <ListItemText
+        primary={item.text}
         primaryTypographyProps={{
           color: isActive ? 'primary.main' : 'text.primary',
           variant: 'body2',
@@ -251,21 +240,18 @@ const NavItem = memo(({
     </ListItemButton>
   );
 });
-
 // MODERNIZED: Enhanced mobile drawer navigation
 const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
   const location = useLocation();
-  
   // Memoize menu items to prevent recreations
   const menuItems = useMemo(() => [
     { text: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
     { text: 'Real-Time Data', path: '/realtime', icon: <SpeedIcon /> },
     { text: 'Historical Data', path: '/historical', icon: <StorageIcon /> },
+    { text: 'Model Viewer', path: '/model-viewer', icon: <BatteryFullIcon /> },
     { text: 'WebSocket Monitor', path: '/wsdata', icon: <WifiIcon /> },
   ], []);
-  
   const closeDrawer = useCallback(() => setDrawerOpen(false), [setDrawerOpen]);
-  
   return (
     <Drawer
       anchor="left"
@@ -274,7 +260,7 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
       variant="temporary"
       keepMounted={false} // Important - prevent rendering when closed
       sx={{
-        '& .MuiDrawer-paper': { 
+        '& .MuiDrawer-paper': {
           width: 280,
           boxSizing: 'border-box',
           bgcolor: 'background.paper',
@@ -283,29 +269,29 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
         },
       }}
     >
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
           p: 2,
           borderBottom: '1px solid',
           borderColor: 'divider',
         }}
       >
-        <Box 
+        <Box
           component="img"
           src="/logo.png"
           alt="Logo"
-          sx={{ 
+          sx={{
             height: 36,
             width: 'auto',
             mr: 2
           }}
         />
-        <Typography 
-          variant="h6" 
+        <Typography
+          variant="h6"
           component="h1"
-          sx={{ 
+          sx={{
             fontWeight: DESIGN_TOKENS.fontWeight.bold,
             color: 'secondary.main'
           }}
@@ -313,9 +299,9 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
           Telemetry
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        <IconButton 
-          size="small" 
-          onClick={closeDrawer} 
+        <IconButton
+          size="small"
+          onClick={closeDrawer}
           edge="end"
           sx={{
             bgcolor: theme => alpha(theme.palette.primary.main, 0.1),
@@ -328,13 +314,12 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
           <CloseIcon fontSize="small" />
         </IconButton>
       </Box>
-      
       <Box sx={{ p: 2 }}>
-        <Typography 
-          variant="caption" 
+        <Typography
+          variant="caption"
           color="text.secondary"
-          sx={{ 
-            pl: 2, 
+          sx={{
+            pl: 2,
             textTransform: 'uppercase',
             fontWeight: DESIGN_TOKENS.fontWeight.semiBold,
             letterSpacing: '0.5px',
@@ -346,7 +331,7 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
         </Typography>
         <List disablePadding>
           {menuItems.map((item) => (
-            <NavItem 
+            <NavItem
               key={item.text}
               item={item}
               isActive={location.pathname === item.path}
@@ -355,13 +340,12 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
           ))}
         </List>
       </Box>
-      
       <Box sx={{ mt: 'auto', p: 2, borderTop: 1, borderColor: 'divider' }}>
-        <Typography 
-          variant="caption" 
+        <Typography
+          variant="caption"
           color="text.secondary"
-          sx={{ 
-            pl: 2, 
+          sx={{
+            pl: 2,
             textTransform: 'uppercase',
             fontWeight: DESIGN_TOKENS.fontWeight.semiBold,
             letterSpacing: '0.5px',
@@ -383,8 +367,8 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
             <ListItemIcon sx={{ minWidth: 36, color: 'secondary.main' }}>
               <HelpOutlineIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText 
-              primary="Help Center" 
+            <ListItemText
+              primary="Help Center"
               primaryTypographyProps={{
                 variant: 'body2',
                 fontWeight: DESIGN_TOKENS.fontWeight.medium,
@@ -397,69 +381,72 @@ const Navigation = memo(({ drawerOpen, setDrawerOpen }) => {
     </Drawer>
   );
 });
-
 // MODERNIZED: Enhanced desktop navigation with theme-appropriate styling and animations
 const DesktopNavigation = memo(() => {
   const location = useLocation();
   const { navigateTo, isNavigating } = useNavigation();
-  
   // Memoize the isActive function
   const isActive = useCallback((path) => {
     return location.pathname === path;
   }, [location.pathname]);
-  
   // Memoize navigation handlers
   const navHandlers = useMemo(() => ({
     dashboard: () => navigateTo('/dashboard'),
     realtime: () => navigateTo('/realtime'),
     historical: () => navigateTo('/historical'),
+    modelViewer: () => navigateTo('/model-viewer'),
     wsdata: () => navigateTo('/wsdata')
   }), [navigateTo]);
-  
   // Nav items for desktop
   const navItems = useMemo(() => [
-    { 
-      text: 'Dashboard', 
-      path: '/dashboard', 
-      icon: <DashboardIcon fontSize="small" />, 
+    {
+      text: 'Dashboard',
+      path: '/dashboard',
+      icon: <DashboardIcon fontSize="small" />,
       handler: navHandlers.dashboard,
       tooltip: 'View Dashboard'
     },
-    { 
-      text: 'Real-Time', 
-      path: '/realtime', 
-      icon: <SpeedIcon fontSize="small" />, 
+    {
+      text: 'Real-Time',
+      path: '/realtime',
+      icon: <SpeedIcon fontSize="small" />,
       handler: navHandlers.realtime,
-      tooltip: 'Real-Time Data Analytics' 
+      tooltip: 'Real-Time Data Analytics'
     },
-    { 
-      text: 'Historical', 
-      path: '/historical', 
-      icon: <StorageIcon fontSize="small" />, 
+    {
+      text: 'Historical',
+      path: '/historical',
+      icon: <StorageIcon fontSize="small" />,
       handler: navHandlers.historical,
       tooltip: 'Historical Data Analysis'
     },
-    { 
-      text: 'WS Monitor', 
-      path: '/wsdata', 
-      icon: <WifiIcon fontSize="small" />, 
+    {
+      text: 'Model Viewer',
+      path: '/model-viewer',
+      icon: <BatteryFullIcon fontSize="small" />,
+      handler: navHandlers.modelViewer,
+      tooltip: '3D GLB Model Viewer'
+    },
+    {
+      text: 'WS Monitor',
+      path: '/wsdata',
+      icon: <WifiIcon fontSize="small" />,
       handler: navHandlers.wsdata,
       tooltip: 'WebSocket Monitor'
     },
   ], [navHandlers]);
-  
   return (
-    <Box sx={{ 
-      display: { xs: 'none', sm: 'flex' }, 
+    <Box sx={{
+      display: { xs: 'none', sm: 'flex' },
       alignItems: 'center',
       flexGrow: 1,
       justifyContent: 'flex-end'
     }}>
       {/* Navigation items */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          gap: 0.5, 
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 0.5,
           backgroundColor: theme => alpha(theme.palette.background.paper, 0.2),
           backdropFilter: 'blur(8px)',
           borderRadius: DESIGN_TOKENS.borderRadius.lg,
@@ -511,15 +498,14 @@ const DesktopNavigation = memo(() => {
     </Box>
   );
 });
-
 // OPTIMIZATION: Fast switching between routes using shared Suspense
 const MainContent = memo(() => {
   return (
-    <Box 
+    <Box
       component="main"
-      sx={{ 
-        flex: 1, 
-        display: 'flex', 
+      sx={{
+        flex: 1,
+        display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         position: 'relative',
@@ -533,6 +519,7 @@ const MainContent = memo(() => {
           <Route path="/realtime" element={<RealTimeCharts />} />
           <Route path="/historical" element={<HistoricalCharts />} />
           <Route path="/wsdata" element={<WebSocketDataDisplay />} />
+          <Route path="/model-viewer" element={<ModelViewerPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
@@ -540,23 +527,19 @@ const MainContent = memo(() => {
     </Box>
   );
 });
-
 // App wrapper component to handle BrowserRouter
 const AppWithRouter = () => (
   <BrowserRouter>
     <AppContent />
   </BrowserRouter>
 );
-
 // IMPROVED: AnimationContextProvider with better update handling and debouncing
 const AnimationContextProvider = ({ children }) => {
   const chartSettingsContext = React.useContext(ChartSettingsContext);
   const settings = chartSettingsContext?.settings || {};
   const lastUpdateRef = useRef(Date.now());
-  
   // State to force updates when needed
   const [forceUpdate, setForceUpdate] = useState(0);
-  
   // Animation context for the entire app
   const animationContextValue = useMemo(() => ({
     enabled: settings?.global?.enableTransitions ?? true,
@@ -566,33 +549,27 @@ const AnimationContextProvider = ({ children }) => {
     settings?.global?.animationDuration,
     forceUpdate // Include forceUpdate to ensure context updates when needed
   ]);
-  
   // Effect to sync the external animation context with our provider value
   useEffect(() => {
     console.log('Animation settings updated:', animationContextValue);
-    
     // Update the external animation context
     if (animationContext && typeof animationContext.setConfig === 'function') {
       animationContext.setConfig(animationContextValue);
     }
   }, [animationContextValue]);
-  
   // Listen for settings changes on both window and document
   useEffect(() => {
     // Function to handle settings updates
     const handleSettingsUpdate = (event) => {
       console.log('AnimationContext received settings update event', event);
-      
       // Debounce updates that come in quick succession
       const now = Date.now();
       if (now - lastUpdateRef.current < 50) {
         return; // Skip if last update was less than 50ms ago
       }
       lastUpdateRef.current = now;
-      
       // Force a rerender of this context
       setForceUpdate(prev => prev + 1);
-      
       // Also directly update the animation context if available
       if (animationContext && typeof animationContext.setConfig === 'function') {
         const newSettings = event?.detail?.settings || chartSettingsContext?.settings;
@@ -604,13 +581,11 @@ const AnimationContextProvider = ({ children }) => {
         }
       }
     };
-    
     // Listen for both direct settings updates and forced UI updates
     window.addEventListener('settings-updated', handleSettingsUpdate);
     document.addEventListener('settings-updated', handleSettingsUpdate);
     window.addEventListener('force-ui-update', handleSettingsUpdate);
     window.addEventListener('settingsChanged', handleSettingsUpdate);
-    
     return () => {
       // Cleanup
       window.removeEventListener('settings-updated', handleSettingsUpdate);
@@ -619,50 +594,41 @@ const AnimationContextProvider = ({ children }) => {
       window.removeEventListener('settingsChanged', handleSettingsUpdate);
     };
   }, [chartSettingsContext?.settings]);
-  
   return (
     <AnimationContext.Provider value={animationContextValue}>
       {children}
     </AnimationContext.Provider>
   );
 };
-
 // MODERNIZED: Main App component with enhanced AppBar and navigation
 const AppContent = () => {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const settingsAppliedRef = useRef(false);
-  
   // Toggle settings modal with useCallback for stable identity
   const toggleSettingsModal = useCallback(() => {
     setSettingsModalOpen(prev => !prev);
   }, []);
-  
   // Toggle drawer with useCallback for stable identity
   const toggleDrawer = useCallback(() => {
     setDrawerOpen(prev => !prev);
   }, []);
-  
   // Memoize toolbar height to prevent recalculation
   const toolbarHeight = useMemo(() => ({ xs: 56, sm: 64 }), []);
-
   // Memoized app classes
   const appClassName = useMemo(() => {
     // Check for low performance mode from localStorage
-    const isLowPerformanceMode = 
-      window.localStorage.getItem('lowPerformanceMode') === 'true' || 
+    const isLowPerformanceMode =
+      window.localStorage.getItem('lowPerformanceMode') === 'true' ||
       false;
-    
     return isLowPerformanceMode ? 'low-performance-mode' : '';
   }, []);
-  
   // Listen for settings changes that need to be applied globally
   useEffect(() => {
     const handleSettingsUpdate = (event) => {
       console.log('App received settings update:', event?.detail);
       settingsAppliedRef.current = true;
-      
       // Force all components to re-render that depend on settings
       if (wsService && typeof wsService.updateSettings === 'function') {
         try {
@@ -675,23 +641,19 @@ const AppContent = () => {
         }
       }
     };
-    
     window.addEventListener('settings-updated', handleSettingsUpdate);
     document.addEventListener('settings-updated', handleSettingsUpdate);
-    
     return () => {
       window.removeEventListener('settings-updated', handleSettingsUpdate);
       document.removeEventListener('settings-updated', handleSettingsUpdate);
     };
   }, []);
-  
   // Effect to handle settings modal closing
   useEffect(() => {
     if (!settingsModalOpen && settingsAppliedRef.current) {
       // Settings modal was closed after settings were applied
       console.log('Settings modal closed, applying settings...');
       settingsAppliedRef.current = false;
-      
       // Force a UI update after modal closes
       setTimeout(() => {
         try {
@@ -704,13 +666,12 @@ const AppContent = () => {
       }, 50);
     }
   }, [settingsModalOpen]);
-  
   // Memoized AppBar to prevent recreation
   const appBar = useMemo(() => (
-    <AppBar 
-      position="fixed" 
+    <AppBar
+      position="fixed"
       elevation={0}
-      sx={{ 
+      sx={{
         zIndex: DESIGN_TOKENS.zIndex.appBar,
         bgcolor: 'background.paper',
         borderBottom: '1px solid',
@@ -727,7 +688,7 @@ const AppContent = () => {
             edge="start"
             onClick={toggleDrawer}
             size="small"
-            sx={{ 
+            sx={{
               mr: 1,
               bgcolor: theme => alpha(theme.palette.primary.main, 0.1),
               transition: theme => theme.transitions.create(['background-color']),
@@ -739,13 +700,12 @@ const AppContent = () => {
             <MenuIcon />
           </IconButton>
         )}
-        
         {/* Logo with theme-appropriate styling */}
-        <Box 
+        <Box
           component="img"
           src="/logo.png"
           alt="Logo"
-          sx={{ 
+          sx={{
             height: { xs: 32, sm: 36 },
             width: 'auto',
             mr: 2,
@@ -756,11 +716,10 @@ const AppContent = () => {
             }
           }}
         />
-        
-        <Typography 
-          variant="h6" 
+        <Typography
+          variant="h6"
           component="div"
-          sx={{ 
+          sx={{
             fontWeight: DESIGN_TOKENS.fontWeight.bold,
             fontSize: { xs: '1.1rem', sm: '1.25rem' },
             color: 'secondary.main',
@@ -770,18 +729,16 @@ const AppContent = () => {
         >
           Telemetry Dashboard
         </Typography>
-        
         {/* Desktop navigation */}
         <DesktopNavigation />
-        
         {/* Settings button with tooltip */}
         <Tooltip title="Settings">
-          <IconButton 
+          <IconButton
             onClick={toggleSettingsModal}
             size="small"
             edge="end"
-            sx={{ 
-              color: 'secondary.main', 
+            sx={{
+              color: 'secondary.main',
               ml: 1,
               bgcolor: theme => alpha(theme.palette.secondary.main, 0.1),
               transition: theme => theme.transitions.create(['transform', 'background-color', 'box-shadow']),
@@ -798,7 +755,6 @@ const AppContent = () => {
       </Toolbar>
     </AppBar>
   ), [isSmallScreen, toggleDrawer, toolbarHeight, toggleSettingsModal]);
-  
   return (
     <ThemeProvider theme={theme}>
       <ChartSettingsProvider>
@@ -810,29 +766,23 @@ const AppContent = () => {
                 <AnimationContextProvider>
                   {/* Use the enhanced NavigationListener component */}
                   <NavigationListener />
-                  
                   {/* AppBar with minimal re-renders */}
                   {appBar}
-                  
                   {/* Mobile navigation drawer */}
                   <Navigation drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-                  
                   {/* Spacer for fixed AppBar */}
                   <Box sx={{ height: toolbarHeight }} />
-                  
                   {/* Network status indicator - load lazily */}
                   <Suspense fallback={<Box sx={{ height: 4 }} />}>
                     <NetworkStatusBar />
                   </Suspense>
-                  
                   {/* Settings modal - keep mounted to preserve state */}
                   <Suspense fallback={null}>
-                    <ChartSettingsModal 
-                      isOpen={settingsModalOpen} 
-                      onClose={toggleSettingsModal} 
+                    <ChartSettingsModal
+                      isOpen={settingsModalOpen}
+                      onClose={toggleSettingsModal}
                     />
                   </Suspense>
-                  
                   {/* Main content area */}
                   <MainContent />
                 </AnimationContextProvider>
@@ -844,7 +794,6 @@ const AppContent = () => {
     </ThemeProvider>
   );
 };
-
 // Export the wrapped app
 export default function App() {
   return (

@@ -7,7 +7,6 @@
 package processdata
 
 import (
-	"log"
 	"sync/atomic"
 	"telem-system/internal/wsserver"
 	"time"
@@ -79,7 +78,7 @@ func ResetCircuitBreaker() {
 	atomic.StoreInt32(&circuitState, 0)
 	atomic.StoreInt32(&consecutiveDrops, 0)
 	lastCircuitChange = time.Now()
-	log.Println("Throttler circuit breaker manually reset")
+	// log.Println("Throttler circuit breaker manually reset")
 }
 
 // ThrottledBroadcast sends the given message to the WebSocket hub while enforcing
@@ -88,8 +87,8 @@ func ResetCircuitBreaker() {
 func ThrottledBroadcast(msg []byte) {
 	// Check message size limit
 	if len(msg) > maxBroadcastMessageSize {
-		log.Printf("Message exceeds maximum broadcast size (%d > %d), dropping",
-			len(msg), maxBroadcastMessageSize)
+		// log.Printf("Message exceeds maximum broadcast size (%d > %d), dropping",
+		// 	len(msg), maxBroadcastMessageSize)
 		atomic.AddUint64(&messagesDropped, 1)
 		return
 	}
@@ -114,9 +113,9 @@ func ThrottledBroadcast(msg []byte) {
 		if !limiter.Allow() {
 			// Over rate limit, but we'll try to send anyway
 			// Just log for monitoring purposes
-			if state != 1 { // Don't spam logs when circuit is open
-				log.Printf("Message rate exceeded limiter (%v), attempting send anyway", limiter.Limit())
-			}
+			// if state != 1 { // Don't spam logs when circuit is open
+			// 	log.Printf("Message rate exceeded limiter (%v), attempting send anyway", limiter.Limit())
+			// }
 		}
 	}
 
@@ -129,7 +128,7 @@ func ThrottledBroadcast(msg []byte) {
 			// In half-open state and successful, reset circuit
 			atomic.StoreInt32(&circuitState, 0)
 			atomic.StoreInt32(&consecutiveDrops, 0)
-			log.Println("Circuit breaker reset to normal operation")
+			// log.Println("Circuit breaker reset to normal operation")
 		}
 	default:
 		// Channel is full, increment drop counter
@@ -137,14 +136,14 @@ func ThrottledBroadcast(msg []byte) {
 		atomic.AddUint64(&messagesDropped, 1)
 
 		// Only log occasionally to prevent log spam
-		if drops%10 == 0 {
-			log.Printf("Warning: broadcast channel full, dropping messages (consecutive drops: %d)", drops)
-		}
+		// if drops%10 == 0 {
+		// 	log.Printf("Warning: broadcast channel full, dropping messages (consecutive drops: %d)", drops)
+		// }
 
 		// Check if we need to open the circuit breaker
 		if drops >= circuitBreakerThreshold && state != 1 {
-			log.Printf("Circuit breaker triggered after %d consecutive message drops", drops)
-			atomic.StoreInt32(&circuitState, 1)
+			// log.Printf("Circuit breaker triggered after %d consecutive message drops", drops)
+			// atomic.StoreInt32(&circuitState, 1)
 			lastCircuitChange = time.Now()
 		}
 	}

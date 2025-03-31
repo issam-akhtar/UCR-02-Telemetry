@@ -1,9 +1,15 @@
 -- =============================================
--- Telemetry System Database Schema
--- Auto-generated based on CAN JSON definitions.
--- Each incoming message (by frame_id) is stored
--- in its own hypertable.
+-- Optimized Telemetry System Database Schema
+-- Optimized for read performance with retention
+-- and compression policies for TimescaleDB
 -- =============================================
+
+-- =============================================================
+-- Set TimescaleDB Configuration for Better Read Performance
+-- =============================================================
+-- These settings optimize TimescaleDB for read-heavy workloads
+ALTER DATABASE current_database() SET timescaledb.max_background_workers = 16;
+ALTER DATABASE current_database() SET timescaledb.max_insert_batch_size = 10000;
 
 -- =============================================================
 -- Drop Existing Tables (if any)
@@ -370,91 +376,217 @@ CREATE TABLE IF NOT EXISTS bamo_car_re_transmit (
 -- 25. PDMCurrent (frame_id 1312)
 CREATE TABLE IF NOT EXISTS pdm_current (
     timestamp               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    accumulator_current   INTEGER,
-    tcu_current           INTEGER,
-    bamocar_current       INTEGER,
-    pumps_current         INTEGER,
-    tsal_current          INTEGER,
-    daq_current           INTEGER,
-    display_kvaser_current INTEGER,
-    shutdown_reset_current INTEGER
+    accumulator_current     INTEGER,
+    tcu_current             INTEGER,
+    bamocar_current         INTEGER,
+    pumps_current           INTEGER,
+    tsal_current            INTEGER,
+    daq_current             INTEGER,
+    display_kvaser_current  INTEGER,
+    shutdown_reset_current  INTEGER
 );
 
 -- 26. PDMReTransmit (frame_id 1680)
 CREATE TABLE IF NOT EXISTS pdm_re_transmit (
     timestamp               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    pdm_int_temperature   INTEGER,
-    pdm_batt_voltage      DOUBLE PRECISION,
-    global_error_flag     INTEGER,
-    total_current         INTEGER,
-    internal_rail_voltage DOUBLE PRECISION,
-    reset_source          INTEGER
+    pdm_int_temperature     INTEGER,
+    pdm_batt_voltage        DOUBLE PRECISION,
+    global_error_flag       INTEGER,
+    total_current           INTEGER,
+    internal_rail_voltage   DOUBLE PRECISION,
+    reset_source            INTEGER
 );
 
 -- =============================================================
--- Convert Tables to Hypertables (TimescaleDB)
+-- Convert Tables to Hypertables with Optimized Chunk Size
 -- =============================================================
-SELECT create_hypertable('front_analog', 'timestamp');
-SELECT create_hypertable('rear_analog', 'timestamp');
-SELECT create_hypertable('front_aero', 'timestamp');
-SELECT create_hypertable('rear_aero', 'timestamp');
-SELECT create_hypertable('encoder_data', 'timestamp');
-SELECT create_hypertable('front_strain_gauges_1', 'timestamp');
-SELECT create_hypertable('front_strain_gauges_2', 'timestamp');
-SELECT create_hypertable('rear_strain_gauges_1', 'timestamp');
-SELECT create_hypertable('rear_strain_gauges_2', 'timestamp');
-SELECT create_hypertable('gps_best_pos', 'timestamp');
-SELECT create_hypertable('front_frequency', 'timestamp');
-SELECT create_hypertable('rear_frequency', 'timestamp');
-SELECT create_hypertable('bamocar_rx_data', 'timestamp');
-SELECT create_hypertable('cell_data', 'timestamp');
-SELECT create_hypertable('therm_data', 'timestamp');
-SELECT create_hypertable('pack_voltage', 'timestamp');
-SELECT create_hypertable('pack_current', 'timestamp');
-SELECT create_hypertable('tcu1', 'timestamp');
-SELECT create_hypertable('tcu2', 'timestamp');
-SELECT create_hypertable('aculv_fd_1', 'timestamp');
-SELECT create_hypertable('aculv_fd_2', 'timestamp');
-SELECT create_hypertable('aculv1', 'timestamp');
-SELECT create_hypertable('aculv2', 'timestamp');
-SELECT create_hypertable('pdm1', 'timestamp');
-SELECT create_hypertable('bamocar_tx_data', 'timestamp');
-SELECT create_hypertable('ins_gps', 'timestamp');
-SELECT create_hypertable('ins_imu', 'timestamp');
-SELECT create_hypertable('bamo_car_re_transmit', 'timestamp');
-SELECT create_hypertable('pdm_current', 'timestamp');
-SELECT create_hypertable('pdm_re_transmit', 'timestamp');
+-- Using 1 day chunk interval for high-frequency data to balance
+-- between query performance and resource usage
+
+SELECT create_hypertable('front_analog', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('rear_analog', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('front_aero', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('rear_aero', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('encoder_data', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('front_strain_gauges_1', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('front_strain_gauges_2', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('rear_strain_gauges_1', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('rear_strain_gauges_2', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('gps_best_pos', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('front_frequency', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('rear_frequency', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('bamocar_rx_data', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('cell_data', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('therm_data', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('pack_voltage', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('pack_current', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('tcu1', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('tcu2', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('aculv_fd_1', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('aculv_fd_2', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('aculv1', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('aculv2', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('pdm1', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('bamocar_tx_data', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('ins_gps', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('ins_imu', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('bamo_car_re_transmit', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('pdm_current', 'timestamp', chunk_time_interval => INTERVAL '1 day');
+SELECT create_hypertable('pdm_re_transmit', 'timestamp', chunk_time_interval => INTERVAL '1 day');
 
 -- =============================================================
--- Create BRIN Indexes on Timestamp Columns
+-- Create Optimized Indexes for Read Performance 
 -- =============================================================
-CREATE INDEX IF NOT EXISTS brin_front_analog_timestamp ON front_analog USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_rear_analog_timestamp ON rear_analog USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_front_aero_timestamp ON front_aero USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_rear_aero_timestamp ON rear_aero USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_encoder_data_timestamp ON encoder_data USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_front_strain_gauges_1_timestamp ON front_strain_gauges_1 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_front_strain_gauges_2_timestamp ON front_strain_gauges_2 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_rear_strain_gauges_1_timestamp ON rear_strain_gauges_1 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_rear_strain_gauges_2_timestamp ON rear_strain_gauges_2 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_gps_best_pos_timestamp ON gps_best_pos USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_front_frequency_timestamp ON front_frequency USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_rear_frequency_timestamp ON rear_frequency USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_bamocar_rx_data_timestamp ON bamocar_rx_data USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_cell_data_timestamp ON cell_data USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_therm_data_timestamp ON therm_data USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_pack_voltage_timestamp ON pack_voltage USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_pack_current_timestamp ON pack_current USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_tcu1_timestamp ON tcu1 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_tcu2_timestamp ON tcu2 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_aculv_fd_1_timestamp ON aculv_fd_1 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_aculv_fd_2_timestamp ON aculv_fd_2 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_aculv1_timestamp ON aculv1 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_aculv2_timestamp ON aculv2 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_pdm1_timestamp ON pdm1 USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_bamocar_tx_data_timestamp ON bamocar_tx_data USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_ins_gps_timestamp ON ins_gps USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_ins_imu_timestamp ON ins_imu USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_bamo_car_re_transmit_timestamp ON bamo_car_re_transmit USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_pdm_current_timestamp ON pdm_current USING brin(timestamp);
-CREATE INDEX IF NOT EXISTS brin_pdm_re_transmit_timestamp ON pdm_re_transmit USING brin(timestamp);
+-- Use a mix of BRIN and B-tree indexes for different access patterns
+
+-- BRIN indexes for time-range scans on all tables (good for append-only time-series)
+CREATE INDEX IF NOT EXISTS brin_front_analog_timestamp ON front_analog USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_rear_analog_timestamp ON rear_analog USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_front_aero_timestamp ON front_aero USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_rear_aero_timestamp ON rear_aero USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_encoder_data_timestamp ON encoder_data USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_front_strain_gauges_1_timestamp ON front_strain_gauges_1 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_front_strain_gauges_2_timestamp ON front_strain_gauges_2 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_rear_strain_gauges_1_timestamp ON rear_strain_gauges_1 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_rear_strain_gauges_2_timestamp ON rear_strain_gauges_2 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_gps_best_pos_timestamp ON gps_best_pos USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_front_frequency_timestamp ON front_frequency USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_rear_frequency_timestamp ON rear_frequency USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_bamocar_rx_data_timestamp ON bamocar_rx_data USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_cell_data_timestamp ON cell_data USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_therm_data_timestamp ON therm_data USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_pack_voltage_timestamp ON pack_voltage USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_pack_current_timestamp ON pack_current USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_tcu1_timestamp ON tcu1 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_tcu2_timestamp ON tcu2 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_aculv_fd_1_timestamp ON aculv_fd_1 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_aculv_fd_2_timestamp ON aculv_fd_2 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_aculv1_timestamp ON aculv1 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_aculv2_timestamp ON aculv2 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_pdm1_timestamp ON pdm1 USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_bamocar_tx_data_timestamp ON bamocar_tx_data USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_ins_gps_timestamp ON ins_gps USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_ins_imu_timestamp ON ins_imu USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_bamo_car_re_transmit_timestamp ON bamo_car_re_transmit USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_pdm_current_timestamp ON pdm_current USING brin(timestamp) WITH (pages_per_range = 128);
+CREATE INDEX IF NOT EXISTS brin_pdm_re_transmit_timestamp ON pdm_re_transmit USING brin(timestamp) WITH (pages_per_range = 128);
+
+-- B-tree indexes for point queries and sorting by timestamp DESC (good for recent data lookups)
+CREATE INDEX IF NOT EXISTS idx_front_analog_timestamp_desc ON front_analog(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_gps_best_pos_timestamp_desc ON gps_best_pos(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_pack_voltage_timestamp_desc ON pack_voltage(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_pack_current_timestamp_desc ON pack_current(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_cell_data_timestamp_desc ON cell_data(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_bamo_car_re_transmit_timestamp_desc ON bamo_car_re_transmit(timestamp DESC);
+
+-- Additional indexes for common query conditions
+CREATE INDEX IF NOT EXISTS idx_gps_best_pos_coords ON gps_best_pos(latitude, longitude) WHERE gps_status > 0;
+CREATE INDEX IF NOT EXISTS idx_front_analog_steering ON front_analog(steering_angle);
+CREATE INDEX IF NOT EXISTS idx_aculv_fd_1_soc ON aculv_fd_1(state_of_charge);
+
+-- =============================================================
+-- Add Compression Policies
+-- =============================================================
+-- Enable compression for all hypertables to reduce storage requirements
+-- Compress data older than 3 days (adjust based on your access patterns)
+
+-- Setup compression for all tables
+ALTER TABLE front_analog SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE rear_analog SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE front_aero SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE rear_aero SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE encoder_data SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE front_strain_gauges_1 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE front_strain_gauges_2 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE rear_strain_gauges_1 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE rear_strain_gauges_2 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE gps_best_pos SET (timescaledb.compress, timescaledb.compress_segmentby = 'gps_status');
+ALTER TABLE front_frequency SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE rear_frequency SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE bamocar_rx_data SET (timescaledb.compress, timescaledb.compress_segmentby = 'regid');
+ALTER TABLE cell_data SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE therm_data SET (timescaledb.compress, timescaledb.compress_segmentby = 'thermistor_id');
+ALTER TABLE pack_voltage SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE pack_current SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE tcu1 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE tcu2 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE aculv_fd_1 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE aculv_fd_2 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE aculv1 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE aculv2 SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE pdm1 SET (timescaledb.compress, timescaledb.compress_segmentby = 'compound_id');
+ALTER TABLE bamocar_tx_data SET (timescaledb.compress, timescaledb.compress_segmentby = 'regid');
+ALTER TABLE ins_gps SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE ins_imu SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE bamo_car_re_transmit SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE pdm_current SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+ALTER TABLE pdm_re_transmit SET (timescaledb.compress, timescaledb.compress_segmentby = '');
+
+-- Add compression policies (compress data older than 3 days)
+SELECT add_compression_policy('front_analog', INTERVAL '3 days');
+SELECT add_compression_policy('rear_analog', INTERVAL '3 days');
+SELECT add_compression_policy('front_aero', INTERVAL '3 days');
+SELECT add_compression_policy('rear_aero', INTERVAL '3 days');
+SELECT add_compression_policy('encoder_data', INTERVAL '3 days');
+SELECT add_compression_policy('front_strain_gauges_1', INTERVAL '3 days');
+SELECT add_compression_policy('front_strain_gauges_2', INTERVAL '3 days');
+SELECT add_compression_policy('rear_strain_gauges_1', INTERVAL '3 days');
+SELECT add_compression_policy('rear_strain_gauges_2', INTERVAL '3 days');
+SELECT add_compression_policy('gps_best_pos', INTERVAL '3 days');
+SELECT add_compression_policy('front_frequency', INTERVAL '3 days');
+SELECT add_compression_policy('rear_frequency', INTERVAL '3 days');
+SELECT add_compression_policy('bamocar_rx_data', INTERVAL '3 days');
+SELECT add_compression_policy('cell_data', INTERVAL '3 days');
+SELECT add_compression_policy('therm_data', INTERVAL '3 days');
+SELECT add_compression_policy('pack_voltage', INTERVAL '3 days');
+SELECT add_compression_policy('pack_current', INTERVAL '3 days');
+SELECT add_compression_policy('tcu1', INTERVAL '3 days');
+SELECT add_compression_policy('tcu2', INTERVAL '3 days');
+SELECT add_compression_policy('aculv_fd_1', INTERVAL '3 days');
+SELECT add_compression_policy('aculv_fd_2', INTERVAL '3 days');
+SELECT add_compression_policy('aculv1', INTERVAL '3 days');
+SELECT add_compression_policy('aculv2', INTERVAL '3 days');
+SELECT add_compression_policy('pdm1', INTERVAL '3 days');
+SELECT add_compression_policy('bamocar_tx_data', INTERVAL '3 days');
+SELECT add_compression_policy('ins_gps', INTERVAL '3 days');
+SELECT add_compression_policy('ins_imu', INTERVAL '3 days');
+SELECT add_compression_policy('bamo_car_re_transmit', INTERVAL '3 days');
+SELECT add_compression_policy('pdm_current', INTERVAL '3 days');
+SELECT add_compression_policy('pdm_re_transmit', INTERVAL '3 days');
+
+-- =============================================================
+-- Add Retention Policies
+-- =============================================================
+-- For a read-only database, you might want to keep data for a long time
+-- but still need to manage storage. This keeps data for 365 days by default.
+
+SELECT add_retention_policy('front_analog', INTERVAL '365 days');
+SELECT add_retention_policy('rear_analog', INTERVAL '365 days');
+SELECT add_retention_policy('front_aero', INTERVAL '365 days');
+SELECT add_retention_policy('rear_aero', INTERVAL '365 days');
+SELECT add_retention_policy('encoder_data', INTERVAL '365 days');
+SELECT add_retention_policy('front_strain_gauges_1', INTERVAL '365 days');
+SELECT add_retention_policy('front_strain_gauges_2', INTERVAL '365 days');
+SELECT add_retention_policy('rear_strain_gauges_1', INTERVAL '365 days');
+SELECT add_retention_policy('rear_strain_gauges_2', INTERVAL '365 days');
+SELECT add_retention_policy('gps_best_pos', INTERVAL '365 days');
+SELECT add_retention_policy('front_frequency', INTERVAL '365 days');
+SELECT add_retention_policy('rear_frequency', INTERVAL '365 days');
+SELECT add_retention_policy('bamocar_rx_data', INTERVAL '365 days');
+SELECT add_retention_policy('cell_data', INTERVAL '365 days');
+SELECT add_retention_policy('therm_data', INTERVAL '365 days');
+SELECT add_retention_policy('pack_voltage', INTERVAL '365 days');
+SELECT add_retention_policy('pack_current', INTERVAL '365 days');
+SELECT add_retention_policy('tcu1', INTERVAL '365 days');
+SELECT add_retention_policy('tcu2', INTERVAL '365 days');
+SELECT add_retention_policy('aculv_fd_1', INTERVAL '365 days');
+SELECT add_retention_policy('aculv_fd_2', INTERVAL '365 days');
+SELECT add_retention_policy('aculv1', INTERVAL '365 days');
+SELECT add_retention_policy('aculv2', INTERVAL '365 days');
+SELECT add_retention_policy('pdm1', INTERVAL '365 days');
+SELECT add_retention_policy('bamocar_tx_data', INTERVAL '365 days');
+SELECT add_retention_policy('ins_gps', INTERVAL '365 days');
+SELECT add_retention_policy('ins_imu', INTERVAL '365 days');
+SELECT add_retention_policy('bamo_car_re_transmit', INTERVAL '365 days');
+SELECT add_retention_policy('pdm_current', INTERVAL '365 days');
+SELECT add_retention_policy('pdm_re_transmit', INTERVAL '365 days');

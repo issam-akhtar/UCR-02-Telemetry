@@ -28,7 +28,6 @@ import { useInView } from 'react-intersection-observer';
 
 // Constants (moved outside component to prevent recreation)
 const CONSTANTS = {
-  WHEEL_DIAMETER_INCHES: 18.1,
   MILLISECONDS_TO_SECONDS: 0.001,
   M_PER_S_TO_KM_PER_H: 3.6,
   KM_TO_MILES: 0.621371,
@@ -150,9 +149,9 @@ const SpeedometerGauge = () => {
   const updateInterval = componentSettings.updateInterval || dashboardSettings.updateInterval || 300;
   const changeThreshold = componentSettings.changeThreshold || dashboardSettings.significantChangeThreshold || 0.5;
   const decimalPlaces = componentSettings.decimalPlaces || 1;
-  const wheelDiameterInches = componentSettings.wheelDiameterInches || CONSTANTS.WHEEL_DIAMETER_INCHES;
-  const dataSource = componentSettings.dataSource || 'front_frequency';
-  const frequencyField = componentSettings.frequencyField || 'front_left';
+  const dataSource = componentSettings.dataSource || 'ins_imu'; // Changed from 'front_frequency'
+  const northVelField = componentSettings.northVelField || 'north_vel'; // New field
+  const eastVelField = componentSettings.eastVelField || 'east_vel'; // New field
   const timestampField = componentSettings.timestampField || 'timestamp';
   const showAcceleration = componentSettings.showAcceleration !== false;
   const showMaxSpeed = componentSettings.showMaxSpeed !== false;
@@ -176,12 +175,6 @@ const SpeedometerGauge = () => {
   const speedHistoryRef = useRef({ lastSpeed: 0, lastTimestamp: Date.now() });
   const requestAnimationRef = useRef(null);
   const isComponentMounted = useRef(true);
-
-  // Calculate wheel circumference once (won't change)
-  const wheelCircumferenceMeters = useMemo(() => 
-    (Math.PI * wheelDiameterInches * 0.0254), 
-    [wheelDiameterInches]
-  );
 
   // Get appropriate color for a speed value
   const getSpeedColor = useCallback((speedValue) => {
@@ -266,17 +259,18 @@ const SpeedometerGauge = () => {
   }, [inView, componentSettings]);
 
   /**
-   * Calculate speed from wheel frequency
+   * Calculate speed from IMU velocity components
    */
-  const calculateSpeedFromFrequency = useCallback((frequency) => {
-    if (typeof frequency !== 'number' || isNaN(frequency) || frequency < 0) return 0;
+  const calculateSpeedFromVelocity = useCallback((northVel, eastVel) => {
+    if (typeof northVel !== 'number' || typeof eastVel !== 'number' || 
+        isNaN(northVel) || isNaN(eastVel)) return 0;
     
-    // Default calculation: Speed (m/s) = frequency (rotations/s) * circumference (m/rotation)
-    const speedMS = frequency * wheelCircumferenceMeters;
+    // Calculate horizontal speed using Pythagorean theorem
+    const horizontalVelocity = Math.sqrt(northVel * northVel + eastVel * eastVel);
     
-    // Convert to km/h
-    return speedMS * CONSTANTS.M_PER_S_TO_KM_PER_H;
-  }, [wheelCircumferenceMeters]);
+    // Convert to km/h (assuming velocities are in m/s)
+    return horizontalVelocity * CONSTANTS.M_PER_S_TO_KM_PER_H;
+  }, []);
 
   // Toggle unit conversion (km/h ↔ mph)
   const handleUnitToggle = useCallback(() => {
@@ -334,16 +328,17 @@ const SpeedometerGauge = () => {
       const fields = msg?.fields;
       if (!fields) return;
 
-      // Extract wheel frequency (Hz)
-      const wheelFreq = fields[frequencyField]?.numberValue;
+      // Extract north and east velocity components
+      const northVel = fields[northVelField]?.numberValue;
+      const eastVel = fields[eastVelField]?.numberValue;
       
       // Extract timestamp
       const timestamp = fields[timestampField]?.numberValue ?? Date.now();
       
-      if (wheelFreq === undefined) return;
+      if (northVel === undefined || eastVel === undefined) return;
       
-      // Calculate speed from wheel frequency
-      const newSpeed = calculateSpeedFromFrequency(wheelFreq);
+      // Calculate speed from velocity components
+      const newSpeed = calculateSpeedFromVelocity(northVel, eastVel);
       
       // Only update if change exceeds threshold or first reading
       if (Math.abs(newSpeed - speedHistoryRef.current.lastSpeed) >= changeThreshold || 
@@ -353,7 +348,7 @@ const SpeedometerGauge = () => {
     } catch (error) {
       console.error('Speedometer error:', error);
     }
-  }, [inView, frequencyField, timestampField, calculateSpeedFromFrequency, changeThreshold, updateSpeedState]);
+  }, [inView, northVelField, eastVelField, timestampField, calculateSpeedFromVelocity, changeThreshold, updateSpeedState]);
 
   // Subscribe to real-time data
   const { ref: dataRef } = useRealTimeData(

@@ -34,7 +34,18 @@ const TEMP_THRESHOLDS = {
   MAX_SCALE: 150
 };
 
-// Pre-calculated temperature lookup table
+// Motor temperature calculation function using the provided formula
+const calculateMotorTemp = (x) => {
+  return (2.33e-21 * Math.pow(x, 6)) - 
+         (1.619e-16 * Math.pow(x, 5)) + 
+         (4.627e-12 * Math.pow(x, 4)) - 
+         (6.953e-08 * Math.pow(x, 3)) + 
+         (0.000579 * Math.pow(x, 2)) - 
+         (2.515 * x) + 
+         4379;
+};
+
+// Pre-calculated temperature lookup table (still used for controller temp)
 const createTempLookup = () => {
   const lookupData = [
     { temp: -60, value: 10000 },
@@ -386,7 +397,11 @@ const MotorControllerTempGauge = () => {
       if (rawMotor === undefined || rawController === undefined) return;
 
       const now = Date.now();
-      const newMotorTemp = TEMP_LOOKUP.lookup(Number(rawMotor));
+      
+      // Use the new formula for motor temperature
+      const newMotorTemp = calculateMotorTemp(Number(rawMotor));
+      
+      // Continue using the lookup table for controller temperature
       const newControllerTemp = TEMP_LOOKUP.lookup(Number(rawController));
 
       // Update motor temperature if significant change
