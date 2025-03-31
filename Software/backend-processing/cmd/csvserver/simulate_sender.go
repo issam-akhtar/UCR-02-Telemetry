@@ -10,14 +10,11 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	"strconv"
-	// "time"
 
 	"telem-system/internal/config"
 	"telem-system/pkg/candecoder"
 	"telem-system/pkg/types"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -25,8 +22,9 @@ var seq uint64 = 0
 var oldTime float64 = 0.000
 //350.csv start at 700000
 //issam.csv at 100000
-var filePath string = "../../testdata/issam.csv"
-var start int = 110000
+//lot_10.csv at 960000
+var filePath string = "../../testdata/lot_10.csv"
+var start int = 960000
 func main() {
 	// Load configuration
 	

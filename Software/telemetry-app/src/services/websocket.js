@@ -2,18 +2,18 @@ import { loadTelemetryProto, decodeTelemetryMessage } from '../utils/protobuf';
 
 // Default configuration values
 const DEFAULT_CONFIG = {
-  RECONNECT_INTERVAL: 5000,
-  MAX_QUEUE_SIZE: 125,
-  MAX_RETRIES: 5,
-  RETRY_DELAY: 2000,
-  MAX_BATCH_SIZE: 10,  // Reduced for real-time dashboard
-  INACTIVE_THRESHOLD: 30000,
-  THROTTLE_TIME_NORMAL: 8,  // ~120fps for smooth dashboard
-  THROTTLE_TIME_LOW_POWER: 33, // 20fps for low-power devices
-  PING_INTERVAL: 25000,
-  HEALTH_CHECK_INTERVAL: 30000,
-  LOW_POWER_HEALTH_CHECK_INTERVAL: 60000,
-  ERROR_THRESHOLD: 5,
+  RECONNECT_INTERVAL: 2000,
+  MAX_QUEUE_SIZE: 250,
+  MAX_RETRIES: 10,
+  RETRY_DELAY: 1000,
+  MAX_BATCH_SIZE: 20,  // Reduced for real-time dashboard
+  INACTIVE_THRESHOLD: 20000,
+  THROTTLE_TIME_NORMAL: 4,  // ~120fps for smooth dashboard
+  THROTTLE_TIME_LOW_POWER: 16, // 20fps for low-power devices
+  PING_INTERVAL: 15000,
+  HEALTH_CHECK_INTERVAL: 20000,
+  LOW_POWER_HEALTH_CHECK_INTERVAL: 30000,
+  ERROR_THRESHOLD: 3,
   ENABLE_COMPRESSION: false, // Disabled by default, enable if needed
 };
 
