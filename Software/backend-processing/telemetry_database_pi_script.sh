@@ -191,7 +191,7 @@ fi
 ####################################
 if [ "$RESET_DATABASE" -eq 1 ]; then
     log_info "Loading SQL schema from 'db/telem_data.sql' to create empty tables..."
-    SQL_FILE="db/telem_data.sql"
+    SQL_FILE="../backend-processing/db/telem_data.sql"
     if [ ! -f "$SQL_FILE" ]; then
         error_exit "SQL file '$SQL_FILE' not found."
     fi
