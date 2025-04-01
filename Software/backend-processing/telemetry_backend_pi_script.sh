@@ -97,7 +97,7 @@ fi
 ####################################
 # Step 2: Extract DB Info & Verify Connectivity
 ####################################
-CONFIG_FILE="configs/config.yaml"
+CONFIG_FILE="../backend-processing/configs/config.yaml"
 if [ ! -f "$CONFIG_FILE" ]; then
     error_exit "Configuration file '$CONFIG_FILE' not found."
 fi
