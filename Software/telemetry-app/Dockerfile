@@ -17,4 +17,5 @@ COPY . .
 EXPOSE 3000
 
 # Start the server
+RUN npm install --legacy-peer-deps
 CMD ["npm", "run", "dev"]
