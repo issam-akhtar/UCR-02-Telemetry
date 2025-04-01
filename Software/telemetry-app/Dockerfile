@@ -8,7 +8,7 @@ WORKDIR /src
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the frontend into the container
 COPY . .
@@ -17,5 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the server
-RUN npm install --legacy-peer-deps
 CMD ["npm", "run", "dev"]
