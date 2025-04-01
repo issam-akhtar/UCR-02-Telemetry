@@ -135,6 +135,7 @@ fi
 # Step 3: Install Go Dependencies
 ####################################
 log_info "Downloading Go module dependencies..."
+cd ../backend-processing
 go mod download || error_exit "Failed to download Go dependencies."
 
 ####################################
