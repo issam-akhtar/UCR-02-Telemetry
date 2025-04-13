@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with consistent configuration
 export const axiosInstance = axios.create({
-  baseURL: `http://${window.location.hostname}:9092/api`,
+  baseURL: `http://${window.location.hostname}:50002/api`,
   timeout: 5000,
 });
 

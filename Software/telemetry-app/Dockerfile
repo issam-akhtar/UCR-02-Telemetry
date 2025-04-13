@@ -14,7 +14,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Expose the port for Vite (default for now too)
-EXPOSE 3000
+EXPOSE 9093
 
 # Start the server
 CMD ["npm", "run", "dev"]

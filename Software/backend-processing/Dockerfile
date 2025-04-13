@@ -17,7 +17,7 @@ COPY . .
 WORKDIR /go/src/cmd/telemetryserver
 
 # Expose the port the backend will use (default port for now)
-EXPOSE 8080
+EXPOSE 50002
 
 # Start the backend
 CMD ["go", "run", "main.go"]

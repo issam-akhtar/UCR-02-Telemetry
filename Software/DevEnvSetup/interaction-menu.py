@@ -5,6 +5,7 @@ dbstarted = False
 
 def run_shell_command(command, wait_for_output=True):
     """Run a shell command and print the output, or run in the background if needed."""
+    #wait_for_output = True
     try:
         if wait_for_output:
             result = subprocess.run(command, capture_output=True, text=True, check=True)

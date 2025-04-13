@@ -706,7 +706,7 @@ const getWebSocketPort = () => {
     return import.meta.env.VITE_WS_PORT;
   }
   const appPort = window.location.port;
-  return appPort === '9093' ? '9094' : '9094';
+  return appPort === '50003' ? '50004' : '50004';
 };
 
 const wsPort = getWebSocketPort();
