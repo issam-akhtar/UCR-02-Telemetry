@@ -32,10 +32,10 @@ const CONSTANTS = {
   M_PER_S_TO_KM_PER_H: 3.6,
   KM_TO_MILES: 0.621371,
   SPEED_THRESHOLDS: {
-    LOW: 40,
-    MEDIUM: 80,
-    HIGH: 120,
-    MAX: 240
+    LOW: 20,
+    MEDIUM: 40,
+    HIGH: 60,
+    MAX: 120
   }
 };
 

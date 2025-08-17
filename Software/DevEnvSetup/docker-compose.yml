@@ -3,7 +3,7 @@ version: '3.8'
 services:
   frontend:
     network_mode: "host"
-    restart: "always"
+    restart: "unless-stopped"
     build:
       context: ../telemetry-app  # Path to the frontend directory where Dockerfile is located
     volumes:
@@ -17,7 +17,7 @@ services:
 
   backend:
     network_mode: "host"
-    restart: "always"
+    restart: "unless-stopped"
     build:
       context: ../backend-processing  # Path to the frontend directory where Dockerfile is located
     volumes:
