@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend file structure and where to change things &mdash; UCR-02 Telemetry Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Project structure quick index" href="structure_index.html" />
+    <link rel="prev" title="Frontend file structure and where to change things" href="frontend_structure.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            UCR-02 Telemetry
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Developer Guide (copied from root readme)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Component diagram and dependency graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequences.html">Sequence diagrams and edge cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Class and package diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proto_docs.html">Protobuf reference and generated docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_examples.html">API examples and sample requests/responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev_setup.html">Development setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">High-level overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#project-layout-important-files">Project layout (important files)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#single-packet-end-to-end-sequence">Single-packet end-to-end sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#per-package-notes-and-common-change-points">Per-package notes and common change points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#configs-and-dbc-conversion">Configs and DBC conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#testing-and-simulator">Testing and simulator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#operational-notes">Operational notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend: consolidated documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration: end-to-end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_structure.html">Frontend file structure and where to change things</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Backend file structure and where to change things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#top-level-files">Top-level files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cmds-and-servers">CMDs and servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#protobuf-and-types">Protobuf and types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configs-and-dbc">Configs and DBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pkg-core-packages">pkg/ - core packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#internal-application-internals">internal/ - application internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#db-schema-and-scripts">DB schema and scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-to-look-for-common-changes">Where to look for common changes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developer-tips">Developer tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="structure_index.html">Project structure quick index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UCR-02 Telemetry</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Backend file structure and where to change things</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/backend_structure.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="backend-file-structure-and-where-to-change-things">
+<h1>Backend file structure and where to change things<a class="headerlink" href="#backend-file-structure-and-where-to-change-things" title="Link to this heading"></a></h1>
+<p>This page lists important folders and files in <code class="docutils literal notranslate"><span class="pre">Software/backend-processing</span></code>
+and explains where to make changes for common tasks.</p>
+<section id="top-level-files">
+<h2>Top-level files<a class="headerlink" href="#top-level-files" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">go.mod</span></code> / <code class="docutils literal notranslate"><span class="pre">go.sum</span></code>: Go module dependencies.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Dockerfile</span></code>: how the backend container image is built.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">configs/config.yaml</span></code>: main runtime configuration (bind addresses,
+database settings, decoder paths). Change this to adjust runtime behavior.</p></li>
+</ul>
+</section>
+<section id="cmds-and-servers">
+<h2>CMDs and servers<a class="headerlink" href="#cmds-and-servers" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cmd/telemetryserver/main.go</span></code>: production server entrypoint. Change server
+bootstrapping, middleware, or CLI flags here.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cmd/csvserver</span></code>: simple CSV-based simulator used for development.</p></li>
+</ul>
+</section>
+<section id="protobuf-and-types">
+<h2>Protobuf and types<a class="headerlink" href="#protobuf-and-types" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">proto/telemetry.proto</span></code> and generated <code class="docutils literal notranslate"><span class="pre">proto/telemetry.pb.go</span></code>: canonical
+protobuf definitions and Go bindings. When modifying, regenerate Go code.</p></li>
+</ul>
+</section>
+<section id="configs-and-dbc">
+<h2>Configs and DBC<a class="headerlink" href="#configs-and-dbc" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">configs/UCR-01.dbc</span></code>: original DBC (domain-specific CAN database file)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scripts/convert_dbc_to_json.py</span></code>: helper to convert a .dbc into JSON
+mappings used by the decoder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">configs/UCR-01.json</span></code>: DBC-derived JSON mapping used by <code class="docutils literal notranslate"><span class="pre">pkg/candecoder</span></code>.</p></li>
+</ul>
+</section>
+<section id="pkg-core-packages">
+<h2>pkg/ - core packages<a class="headerlink" href="#pkg-core-packages" title="Link to this heading"></a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">pkg/candecoder</span></code>
+- Purpose: map raw CAN frames to named signals using the JSON/DBC mapping.
+- Look here to change decoding, add new messages, or adjust scaling.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pkg/processdata</span></code>
+- Purpose: smoothing, throttling, preparing messages for DB and WS</p>
+<blockquote>
+<div><p>broadcasting.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Files: <code class="docutils literal notranslate"><span class="pre">processdata.go</span></code>, <code class="docutils literal notranslate"><span class="pre">throttler.go</span></code>. Edit these to change
+throttling algorithms or batching behavior.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pkg/db</span></code>
+- Purpose: database access helpers (insert samples, query historical ranges).
+- Files: <code class="docutils literal notranslate"><span class="pre">db.go</span></code>. Modify to change SQL dialect, batch sizes, or schema</p>
+<blockquote>
+<div><p>mapping.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="internal-application-internals">
+<h2>internal/ - application internals<a class="headerlink" href="#internal-application-internals" title="Link to this heading"></a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">internal/wsserver</span></code>
+- hub.go: the WebSocket hub that manages clients and broadcast loops. Modify</p>
+<blockquote>
+<div><p>to change client lifecycle behavior, broadcast strategies, or heartbeats.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">internal/handlers</span></code>
+- <code class="docutils literal notranslate"><span class="pre">historical.go</span></code>: REST handlers for historical data. Edit to change API</p>
+<blockquote>
+<div><p>shapes, add auth, or implement server-side downsampling.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="db-schema-and-scripts">
+<h2>DB schema and scripts<a class="headerlink" href="#db-schema-and-scripts" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">db/telem_data.sql</span></code>: initial schema used to create the telemetry table.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*_script.sh</span></code> helper scripts: automate common tasks (DB init, Pi-specific
+deployment steps).</p></li>
+</ul>
+</section>
+<section id="where-to-look-for-common-changes">
+<h2>Where to look for common changes<a class="headerlink" href="#where-to-look-for-common-changes" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Add/update message decodes: <code class="docutils literal notranslate"><span class="pre">pkg/candecoder</span></code> and update <code class="docutils literal notranslate"><span class="pre">configs/*.json</span></code>
+(or convert a new .dbc).</p></li>
+<li><p>Change throttling/aggregation behavior: <code class="docutils literal notranslate"><span class="pre">pkg/processdata/throttler.go</span></code> and
+<code class="docutils literal notranslate"><span class="pre">processdata.go</span></code>.</p></li>
+<li><p>Adjust WebSocket behavior (ping, queue policy): <code class="docutils literal notranslate"><span class="pre">internal/wsserver/hub.go</span></code>.</p></li>
+<li><p>Change HTTP API endpoints and parameters: <code class="docutils literal notranslate"><span class="pre">internal/handlers/historical.go</span></code>.</p></li>
+</ul>
+</section>
+<section id="developer-tips">
+<h2>Developer tips<a class="headerlink" href="#developer-tips" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Use the CSV simulator (<code class="docutils literal notranslate"><span class="pre">cmd/csvserver</span></code>) to reproduce decoding and pipeline
+tests.</p></li>
+<li><p>Use the protobuf definitions to produce test fixtures that both the backend
+and frontend can read.</p></li>
+<li><p>Add unit tests around <code class="docutils literal notranslate"><span class="pre">pkg/candecoder</span></code> decoders using the mappings in
+<code class="docutils literal notranslate"><span class="pre">configs/</span></code> to ensure future DBC changes don’t regress decoding.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="frontend_structure.html" class="btn btn-neutral float-left" title="Frontend file structure and where to change things" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="structure_index.html" class="btn btn-neutral float-right" title="Project structure quick index" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

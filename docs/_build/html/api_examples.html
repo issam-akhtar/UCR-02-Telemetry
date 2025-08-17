@@ -1,0 +1,207 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API examples and sample requests/responses &mdash; UCR-02 Telemetry Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Development setup" href="dev_setup.html" />
+    <link rel="prev" title="Protobuf reference and generated docs" href="proto_docs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            UCR-02 Telemetry
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Developer Guide (copied from root readme)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Component diagram and dependency graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequences.html">Sequence diagrams and edge cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Class and package diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proto_docs.html">Protobuf reference and generated docs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API examples and sample requests/responses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#historical-rest-example">Historical REST example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#websocket-realtime-example">WebSocket (realtime) example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#small-code-snippets">Small code snippets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#auto-generating-examples-from-tests">Auto-generating examples from tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_setup.html">Development setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">High-level overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#project-layout-important-files">Project layout (important files)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#single-packet-end-to-end-sequence">Single-packet end-to-end sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#per-package-notes-and-common-change-points">Per-package notes and common change points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#configs-and-dbc-conversion">Configs and DBC conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#testing-and-simulator">Testing and simulator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#operational-notes">Operational notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend: consolidated documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration: end-to-end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_structure.html">Frontend file structure and where to change things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_structure.html">Backend file structure and where to change things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure_index.html">Project structure quick index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UCR-02 Telemetry</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API examples and sample requests/responses</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-examples-and-sample-requests-responses">
+<h1>API examples and sample requests/responses<a class="headerlink" href="#api-examples-and-sample-requests-responses" title="Link to this heading"></a></h1>
+<p>This page documents example REST and WebSocket interactions with sample JSON
+and Protobuf snippets.</p>
+<section id="historical-rest-example">
+<h2>Historical REST example<a class="headerlink" href="#historical-rest-example" title="Link to this heading"></a></h2>
+<p>Request (HTTP GET):</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/api/historical?signal=cell_temp&amp;from=2025-01-01T00:00:00Z&amp;to=2025-01-01T00:10:00Z</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">localhost:8080</span>
+</pre></div>
+</div>
+<p>Response (JSON):</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2025-01-01T00:00:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="mf">23.5</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2025-01-01T00:01:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="mf">23.8</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2025-01-01T00:02:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="mf">24.1</span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="websocket-realtime-example">
+<h2>WebSocket (realtime) example<a class="headerlink" href="#websocket-realtime-example" title="Link to this heading"></a></h2>
+<p>The backend broadcasts protobuf-serialized messages. Here is a conceptual
+example of what the decoded JSON equivalent looks like after the frontend
+decodes the protobuf frame:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-01T00:00:05Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;signals&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;vehicle_speed&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">31.2</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;motor_temp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">68.4</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;battery_soc&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.87</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="small-code-snippets">
+<h2>Small code snippets<a class="headerlink" href="#small-code-snippets" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Frontend: subscribing to WebSocket and decoding via protobuf (JS pseudocode):</p></li>
+</ul>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebSocket</span><span class="p">(</span><span class="s1">&#39;ws://localhost:8080/ws&#39;</span><span class="p">);</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">binaryType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;arraybuffer&#39;</span><span class="p">;</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Uint8Array</span><span class="p">(</span><span class="nx">ev</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">TelemetryProto</span><span class="p">.</span><span class="nx">TelemetryMessage</span><span class="p">.</span><span class="nx">decode</span><span class="p">(</span><span class="nx">buf</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// update UI with msg</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Backend: pseudo-handler broadcasting protobuf (Go-like pseudocode):</p></li>
+</ul>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span><span class="w"> </span><span class="nx">broadcastUpdate</span><span class="p">(</span><span class="nx">hub</span><span class="w"> </span><span class="o">*</span><span class="nx">ws</span><span class="p">.</span><span class="nx">Hub</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="p">[]</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// data is protobuf-marshaled bytes</span>
+<span class="w">  </span><span class="nx">hub</span><span class="p">.</span><span class="nx">Broadcast</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="auto-generating-examples-from-tests">
+<h2>Auto-generating examples from tests<a class="headerlink" href="#auto-generating-examples-from-tests" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Optionally, you can add small unit tests that output canonical JSON examples
+and commit their outputs into <code class="docutils literal notranslate"><span class="pre">docs/examples/</span></code>. Sphinx can then include
+those files with the <code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">literalinclude::</span></code> directive.</p></li>
+</ul>
+<p>Example literal include (historical example):</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2025-01-01T00:00:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="mf">23.5</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2025-01-01T00:01:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="mf">23.8</span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2025-01-01T00:02:00Z&quot;</span><span class="p">,</span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="mf">24.1</span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="proto_docs.html" class="btn btn-neutral float-left" title="Protobuf reference and generated docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dev_setup.html" class="btn btn-neutral float-right" title="Development setup" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

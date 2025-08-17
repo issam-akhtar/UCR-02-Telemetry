@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend: consolidated documentation &mdash; UCR-02 Telemetry Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Integration: end-to-end" href="integration.html" />
+    <link rel="prev" title="High-level overview" href="backend.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            UCR-02 Telemetry
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Developer Guide (copied from root readme)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Component diagram and dependency graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequences.html">Sequence diagrams and edge cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Class and package diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proto_docs.html">Protobuf reference and generated docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_examples.html">API examples and sample requests/responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev_setup.html">Development setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">High-level overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#project-layout-important-files">Project layout (important files)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#single-packet-end-to-end-sequence">Single-packet end-to-end sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#per-package-notes-and-common-change-points">Per-package notes and common change points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#configs-and-dbc-conversion">Configs and DBC conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#testing-and-simulator">Testing and simulator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#operational-notes">Operational notes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frontend: consolidated documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-jump-list">Quick jump list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#project-layout-important-files">Project layout (important files)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#real-time-data-path-detailed">Real-time data path (detailed)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#where-to-change-behavior-file-action">Where to change behavior (file-&gt;action)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developer-tips">Developer tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration: end-to-end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_structure.html">Frontend file structure and where to change things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_structure.html">Backend file structure and where to change things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure_index.html">Project structure quick index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UCR-02 Telemetry</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Frontend: consolidated documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/frontend.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="frontend-consolidated-documentation">
+<h1>Frontend: consolidated documentation<a class="headerlink" href="#frontend-consolidated-documentation" title="Link to this heading"></a></h1>
+<p>This consolidated page contains everything a developer needs to know about the
+frontend (<code class="docutils literal notranslate"><span class="pre">Software/telemetry-app</span></code>): project layout, where to make common
+changes, the real-time data path, chart rendering details, performance tips,
+and links to relevant files.</p>
+<section id="quick-jump-list">
+<h2>Quick jump list<a class="headerlink" href="#quick-jump-list" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>To change WebSocket behavior: <code class="docutils literal notranslate"><span class="pre">src/services/websocket.js</span></code></p></li>
+<li><p>To change proto decoding: <code class="docutils literal notranslate"><span class="pre">public/proto/telemetry.proto</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">src/utils/protobuf.js</span></code></p></li>
+<li><p>To change buffer/downsampling: <code class="docutils literal notranslate"><span class="pre">src/hooks/useRealTimeData.js</span></code></p></li>
+<li><p>To add/modify charts: <code class="docutils literal notranslate"><span class="pre">src/components/charts/*</span></code>, pages in <code class="docutils literal notranslate"><span class="pre">src/pages/</span></code></p></li>
+</ul>
+</section>
+<section id="project-layout-important-files">
+<h2>Project layout (important files)<a class="headerlink" href="#project-layout-important-files" title="Link to this heading"></a></h2>
+<ul>
+<li><p>Top-level: <code class="docutils literal notranslate"><span class="pre">package.json</span></code> (scripts/deps), <code class="docutils literal notranslate"><span class="pre">vite.config.js</span></code> (build/dev
+server settings), <code class="docutils literal notranslate"><span class="pre">Dockerfile</span></code>.</p></li>
+<li><p>Public assets: <code class="docutils literal notranslate"><span class="pre">public/proto/telemetry.proto</span></code>, <code class="docutils literal notranslate"><span class="pre">public/3D/</span></code>, <code class="docutils literal notranslate"><span class="pre">public/SVG/</span></code>.</p></li>
+<li><p>Source: <code class="docutils literal notranslate"><span class="pre">src/</span></code> — main app code:
+- <code class="docutils literal notranslate"><span class="pre">src/main.jsx</span></code> and <code class="docutils literal notranslate"><span class="pre">src/App.jsx</span></code> — app bootstrap and providers.
+- <code class="docutils literal notranslate"><span class="pre">src/pages/</span></code> — Dashboard, RealTimeCharts, HistoricalCharts, ModelViewer.
+- <code class="docutils literal notranslate"><span class="pre">src/services/websocket.js</span></code> — WebSocket connect/reconnect, binary handling.
+- <code class="docutils literal notranslate"><span class="pre">src/services/api.js</span></code> — REST helpers for historical queries.
+- <code class="docutils literal notranslate"><span class="pre">src/utils/protobuf.js</span></code> — Protobuf decode helpers for client.
+- <code class="docutils literal notranslate"><span class="pre">src/hooks/useRealTimeData.js</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">useHistoricalData.js</span></code> — central</p>
+<blockquote>
+<div><p>buffering and data normalization.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src/components/charts/</span></code> — chart implementations and wrappers.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="real-time-data-path-detailed">
+<h2>Real-time data path (detailed)<a class="headerlink" href="#real-time-data-path-detailed" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Connection and frame reception</p></li>
+</ol>
+<ul class="simple">
+<li><p>The WebSocket client (<cite>src/services/websocket.js</cite>) opens a binary socket to
+<code class="docutils literal notranslate"><span class="pre">ws://&lt;host&gt;/ws</span></code> and sets <code class="docutils literal notranslate"><span class="pre">binaryType='arraybuffer'</span></code>.</p></li>
+<li><p>Frames are received as ArrayBuffers (protobuf binary) and forwarded to the
+decoder.</p></li>
+</ul>
+<ol class="arabic simple" start="2">
+<li><p>Protobuf decode and normalization</p></li>
+</ol>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src/utils/protobuf.js</span></code> decodes the binary using a Protobuf runtime
+(generated or runtime reflection). The decoded message has a timestamp and
+a mapping of signal names to numeric values.</p></li>
+<li><p>The decoder normalizes field names and applies any small per-field
+post-processing required by the frontend (unit conversions for display).</p></li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><p>Buffering and backpressure</p></li>
+</ol>
+<ul class="simple">
+<li><p>Decoded messages go into <code class="docutils literal notranslate"><span class="pre">useRealTimeData</span></code> which maintains a per-signal
+circular buffer (fixed capacity). This design bounds memory growth and
+simplifies charting windows (e.g., last N seconds or samples).</p></li>
+<li><p>The buffer append is cheap (O(1)), and the hook exposes a subscription API
+so chart components only read the current window when they need to render.</p></li>
+</ul>
+<ol class="arabic simple" start="4">
+<li><p>Downsampling and rendering</p></li>
+</ol>
+<ul class="simple">
+<li><p>To avoid plotting too many points, the frontend may downsample using an
+algorithm like Largest-Triangle-Three-Buckets (LTTB) or simple decimation
+before rendering.</p></li>
+<li><p>Chart components throttle their render updates (for example, only every
+200-500ms) to make the UI smooth while still providing timeliness.</p></li>
+</ul>
+<ol class="arabic simple" start="5">
+<li><p>Historical merge</p></li>
+</ol>
+<ul class="simple">
+<li><p>Historical values fetched from <code class="docutils literal notranslate"><span class="pre">/api/historical</span></code> are added into the same
+buffers (with timestamp normalization). When both historical and live data
+are present, the UI merges them and deduplicates using timestamp/sequence
+numbers.</p></li>
+</ul>
+</section>
+<section id="where-to-change-behavior-file-action">
+<h2>Where to change behavior (file-&gt;action)<a class="headerlink" href="#where-to-change-behavior-file-action" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Add new chart widget: <code class="docutils literal notranslate"><span class="pre">src/components/charts/</span></code> and import in
+<code class="docutils literal notranslate"><span class="pre">src/pages/RealTimeCharts.jsx</span></code> or <code class="docutils literal notranslate"><span class="pre">HistoricalCharts.jsx</span></code>.</p></li>
+<li><p>Change reconnect/backoff: <code class="docutils literal notranslate"><span class="pre">src/services/websocket.js</span></code>.</p></li>
+<li><p>Change buffer sizes / sampling: <code class="docutils literal notranslate"><span class="pre">src/hooks/useRealTimeData.js</span></code>.</p></li>
+<li><p>Update Protobuf shapes: edit <code class="docutils literal notranslate"><span class="pre">public/proto/telemetry.proto</span></code> and update
+client decode code in <code class="docutils literal notranslate"><span class="pre">src/utils/protobuf.js</span></code>.</p></li>
+</ul>
+</section>
+<section id="developer-tips">
+<h2>Developer tips<a class="headerlink" href="#developer-tips" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>For development, log decoded messages at <code class="docutils literal notranslate"><span class="pre">src/services/websocket.js</span></code> to
+inspect raw frames.</p></li>
+<li><p>Use the built-in simulator (CSV) to produce repeatable input streams.</p></li>
+<li><p>If charts appear sluggish, reduce per-chart render frequency and increase
+downsampling.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="backend.html" class="btn btn-neutral float-left" title="High-level overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="integration.html" class="btn btn-neutral float-right" title="Integration: end-to-end" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

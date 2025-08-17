@@ -1,0 +1,184 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protobuf reference and generated docs &mdash; UCR-02 Telemetry Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API examples and sample requests/responses" href="api_examples.html" />
+    <link rel="prev" title="Class and package diagrams" href="classes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            UCR-02 Telemetry
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Developer Guide (copied from root readme)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Component diagram and dependency graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequences.html">Sequence diagrams and edge cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Class and package diagrams</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Protobuf reference and generated docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#proto-files-of-interest">Proto files of interest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-language-bindings">Generating language bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-html-documentation-proto-docs">Generating HTML documentation (proto docs)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#embedding-proto-reference-into-sphinx">Embedding proto reference into Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_examples.html">API examples and sample requests/responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev_setup.html">Development setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">High-level overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#project-layout-important-files">Project layout (important files)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#single-packet-end-to-end-sequence">Single-packet end-to-end sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#per-package-notes-and-common-change-points">Per-package notes and common change points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#configs-and-dbc-conversion">Configs and DBC conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#testing-and-simulator">Testing and simulator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html#operational-notes">Operational notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend.html">Frontend: consolidated documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration: end-to-end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frontend_structure.html">Frontend file structure and where to change things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend_structure.html">Backend file structure and where to change things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure_index.html">Project structure quick index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">UCR-02 Telemetry</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Protobuf reference and generated docs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/proto_docs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="protobuf-reference-and-generated-docs">
+<h1>Protobuf reference and generated docs<a class="headerlink" href="#protobuf-reference-and-generated-docs" title="Link to this heading"></a></h1>
+<p>This page explains how protobuf messages are used and how to generate HTML
+reference docs for the <code class="docutils literal notranslate"><span class="pre">telemetry.proto</span></code> definitions.</p>
+<section id="proto-files-of-interest">
+<h2>Proto files of interest<a class="headerlink" href="#proto-files-of-interest" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Backend canonical proto: <code class="docutils literal notranslate"><span class="pre">Software/backend-processing/proto/telemetry.proto</span></code></p></li>
+<li><p>Frontend copy: <code class="docutils literal notranslate"><span class="pre">Software/telemetry-app/public/proto/telemetry.proto</span></code></p></li>
+</ul>
+</section>
+<section id="generating-language-bindings">
+<h2>Generating language bindings<a class="headerlink" href="#generating-language-bindings" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Go: <code class="docutils literal notranslate"><span class="pre">protoc</span> <span class="pre">--go_out=.</span> <span class="pre">--go_opt=paths=source_relative</span> <span class="pre">telemetry.proto</span></code></p></li>
+<li><p>JS (optional): <code class="docutils literal notranslate"><span class="pre">protoc</span> <span class="pre">--js_out=import_style=commonjs,binary:./out</span> <span class="pre">telemetry.proto</span></code></p></li>
+</ul>
+</section>
+<section id="generating-html-documentation-proto-docs">
+<h2>Generating HTML documentation (proto docs)<a class="headerlink" href="#generating-html-documentation-proto-docs" title="Link to this heading"></a></h2>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">protoc-gen-doc</span></code> to generate HTML or Markdown documentation for
+proto files.</p>
+<ol class="arabic">
+<li><p>Install the plugin (example using prebuilt binary):</p>
+<ul class="simple">
+<li><p>Download protoc-gen-doc and place it on your PATH.</p></li>
+</ul>
+</li>
+<li><p>Run the generator:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>Software/backend-processing/proto
+protoc<span class="w"> </span>--doc_out<span class="o">=</span>./doc<span class="w"> </span>--doc_opt<span class="o">=</span>html,telemetry-proto.html<span class="w"> </span>telemetry.proto
+</pre></div>
+</div>
+</li>
+<li><p>The file <code class="docutils literal notranslate"><span class="pre">telemetry-proto.html</span></code> will appear in <code class="docutils literal notranslate"><span class="pre">proto/doc</span></code>. You can
+copy or include this file into the Sphinx site (<code class="docutils literal notranslate"><span class="pre">docs/_static</span></code>) and link
+to it from this page.</p></li>
+</ol>
+</section>
+<section id="embedding-proto-reference-into-sphinx">
+<h2>Embedding proto reference into Sphinx<a class="headerlink" href="#embedding-proto-reference-into-sphinx" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Option A: copy generated HTML into <code class="docutils literal notranslate"><span class="pre">docs/_static</span></code> and link with
+<code class="docutils literal notranslate"><span class="pre">..</span> <span class="pre">raw::</span> <span class="pre">html</span></code> or a standard link.</p></li>
+<li><p>Option B: generate Markdown via protoc-gen-doc and include it in the site.</p></li>
+</ul>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading"></a></h2>
+<p>Protobuf changes must be coordinated between backend and frontend. The frontend
+expects the same proto definitions to decode binary payloads over WebSocket.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="classes.html" class="btn btn-neutral float-left" title="Class and package diagrams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_examples.html" class="btn btn-neutral float-right" title="API examples and sample requests/responses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
