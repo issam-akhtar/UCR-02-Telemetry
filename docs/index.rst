@@ -1,28 +1,42 @@
 UCR-02 Telemetry Documentation
 ===============================
 
+
+Pick a category to explore the project documentation.
+
+Frontend
+--------
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   guide
-   components
-   sequences
-   classes
-   proto_docs
-   api_examples
-   dev_setup
-   backend
+   architecture/frontend_structure
    frontend
-   integration
-   frontend_structure
-   backend_structure
-   structure_index
+   components
 
+Backend
+-------
 
-Build instructions
-------------------
+.. toctree::
+   :maxdepth: 2
+
+   architecture/backend_structure
+   backend
+   dev_setup
+   guide
+
+Database
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   database
+
+Build locally
+-------------
 
 To build the docs locally, install the Python requirements from
 ``docs/requirements.txt`` and run ``make html`` inside the ``docs/`` folder.
+API & Protocols
 

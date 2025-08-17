@@ -5,6 +5,8 @@ sys.path.insert(0, os.path.abspath('..'))
 
 project = 'UCR-02 Telemetry'
 html_title = project + ' Documentation'
+author = 'UCR Team'
+release = '0.1'
 
 extensions = [
     'sphinx_rtd_theme',

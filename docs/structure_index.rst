@@ -1,9 +1,10 @@
 Project structure quick index
 =============================
 
-The following pages explain file-level responsibilities and where to change
-behavior:
 
-- Frontend: :doc:`frontend_structure`
-- Backend: :doc:`backend_structure`
+Quick pointers to the code areas you'll commonly edit.
+
+- Architecture index: :doc:`architecture/index` — high-level grouping of the
+	frontend and backend structure pages.
+
 

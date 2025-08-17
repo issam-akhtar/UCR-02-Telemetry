@@ -17,6 +17,7 @@
 **/build/
 **/build*
 **/managed_components/
+**/components/
 # CMake generated files
 CMakeLists.txt.user
 CMakeCache.txt
@@ -42,10 +43,10 @@ cmake_install.cmake
 *.swp
 *.swo
 *.tmp
-
+*.mov
 # Logs
 *.log
-
+*.csv
 # IDE specific
 .vscode/
 .idea/
@@ -56,3 +57,41 @@ cmake_install.cmake
 venv/
 __pycache__/
 *.py[cod]
+
+# Sphinx build directory
+_build/
+build/
+
+# Sphinx auto-generated files
+.doctrees/
+.buildinfo
+
+# Sphinx generated documentation
+_static/
+_templates/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+*.egg-info/
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific files
+.DS_Store
+Thumbs.db
