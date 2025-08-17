@@ -12,6 +12,8 @@
 .csv
 
 # Build directories
+**/_build/
+**/_build/*
 **/build/
 **/build*
 **/managed_components/
