@@ -4,5 +4,18 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+---
+
+Documentation
+-------------
+
+This frontend is documented in the repository-wide developer guide. See the
+root ``readme.rst`` and the Sphinx site in ``docs/``. To build the HTML docs:
+
+1. Create and activate a Python virtualenv (optional): ``python3 -m venv .docs-venv && source .docs-venv/bin/activate``
+2. Install requirements: ``pip install -r docs/requirements.txt``
+3. Build: ``cd docs && make html``
+
+The guide includes architecture diagrams, Protobuf guidance, and integration
+contracts with the backend.
