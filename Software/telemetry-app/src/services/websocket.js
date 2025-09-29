@@ -1,6 +1,88 @@
+// websocket.js
+// Uses ports/IP from configs/config.yaml (with env + sane fallbacks)
+
 import { loadTelemetryProto, decodeTelemetryMessage } from '../utils/protobuf';
 
-// Simple configuration
+// ---------- Runtime config loader (YAML → JS) ----------
+const DEFAULTS = {
+  host: (typeof window !== 'undefined' && window.location.hostname) || 'localhost',
+  wsPort: 9094,   // live data WS for frontend
+  apiPort: 9092,  // REST API
+  wsPath: '/ws',  // WS route on your server
+};
+
+const ENV = (() => {
+  // Vite-style env overrides (if present)
+  const vite = (typeof import.meta !== 'undefined' && import.meta.env) || {};
+  return {
+    host: vite.VITE_HOST || null,
+    wsPort: vite.VITE_WS_PORT ? Number(vite.VITE_WS_PORT) : null,
+    apiPort: vite.VITE_API_PORT ? Number(vite.VITE_API_PORT) : null,
+  };
+})();
+
+async function fetchText(path) {
+  try {
+    const res = await fetch(path, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.text();
+  } catch {
+    return null;
+  }
+}
+
+async function parseYamlToJson(yamlText) {
+  if (!yamlText) return null;
+  try {
+    const { default: yaml } = await import('js-yaml'); // expects js-yaml in deps
+    return yaml.load(yamlText);
+  } catch {
+    // If js-yaml isn’t available, gracefully ignore and use defaults
+    return null;
+  }
+}
+
+/**
+ * Load config.yaml if available. Supports:
+ *  - /configs/config.yaml
+ *  - /config.yaml
+ * Returns { host, wsPort, apiPort, wsPath }
+ */
+async function loadRuntimeConfig() {
+  const yamlText =
+    (await fetchText('/configs/config.yaml')) ||
+    (await fetchText('/config.yaml'));
+
+  const cfg = await parseYamlToJson(yamlText);
+
+  // Pull values from new unified structure with legacy fallbacks
+  const hostFromYaml = cfg?.network?.host_ip || cfg?.websocket?.ip || 'localhost';
+  const wsPortFromYaml =
+    Number(cfg?.network?.ports?.live_data_ws) ||
+    Number(cfg?.live_ws_port) ||
+    Number(cfg?.websocket?.port) ||
+    DEFAULTS.wsPort;
+
+  const apiPortFromYaml =
+    Number(cfg?.network?.ports?.rest_api) ||
+    Number(cfg?.apiport) ||
+    DEFAULTS.apiPort;
+
+  // If YAML says "localhost"/"0.0.0.0"/"::", prefer current browser host for nicer DX
+  const localish = new Set(['localhost', '0.0.0.0', '::', '127.0.0.1']);
+  const resolvedHost = localish.has(String(hostFromYaml).toLowerCase())
+    ? DEFAULTS.host
+    : hostFromYaml;
+
+  // Env overrides, then YAML, then defaults
+  const host = ENV.host || resolvedHost || DEFAULTS.host;
+  const wsPort = ENV.wsPort ?? wsPortFromYaml ?? DEFAULTS.wsPort;
+  const apiPort = ENV.apiPort ?? apiPortFromYaml ?? DEFAULTS.apiPort;
+
+  return { host, wsPort, apiPort, wsPath: DEFAULTS.wsPath };
+}
+
+// ---------- Simple configuration ----------
 const CONFIG = {
   RECONNECT_INTERVAL: 3000,
   MAX_RETRIES: 3,
@@ -40,29 +122,47 @@ export class WebSocketService {
   }
 
   /**
+   * Update the WS URL at runtime (used after loading YAML).
+   * Will reconnect if the URL changed.
+   */
+  async updateUrl(newUrl) {
+    if (!newUrl || newUrl === this.url) return;
+    this.url = newUrl;
+    try {
+      // cleanly reconnect to new endpoint
+      if (this.socket) {
+        try { this.socket.close(); } catch {}
+      }
+      await this.connect();
+    } catch {
+      // will backoff via handleDisconnection
+    }
+  }
+
+  /**
    * Set connection state and trigger notifications.
    * @param {string} newState
    */
   setConnectionState(newState) {
     if (!newState || !ConnectionState[newState]) return;
-    
+
     const prevState = this.connectionState;
     if (prevState === newState) return;
-    
+
     this.connectionState = newState;
-    
+
     // Notify subscribers of connection state change
     this.notifyConnectionChange(newState === ConnectionState.CONNECTED);
 
     if (newState === ConnectionState.CONNECTED) {
       this.connectionAttempts = 0;
       this.startPingPongCycle();
-      
+
       if (prevState === ConnectionState.RECONNECTING && !this._subscriptionsPaused) {
         this._notifyResumeListeners();
       }
     }
-    
+
     if (newState === ConnectionState.DISCONNECTED && prevState === ConnectionState.CONNECTED) {
       this.handleDisconnection();
     }
@@ -75,13 +175,13 @@ export class WebSocketService {
    */
   onConnectionChange(callback) {
     if (typeof callback !== 'function') return () => {};
-    
+
     this.onConnectionChangeCallbacks.add(callback);
-    
+
     // Call immediately with current state
-    const isConnected = this.socket?.readyState === WebSocket.OPEN || 
+    const isConnected = this.socket?.readyState === WebSocket.OPEN ||
                         this.connectionState === ConnectionState.CONNECTED;
-    
+
     queueMicrotask(() => {
       try {
         callback(Boolean(isConnected));
@@ -89,7 +189,7 @@ export class WebSocketService {
         this.onConnectionChangeCallbacks.delete(callback);
       }
     });
-    
+
     return () => this.onConnectionChangeCallbacks.delete(callback);
   }
 
@@ -100,7 +200,7 @@ export class WebSocketService {
    */
   onResume(callback) {
     if (typeof callback !== 'function') return () => {};
-    
+
     this.onResumeCallbacks.add(callback);
     return () => this.onResumeCallbacks.delete(callback);
   }
@@ -125,7 +225,7 @@ export class WebSocketService {
    */
   notifyConnectionChange(isConnected) {
     const connectedState = Boolean(isConnected);
-    
+
     for (const callback of this.onConnectionChangeCallbacks) {
       try {
         callback(connectedState);
@@ -141,7 +241,7 @@ export class WebSocketService {
    */
   async loadProto(retries = CONFIG.MAX_RETRIES) {
     if (this.isProtoLoaded && this.protoRoot) return true;
-    
+
     try {
       this.protoRoot = await loadTelemetryProto();
       this.isProtoLoaded = Boolean(this.protoRoot);
@@ -160,14 +260,14 @@ export class WebSocketService {
    */
   async initialize() {
     this.setConnectionState(ConnectionState.CONNECTING);
-    
+
     try {
       await this.loadProto();
       await this.connect();
       this.setupTimers();
     } catch (error) {
       this.setConnectionState(ConnectionState.ERROR);
-      
+
       // Retry with backoff
       const retryDelay = Math.min(30000, 5000 * (this.connectionAttempts + 1));
       setTimeout(() => this.initialize(), retryDelay);
@@ -181,7 +281,7 @@ export class WebSocketService {
     if (this.pingTimerId) {
       clearInterval(this.pingTimerId);
     }
-    
+
     if (!this._subscriptionsPaused) {
       this.pingTimerId = setInterval(() => this.sendPing(), CONFIG.PING_INTERVAL);
     }
@@ -194,7 +294,7 @@ export class WebSocketService {
    */
   parseJSONMessage(data) {
     if (!data || typeof data !== 'string') return null;
-    
+
     try {
       return JSON.parse(data);
     } catch (e) {
@@ -209,7 +309,7 @@ export class WebSocketService {
    */
   parseBinaryMessage(data) {
     if (!this.protoRoot || !this.isProtoLoaded || !data) return null;
-    
+
     try {
       const buffer = new Uint8Array(data);
       return decodeTelemetryMessage(this.protoRoot, buffer);
@@ -228,14 +328,14 @@ export class WebSocketService {
     if (!message) {
       return { type: messageType || 'unknown', payload: { fields: {} }, time: Date.now() };
     }
-    
+
     const { type = messageType || 'unknown', time, timestamp, payload, ...rest } = message;
-    
+
     const normalized = {
       type,
       time: time || timestamp || Date.now(),
     };
-    
+
     if (!payload || typeof payload !== 'object') {
       normalized.payload = { fields: { ...rest } };
     } else if (!payload.fields) {
@@ -246,7 +346,7 @@ export class WebSocketService {
     } else {
       normalized.payload = payload;
     }
-    
+
     return normalized;
   }
 
@@ -256,17 +356,17 @@ export class WebSocketService {
    */
   deliverMessage(message) {
     if (!message || this._subscriptionsPaused) return;
-    
+
     // Check for pong
     if (message.type === 'pong' || (message.payload && message.payload.type === 'pong')) {
       return;
     }
-    
+
     let messageType = message.type || (message.payload && message.payload.type);
     if (!messageType) return;
-    
+
     const normalizedMessage = this.normalizeMessage(message, messageType);
-    
+
     // Deliver to specific subscribers
     const subscribers = this.subscribers.get(messageType);
     if (subscribers && subscribers.size > 0) {
@@ -279,7 +379,7 @@ export class WebSocketService {
       }
       return;
     }
-    
+
     // Deliver to wildcard subscribers
     const wildcardSubscribers = this.subscribers.get('*');
     if (wildcardSubscribers && wildcardSubscribers.size > 0) {
@@ -318,19 +418,19 @@ export class WebSocketService {
               this.socket.removeEventListener('error', onError);
               resolve();
             };
-            
+
             const onError = () => {
               this.socket.removeEventListener('open', onOpen);
               this.socket.removeEventListener('error', onError);
               reject(new Error('WebSocket connection failed'));
             };
-            
+
             this.socket.addEventListener('open', onOpen);
             this.socket.addEventListener('error', onError);
-            
+
             setTimeout(() => reject(new Error('WebSocket connection timeout')), 5000);
           });
-          
+
           this.setConnectionState(ConnectionState.CONNECTED);
           return true;
         } catch (err) {
@@ -342,27 +442,27 @@ export class WebSocketService {
         }
       }
     }
-    
+
     // Don't create new connections while paused
     if (this._subscriptionsPaused) return false;
-    
+
     try {
       this.socket = new WebSocket(this.url);
       this.socket.binaryType = 'arraybuffer';
-      
+
       this.setConnectionState(ConnectionState.CONNECTING);
-      
+
       await new Promise((resolve, reject) => {
         const timeoutId = setTimeout(() => {
           reject(new Error('WebSocket connection timeout'));
         }, 5000);
-        
+
         this.socket.onopen = () => {
           clearTimeout(timeoutId);
           this.handleOpen();
           resolve();
         };
-        
+
         this.socket.onerror = () => {
           clearTimeout(timeoutId);
           this.setConnectionState(ConnectionState.ERROR);
@@ -370,11 +470,11 @@ export class WebSocketService {
           reject(new Error('WebSocket connection error'));
         };
       });
-      
+
       return true;
     } catch (error) {
       this.setConnectionState(ConnectionState.ERROR);
-      
+
       if (this.socket) {
         this.socket.onopen = null;
         this.socket.onclose = null;
@@ -382,7 +482,7 @@ export class WebSocketService {
         this.socket.onmessage = null;
         this.socket = null;
       }
-      
+
       throw error;
     }
   }
@@ -394,11 +494,11 @@ export class WebSocketService {
     this.reconnectInterval = CONFIG.RECONNECT_INTERVAL;
     this.lastMessageTime = Date.now();
     this.setConnectionState(ConnectionState.CONNECTED);
-    
+
     this.socket.onmessage = this.handleMessage.bind(this);
     this.socket.onclose = this.handleClose.bind(this);
     this.socket.onerror = this.handleError.bind(this);
-    
+
     this.startPingPongCycle();
   }
 
@@ -407,10 +507,10 @@ export class WebSocketService {
    */
   startPingPongCycle() {
     if (this.pingTimerId || this.connectionState !== ConnectionState.CONNECTED) return;
-    
+
     // Send initial ping
     this.sendPing();
-    
+
     // Set up regular pings
     this.pingTimerId = setInterval(() => this.sendPing(), CONFIG.PING_INTERVAL);
   }
@@ -420,14 +520,14 @@ export class WebSocketService {
    */
   sendPing() {
     if (this._subscriptionsPaused || !this.socket || this.socket.readyState !== WebSocket.OPEN) return;
-    
+
     try {
       this._pingId = (this._pingId + 1) % 1000000;
-      
-      this.socket.send(JSON.stringify({ 
-        type: "ping", 
+
+      this.socket.send(JSON.stringify({
+        type: "ping",
         pingId: this._pingId,
-        timestamp: Date.now() 
+        timestamp: Date.now()
       }));
     } catch (error) {
       // Connection might be broken
@@ -443,11 +543,11 @@ export class WebSocketService {
    */
   handleMessage(event) {
     this.lastMessageTime = Date.now();
-    
+
     if (this._subscriptionsPaused) return;
-    
+
     let message = null;
-    
+
     if (typeof event.data === 'string') {
       message = this.parseJSONMessage(event.data);
       if (message) {
@@ -460,7 +560,7 @@ export class WebSocketService {
         this.deliverMessage(message);
         return;
       }
-      
+
       // Fallback to JSON decoding
       try {
         const text = new TextDecoder().decode(event.data);
@@ -479,7 +579,7 @@ export class WebSocketService {
    */
   handleError() {
     this.setConnectionState(ConnectionState.ERROR);
-    
+
     if (!this._subscriptionsPaused) {
       this.handleDisconnection();
     }
@@ -495,9 +595,9 @@ export class WebSocketService {
       this.socket.onerror = null;
       this.socket.onmessage = null;
     }
-    
+
     this.setConnectionState(ConnectionState.DISCONNECTED);
-    
+
     if (!this._subscriptionsPaused) {
       this.handleDisconnection();
     }
@@ -508,17 +608,17 @@ export class WebSocketService {
    */
   handleDisconnection() {
     if (this._subscriptionsPaused) return;
-    
+
     if (this.reconnectTimerId !== null) {
       clearTimeout(this.reconnectTimerId);
       this.reconnectTimerId = null;
     }
-    
+
     this.connectionAttempts++;
     const baseDelay = this.reconnectInterval;
     // Cap backoff at 10 seconds
     const backoff = Math.min(10000, baseDelay * Math.pow(2, Math.min(this.connectionAttempts, 10)));
-    
+
     this.reconnectTimerId = setTimeout(() => {
       if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
         this.setConnectionState(ConnectionState.RECONNECTING);
@@ -533,14 +633,14 @@ export class WebSocketService {
    */
   checkConnection() {
     if (this._subscriptionsPaused) return;
-    
+
     const now = Date.now();
     const inactiveTime = now - this.lastMessageTime;
-    
+
     if (this.lastMessageTime > 0 &&
       inactiveTime > 10000 &&
       this.connectionState === ConnectionState.CONNECTED) {
-      
+
       if (this.socket) {
         try {
           this.socket.close();
@@ -548,28 +648,28 @@ export class WebSocketService {
           // Error closing socket
         }
       }
-      
+
       this.connect().catch(() => {});
     }
   }
 
   /**
    * Subscribe to a message type
-   * @param {string} messageType 
-   * @param {Function} callback 
+   * @param {string} messageType
+   * @param {Function} callback
    * @returns {Function} Unsubscribe function
    */
   subscribe(messageType, callback) {
     if (!messageType || typeof callback !== 'function') {
       return () => {};
     }
-    
+
     if (!this.subscribers.has(messageType)) {
       this.subscribers.set(messageType, new Set());
     }
-    
+
     this.subscribers.get(messageType).add(callback);
-    
+
     return () => {
       const handlers = this.subscribers.get(messageType);
       if (handlers) {
@@ -599,14 +699,14 @@ export class WebSocketService {
         resolve(true);
         return;
       }
-      
+
       this._subscriptionsPaused = true;
-      
+
       if (this.pingTimerId) {
         clearInterval(this.pingTimerId);
         this.pingTimerId = null;
       }
-      
+
       resolve(true);
     });
   }
@@ -621,22 +721,22 @@ export class WebSocketService {
         resolve(true);
         return;
       }
-      
+
       this._subscriptionsPaused = false;
-      
+
       try {
         if (!this.isConnected()) {
           await this.connect();
         }
-        
+
         this.setupTimers();
-        
+
         if (this.isConnected()) {
           this.startPingPongCycle();
         }
-        
+
         this._notifyResumeListeners();
-        
+
         resolve(true);
       } catch (error) {
         resolve(false);
@@ -652,7 +752,7 @@ export class WebSocketService {
     if (this._subscriptionsPaused) {
       return Promise.resolve(false);
     }
-    
+
     try {
       if (!this.isConnected()) {
         return await this.connect();
@@ -673,12 +773,12 @@ export class WebSocketService {
       clearInterval(this.pingTimerId);
       this.pingTimerId = null;
     }
-    
+
     if (this.reconnectTimerId) {
       clearTimeout(this.reconnectTimerId);
       this.reconnectTimerId = null;
     }
-    
+
     if (this.socket) {
       try {
         this.socket.onopen = null;
@@ -691,27 +791,31 @@ export class WebSocketService {
       }
       this.socket = null;
     }
-    
+
     this.subscribers.clear();
     this.onConnectionChangeCallbacks.clear();
     this.onResumeCallbacks.clear();
   }
 }
 
-// Create WebSocket service instance
-const hostname = window.location.hostname === 'localhost' ? '0.0.0.0' : window.location.hostname;
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const getWebSocketPort = () => {
-  if (import.meta && import.meta.env && import.meta.env.VITE_WS_PORT) {
-    return import.meta.env.VITE_WS_PORT;
-  }
-  const appPort = window.location.port;
-  return appPort === '50003' ? '50004' : '50004';
-};
+// ---------- Instance bootstrap using config.yaml ----------
+const protocol = (typeof window !== 'undefined' && window.location.protocol === 'https:') ? 'wss:' : 'ws:';
 
-const wsPort = getWebSocketPort();
-export const wsService = new WebSocketService(`${protocol}//${hostname}:${wsPort}/ws`);
-wsService.initialize().catch(() => {});
+// Start with safe defaults so imports don’t explode, then patch once YAML loads
+const initialUrl = `${protocol}//${DEFAULTS.host}:${DEFAULTS.wsPort}${DEFAULTS.wsPath}`;
+export const wsService = new WebSocketService(initialUrl);
+
+// Load YAML and update URL (and reconnect) if needed
+(async () => {
+  const runtime = await loadRuntimeConfig();
+  const url = `${protocol}//${runtime.host}:${runtime.wsPort}${runtime.wsPath}`;
+  await wsService.updateUrl(url);
+  // Kick off if not already initialized
+  wsService.initialize().catch(() => {});
+})().catch(() => {
+  // Fall back to defaults
+  wsService.initialize().catch(() => {});
+});
 
 // Create a simple animation context to support app animations
 export const animationContext = (() => {

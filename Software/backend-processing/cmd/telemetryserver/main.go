@@ -277,6 +277,17 @@ func main() {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
 
+	// Log the network configuration for clarity
+	log.Println("=== UCR TELEMETRY SYSTEM CONFIGURATION ===")
+	log.Printf("Mode: %s", cfg.Mode)
+	log.Printf("Network Configuration:")
+	log.Printf("  Host IP: %s", cfg.Network.HostIP)
+	log.Printf("  Ports:")
+	log.Printf("    - Raw Telemetry WebSocket: %d (car/sender connects here)", cfg.Network.Ports.RawTelemetryWS)
+	log.Printf("    - REST API: %d (frontend queries data here)", cfg.Network.Ports.RestAPI)
+	log.Printf("    - Live Data WebSocket: %d (frontend receives real-time data here)", cfg.Network.Ports.LiveDataWS)
+	log.Println("=========================================")
+
 	// Connect to the database with context awareness
 	dbConn, err := db.Connect(cfg.Database.ConnectionString)
 	if err != nil {
@@ -315,7 +326,7 @@ func main() {
 	processdata.BroadcastFunc = processdata.ThrottledBroadcast
 
 	// Create worker pool for data processing - fixed size for Raspberry Pi
-	numWorkers := 3                     // Using 4 workers as requested
+	numWorkers := 3                     // Using 3 workers as in original
 	jobChan := make(chan dataJob, 1000) // Larger buffer to prevent blocking on spikes
 
 	// Start worker pool
@@ -347,7 +358,7 @@ func main() {
 	}
 
 	// ---------------------
-	// REST API Server on port cfg.APIPort (e.g., 9092)
+	// REST API Server on port from config (e.g., 9092)
 	// ---------------------
 	apiRouter := chi.NewRouter()
 	apiRouter.Use(middleware.Logger)
@@ -364,19 +375,19 @@ func main() {
 	handlers.RegisterRoutes(apiRouter, queries)
 
 	apiServer := &http.Server{
-		Addr:    ":" + cfg.APIPort,
+		Addr:    fmt.Sprintf(":%d", cfg.Network.Ports.RestAPI),
 		Handler: apiRouter,
 	}
 
 	go func() {
-		log.Printf("API server listening on %s", apiServer.Addr)
+		log.Printf("REST API server listening on port %d", cfg.Network.Ports.RestAPI)
 		if err := apiServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("API server error: %v", err)
 		}
 	}()
 
 	// ---------------------
-	// Raw Telemetry WebSocket Server on port cfg.WebSocket.Port (e.g., 9091)
+	// Raw Telemetry WebSocket Server on port from config (e.g., 9091)
 	// ---------------------
 	telemetryMux := http.NewServeMux()
 	telemetryMux.HandleFunc("/telemetry", func(w http.ResponseWriter, r *http.Request) {
@@ -384,25 +395,25 @@ func main() {
 	})
 
 	telemetryServer := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.WebSocket.Port),
+		Addr:    fmt.Sprintf(":%d", cfg.Network.Ports.RawTelemetryWS),
 		Handler: telemetryMux,
 	}
 
 	go func() {
-		log.Printf("Raw Telemetry WS server listening on %s", telemetryServer.Addr)
+		log.Printf("Raw Telemetry WebSocket server listening on port %d", cfg.Network.Ports.RawTelemetryWS)
 		if err := telemetryServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Raw Telemetry WS server error: %v", err)
 		}
 	}()
 
 	// ---------------------
-	// Live Data WebSocket Server on port cfg.LiveWSPort (e.g., 9094)
+	// Live Data WebSocket Server on port from config (e.g., 9094)
 	// ---------------------
 	liveWsMux := http.NewServeMux()
 	liveWsMux.HandleFunc("/ws", wsserver.ServeWS)
 
 	liveDataServer := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.LiveWSPort),
+		Addr:    fmt.Sprintf(":%d", cfg.Network.Ports.LiveDataWS),
 		Handler: liveWsMux,
 	}
 
@@ -428,7 +439,7 @@ func main() {
 		cancel() // Cancel the main context
 	}()
 
-	log.Printf("Live Data WS server listening on %s", liveDataServer.Addr)
+	log.Printf("Live Data WebSocket server listening on port %d", cfg.Network.Ports.LiveDataWS)
 	if err := liveDataServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("Live Data WS server error: %v", err)
 	}

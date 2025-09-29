@@ -30,10 +30,10 @@ var (
 	configPath = flag.String("config", "../../configs/", "Path to config directory")
 	configName = flag.String("configname", "config", "Name of config file without extension")
 	configType = flag.String("configtype", "yaml", "Config file type (yaml, json, etc)")
-	csvFile    = flag.String("csvfile", "../../testdata/data.csv", "Path to CSV file")
-	startLine  = flag.Int("startline", 960000, "Line number to start sending from")
-	timeAdjust = flag.Float64("timeadjust", 0.000415, "Time adjustment factor (seconds)")
-	liveDelay  = flag.Float64("livedelay", 3, "Delay between messages in live mode (milliseconds)")
+	csvFile    = flag.String("csvfile", "", "Path to CSV file (overrides config)")
+	startLine  = flag.Int("startline", -1, "Line number to start sending from (overrides config)")
+	timeAdjust = flag.Float64("timeadjust", -1, "Time adjustment factor in seconds (overrides config)")
+	liveDelay  = flag.Float64("livedelay", -1, "Delay between messages in live mode in ms (overrides config)")
 )
 
 // safeConn is a thread-safe connection wrapper.
@@ -76,9 +76,34 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 
-	// Construct the telemetry URL using both IP and port from config.
-	telemetryURL := fmt.Sprintf("ws://%s:%d/telemetry", cfg.WebSocket.IP, cfg.WebSocket.Port)
+	// Apply command-line overrides or use config defaults
+	csvFilePath := cfg.CSVSimulation.FilePath
+	if *csvFile != "" {
+		csvFilePath = *csvFile
+	}
+
+	startLineNum := cfg.CSVSimulation.StartLine
+	if *startLine >= 0 {
+		startLineNum = *startLine
+	}
+
+	timeAdjustValue := cfg.CSVSimulation.TimeAdjust
+	if *timeAdjust >= 0 {
+		timeAdjustValue = *timeAdjust
+	}
+
+	liveDelayValue := cfg.LiveMode.MessageDelay
+	if *liveDelay >= 0 {
+		liveDelayValue = *liveDelay
+	}
+
+	// Construct the telemetry URL using network settings from config
+	telemetryURL := fmt.Sprintf("ws://%s:%d/telemetry", cfg.Network.HostIP, cfg.Network.Ports.RawTelemetryWS)
 	log.Printf("Simulated data sender connecting to %s in mode: %s", telemetryURL, cfg.Mode)
+	log.Printf("Network Configuration:")
+	log.Printf("  - Raw Telemetry WS Port: %d (car sends data here)", cfg.Network.Ports.RawTelemetryWS)
+	log.Printf("  - REST API Port: %d", cfg.Network.Ports.RestAPI)
+	log.Printf("  - Live Data WS Port: %d (frontend receives data here)", cfg.Network.Ports.LiveDataWS)
 
 	// Dial the receiver's telemetry WebSocket endpoint.
 	conn, _, err := websocket.DefaultDialer.Dial(telemetryURL, nil)
@@ -114,11 +139,17 @@ func main() {
 	// Stream data based on the configured mode.
 	switch cfg.Mode {
 	case "csv":
-		go sendCSV(safeConnection, *csvFile, *timeAdjust, *startLine, done)
+		log.Printf("CSV Mode Configuration:")
+		log.Printf("  - CSV File: %s", csvFilePath)
+		log.Printf("  - Start Line: %d", startLineNum)
+		log.Printf("  - Time Adjustment: %f seconds", timeAdjustValue)
+		go sendCSV(safeConnection, csvFilePath, timeAdjustValue, startLineNum, done)
 	case "live":
-		go sendLive(safeConnection, cfg, *liveDelay, done)
+		log.Printf("Live Mode Configuration:")
+		log.Printf("  - Message Delay: %f ms", liveDelayValue)
+		go sendLive(safeConnection, cfg, liveDelayValue, done)
 	default:
-		log.Fatalf("Invalid mode in configuration")
+		log.Fatalf("Invalid mode in configuration: %s (must be 'csv' or 'live')", cfg.Mode)
 	}
 
 	// Wait for termination.

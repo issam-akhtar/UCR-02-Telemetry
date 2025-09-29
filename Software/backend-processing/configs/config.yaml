@@ -1,19 +1,57 @@
+# Unified Configuration for UCR Telemetry System
+# This file contains all network, port, and system settings
+
+# Database configuration
 database:
   connection_string: "postgres://postgres:H1a2m3z4a5%402003@localhost:5432/telem_db?sslmode=disable"
 
+# Network configuration - all IPs and ports in one place
+network:
+  # Host IP for all services (change this for deployment)
+  host_ip: "localhost"
+  
+  # Port configurations with descriptions
+  ports:
+    # Raw telemetry WebSocket port - car sends data here, receiver listens here
+    raw_telemetry_ws: 9091
+    
+    # REST API port - frontend queries historical data here
+    rest_api: 9092
+    
+    # Live data WebSocket port - frontend receives real-time data here
+    live_data_ws: 9094
+
+# WebSocket URLs (constructed from network settings)
 websocket:
-  # Used by the car (sender) to send raw telemetry data to the receiver.
-  url: "ws://localhost:9091/telemetry"
+  # URL for car/sender to connect to receiver
+  sender_url: "ws://localhost:9091/telemetry"
+  
+  # IP and port for backward compatibility
   ip: "localhost"
   port: 9091
 
-mode: "csv"             # Allowed values: "csv" or "live"
-apiport: "9092"         # REST API server port
+# System operation mode
+mode: "csv"  # Options: "csv" for replay mode, "live" for real-time CAN data
 
+# File paths
 dbc_file: "../../configs/UCR-01.dbc"
 json_file: "../../configs/UCR-01.json"
 
-throttler_interval: 0   # in milliseconds
+# CSV simulation settings (used when mode is "csv")
+csv_simulation:
+  file_path: "../../testdata/data.csv"
+  start_line: 960000
+  time_adjust: 0.000415  # seconds
 
-# Port for the live data WebSocket (from backend to frontend)
+# Live mode settings (used when mode is "live")
+live_mode:
+  message_delay: 0  # milliseconds between messages
+
+# Performance settings
+throttler_interval: 0  # milliseconds (0 = disabled for maximum throughput)
+
+# API settings
+apiport: "9092"  # Legacy field for compatibility
+
+# Live WebSocket port (legacy field for compatibility)
 live_ws_port: 9094
