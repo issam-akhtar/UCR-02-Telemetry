@@ -172,7 +172,7 @@ export default defineConfig({
   // Development server optimizations
   server: {
     host: true,
-    port: 9093,
+    port: 50003,
     open: !isCI,
     fs: {
       allow: ['..'],
@@ -181,8 +181,8 @@ export default defineConfig({
     hmr: {
       overlay: true,
       protocol: 'ws',
-      port: 9093, // Match server port
-      clientPort: 9093 // Match server port for proxy scenarios
+      port: 50003, // Match server port
+      clientPort: 50003 // Match server port for proxy scenarios
     },
     watch: {
       usePolling: false, // Better performance, false is default

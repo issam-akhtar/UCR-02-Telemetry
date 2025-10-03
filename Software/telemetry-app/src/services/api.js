@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const DEFAULTS = {
   host: (typeof window !== 'undefined' && window.location.hostname) || 'localhost',
-  apiPort: 9092,
+  apiPort: 50002,
 };
 
 const ENV = (() => {

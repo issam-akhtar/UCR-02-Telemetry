@@ -1,147 +1,214 @@
-#!/bin/bash
-# Automated Backend Processing Environment Setup Script
-# This script:
-#   1. Ensures required tools (Go, yq, pg_isready) are installed.
-#      Instead of installing Go via apt (which is outdated),
-#      it downloads and installs Go version 1.24.0.
-#   2. Extracts the database connection string from configs/config.yaml and verifies DB connectivity.
-#   3. Downloads Go module dependencies.
+#!/usr/bin/env bash
+# Automated Backend Processing Environment Setup (Debian 12 / Raspberry Pi 5)
+# - Installs Go from official tarball to /usr/local/go and makes it globally available
+# - Installs yq and PostgreSQL client (pg_isready) if missing
+# - Reads DB connection from configs/config.yaml (or ../backend-processing/configs/config.yaml)
+# - Verifies DB readiness and downloads Go module deps
 #
 # Usage:
-#   1. Ensure you have root privileges (or use sudo).
-#   2. Place this script in your project’s root directory.
-#   3. Ensure the configuration file is at "configs/config.yaml".
-#   4. Run the script: sudo ./setup_backend.sh
+#   sudo ./setup_backend.sh
 #
-# After successful execution, the script prints instructions to run the sender and receiver.
-#
-set -euo pipefail
+set -Eeuo pipefail
 
-# Color codes for output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+############################
+# Config (override via env)
+############################
+: "${GO_VERSION:=1.24.0}"       # desired Go version (just digits, e.g., 1.24.0)
+: "${YQ_VERSION:=v4.43.1}"      # stable yq release
 
-# Logging functions
-log_info()   { echo -e "${GREEN}[INFO] $1${NC}"; }
-log_warn()   { echo -e "${YELLOW}[WARN] $1${NC}"; }
-error_exit() { echo -e "${RED}[ERROR] $1${NC}"; exit 1; }
+############################
+# Colors / logging
+############################
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
+log_info(){ echo -e "${GREEN}[INFO] $*${NC}"; }
+log_warn(){ echo -e "${YELLOW}[WARN] $*${NC}"; }
+log_err(){  echo -e "${RED}[ERROR] $*${NC}"; }
+die(){ log_err "$*"; exit 1; }
+
+############################
+# Root / sudo handling
+############################
+SUDO=""
+if [[ $EUID -ne 0 ]]; then
+  if command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo"
+  else
+    die "Please run as root or install sudo."
+  fi
+fi
 
 log_info "=== Setting up Backend Processing Environment ==="
 
-####################################
-# Step 1: Ensure Required Tools Are Installed
-####################################
+############################
+# Helpers
+############################
+require_cmd() { command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"; }
+arch_go() {
+  # Map uname -m to Go's arch names
+  case "$(uname -m)" in
+    aarch64|arm64) echo "arm64" ;;
+    x86_64|amd64)  echo "amd64" ;;
+    armv7l|armv6l) echo "armv6l" ;;  # uncommon for Pi 5, but included
+    *) die "Unsupported architecture: $(uname -m)" ;;
+  esac
+}
+refresh_path() {
+  hash -r || true
+  export PATH="/usr/local/go/bin:${PATH}"
+}
 
-# --- Install Go Version 1.24.0 (overriding any older apt version) ---
-GO_DESIRED_VERSION="go1.24.0"
-GO_ARCHIVE="${GO_DESIRED_VERSION}.linux-arm64.tar.gz"
-GO_DOWNLOAD_URL="https://go.dev/dl/${GO_ARCHIVE}"
+############################
+# Base tools
+############################
+log_info "Installing base tools (curl, wget, tar, ca-certificates)..."
+$SUDO apt-get update -y
+$SUDO apt-get install -y curl wget tar ca-certificates gnupg >/dev/null
 
-if command -v go &>/dev/null; then
-    CURRENT_GO_VERSION=$(go version | awk '{print $3}')
-    if [[ "$CURRENT_GO_VERSION" != "$GO_DESIRED_VERSION" ]]; then
-        log_info "Updating Go from $CURRENT_GO_VERSION to $GO_DESIRED_VERSION..."
-        rm -rf /usr/local/go || log_warn "Could not remove /usr/local/go"
-        wget -q "$GO_DOWNLOAD_URL" -O /tmp/$GO_ARCHIVE || error_exit "Failed to download Go archive."
-        tar -C /usr/local -xzf /tmp/$GO_ARCHIVE || error_exit "Failed to extract Go archive."
-        # Add /usr/local/go/bin to system PATH globally if not already done.
-        if ! grep -q "/usr/local/go/bin" /etc/profile; then
-            echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile
-            log_info "Added /usr/local/go/bin to system PATH in /etc/profile."
-        fi
-        export PATH=$PATH:/usr/local/go/bin
-        log_info "Go updated successfully: $(go version)"
-    else
-        log_info "Go version $GO_DESIRED_VERSION is already installed."
+############################
+# Install/Upgrade Go
+############################
+GO_ARCH="$(arch_go)"
+GO_TARBALL="go${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
+GO_URL="https://go.dev/dl/${GO_TARBALL}"
+
+install_go() {
+  local tmp="/tmp/${GO_TARBALL}"
+  log_info "Downloading Go ${GO_VERSION} for ${GO_ARCH}..."
+  # Verify URL first; helpful if version doesn't exist
+  if ! curl -fsI "$GO_URL" >/dev/null 2>&1; then
+    die "Go ${GO_VERSION} not found at ${GO_URL}. Set GO_VERSION to an available release."
+  fi
+  curl -fsSL "$GO_URL" -o "$tmp" || die "Failed to download Go tarball."
+  log_info "Removing any existing /usr/local/go ..."
+  $SUDO rm -rf /usr/local/go
+  log_info "Extracting to /usr/local ..."
+  $SUDO tar -C /usr/local -xzf "$tmp"
+  # Make globally visible via profile.d and a symlink for non-login shells
+  if [[ ! -f /etc/profile.d/go.sh ]] || ! grep -q "/usr/local/go/bin" /etc/profile.d/go.sh; then
+    echo 'export PATH=/usr/local/go/bin:$PATH' | $SUDO tee /etc/profile.d/go.sh >/dev/null
+  fi
+  # Create /usr/bin/go symlink for services/non-interactive shells
+  if [[ ! -e /usr/bin/go ]]; then
+    $SUDO ln -s /usr/local/go/bin/go /usr/bin/go || true
+  fi
+  refresh_path
+  log_info "Installed $(go version)"
+}
+
+if command -v go >/dev/null 2>&1; then
+  CURRENT="$(go version | awk '{print $3}' | sed 's/^go//')"
+  if [[ "$CURRENT" != "$GO_VERSION" ]]; then
+    log_warn "Go $CURRENT found, upgrading to $GO_VERSION ..."
+    install_go
+  else
+    log_info "Go $GO_VERSION already installed."
+    # still ensure global availability
+    if [[ ! -f /etc/profile.d/go.sh ]]; then
+      echo 'export PATH=/usr/local/go/bin:$PATH' | $SUDO tee /etc/profile.d/go.sh >/dev/null
     fi
-else
-    log_info "Go not found. Installing Go $GO_DESIRED_VERSION..."
-    rm -rf /usr/local/go 2>/dev/null || true
-    wget -q "$GO_DOWNLOAD_URL" -O /tmp/$GO_ARCHIVE || error_exit "Failed to download Go archive."
-    tar -C /usr/local -xzf /tmp/$GO_ARCHIVE || error_exit "Failed to extract Go archive."
-    if ! grep -q "/usr/local/go/bin" /etc/profile; then
-        echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile
-        log_info "Added /usr/local/go/bin to system PATH in /etc/profile."
+    if [[ ! -e /usr/bin/go ]]; then
+      $SUDO ln -s /usr/local/go/bin/go /usr/bin/go || true
     fi
-    export PATH=$PATH:/usr/local/go/bin
-    log_info "Go installation complete: $(go version)"
-fi
-
-# --- Source user profile to apply PATH changes immediately (if available) ---
-if [ -f "$HOME/.profile" ]; then
-    set +u
-    source "$HOME/.profile" || log_warn "Failed to source $HOME/.profile"
-    set -u
-    log_info "Sourced $HOME/.profile to update PATH."
-fi
-
-# --- Install yq if missing ---
-if ! command -v yq &>/dev/null; then
-    log_info "yq not found. Installing yq..."
-    wget -q "https://github.com/mikefarah/yq/releases/download/v4.30.5/yq_linux_arm64" -O /usr/local/bin/yq || error_exit "Failed to download yq."
-    chmod +x /usr/local/bin/yq || error_exit "Failed to set execute permission on yq."
+    refresh_path
+  fi
 else
-    log_info "yq is already installed."
+  log_info "Go not found; installing $GO_VERSION ..."
+  install_go
 fi
 
-# --- Install pg_isready if missing ---
-if ! command -v pg_isready &>/dev/null; then
-    log_info "pg_isready not found. Installing PostgreSQL client utilities..."
-    apt-get update && apt-get install -y postgresql-client || error_exit "Failed to install PostgreSQL client utilities."
+require_cmd go
+
+############################
+# Install yq
+############################
+if ! command -v yq >/dev/null 2>&1; then
+  log_info "Installing yq ${YQ_VERSION} ..."
+  $SUDO curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${GO_ARCH}" \
+    -o /usr/local/bin/yq || die "Failed to download yq."
+  $SUDO chmod +x /usr/local/bin/yq
 else
-    log_info "pg_isready is installed."
+  log_info "yq already installed ($(yq --version))"
 fi
 
-####################################
-# Step 2: Extract DB Info & Verify Connectivity
-####################################
-CONFIG_FILE="../backend-processing/configs/config.yaml"
-if [ ! -f "$CONFIG_FILE" ]; then
-    error_exit "Configuration file '$CONFIG_FILE' not found."
+############################
+# Install pg_isready (postgresql-client)
+############################
+if ! command -v pg_isready >/dev/null 2>&1; then
+  log_info "Installing PostgreSQL client utilities ..."
+  $SUDO apt-get install -y postgresql-client >/dev/null || die "Failed to install postgresql-client."
+else
+  log_info "pg_isready is present."
 fi
 
-DB_CONN=$(yq e '.database.connection_string' "$CONFIG_FILE")
-if [ -z "$DB_CONN" ]; then
-    error_exit "Database connection string not found in '$CONFIG_FILE'."
-fi
+############################
+# Locate config file
+############################
+CONFIG_CANDIDATES=(
+  "configs/config.yaml"
+  "../backend-processing/configs/config.yaml"
+)
+CONFIG_FILE=""
+for c in "${CONFIG_CANDIDATES[@]}"; do
+  if [[ -f "$c" ]]; then CONFIG_FILE="$c"; break; fi
+done
+[[ -n "$CONFIG_FILE" ]] || die "Could not find configs/config.yaml (checked: ${CONFIG_CANDIDATES[*]}). Run from your project root."
+
+############################
+# Extract DB connection & verify readiness
+############################
+log_info "Reading DB connection string from: $CONFIG_FILE"
+DB_CONN="$(yq e '.database.connection_string' "$CONFIG_FILE")"
+[[ -n "${DB_CONN}" && "${DB_CONN}" != "null" ]] || die "Database connection string missing in $CONFIG_FILE"
+
 log_info "Extracted DB connection string: $DB_CONN"
 
-# Remove protocol and extract host/port.
+# Parse host:port from postgres URL (supports user:pass@host:port/db)
 conn_no_proto="${DB_CONN#postgres://}"
+conn_no_proto="${conn_no_proto#postgresql://}"
 if [[ "$conn_no_proto" == *"@"* ]]; then
-    host_port="${conn_no_proto#*@}"
+  host_port="${conn_no_proto#*@}"
 else
-    host_port="$conn_no_proto"
+  host_port="$conn_no_proto"
 fi
 host_port="${host_port%%/*}"
 HOST="${host_port%%:*}"
 PORT="${host_port#*:}"
 
-if [ -z "$HOST" ] || [ -z "$PORT" ]; then
-    error_exit "Failed to parse host or port from the connection string."
-fi
-log_info "Database host: $HOST, port: $PORT"
+[[ -n "$HOST" && -n "$PORT" && "$HOST" != "$PORT" ]] || die "Failed to parse host or port from connection string."
 
-log_info "Checking if database server is accepting connections..."
-if pg_isready -h "$HOST" -p "$PORT" > /dev/null 2>&1; then
-    log_info "Database server is ready."
+log_info "Checking database readiness on ${HOST}:${PORT} ..."
+if pg_isready -h "$HOST" -p "$PORT" >/dev/null 2>&1; then
+  log_info "Database is accepting connections."
 else
-    error_exit "Database server is not accepting connections on $HOST:$PORT."
+  die "Database is not accepting connections at ${HOST}:${PORT}."
 fi
 
-####################################
-# Step 3: Install Go Dependencies
-####################################
-log_info "Downloading Go module dependencies..."
-cd ../backend-processing
-go mod download || error_exit "Failed to download Go dependencies."
+############################
+# Download Go module deps
+############################
+# Decide project dir for 'go mod download'
+BACKEND_DIRS=(
+  "."                                # if you're already inside backend-processing
+  "../backend-processing"            # common monorepo layout
+)
+TARGET_DIR=""
+for d in "${BACKEND_DIRS[@]}"; do
+  if [[ -f "${d}/go.mod" ]]; then TARGET_DIR="$d"; break; fi
+done
+[[ -n "$TARGET_DIR" ]] || die "Could not find go.mod (checked: ${BACKEND_DIRS[*]}). Run from backend root."
 
-####################################
-# Final Instructions
-####################################
+log_info "Downloading Go modules in: ${TARGET_DIR}"
+pushd "$TARGET_DIR" >/dev/null
+go env -w GOMODCACHE="${HOME}/go/pkg/mod" >/dev/null 2>&1 || true  # keeps cache in user home
+go mod download
+popd >/dev/null
+
+############################
+# Done
+############################
 log_info "=== Setup complete! ==="
-echo -e "${GREEN}[INFO] To run the sender, execute: go run simulate_sender.go${NC}"
-echo -e "${GREEN}[INFO] To run the receiver, execute: go run main.go${NC}"
-echo -e "${GREEN}[INFO] Note: The system-wide PATH has been updated in /etc/profile. You may need to re-login or run 'source ~/.profile' to apply changes fully.${NC}"
+echo -e "${GREEN}To run the sender:${NC} (from ${TARGET_DIR})  ${GREEN}go run simulate_sender.go${NC}"
+echo -e "${GREEN}To run the receiver:${NC} (from ${TARGET_DIR}) ${GREEN}go run main.go${NC}"
+echo -e "${YELLOW}Note:${NC} Go is installed system-wide at /usr/local/go."
+echo -e "  - PATH is exported via ${GREEN}/etc/profile.d/go.sh${NC} and a ${GREEN}/usr/bin/go${NC} symlink is in place."
+echo -e "  - New shells inherit PATH automatically; for the current shell, it's already loaded."

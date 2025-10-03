@@ -105,37 +105,56 @@ echo "  Database: $DB_NAME"
 ###############################################
 # Step 4: Ensure PostgreSQL 16 is Installed
 ###############################################
+ensure_pgdg_repo() {
+  if ! grep -qs "apt.postgresql.org" /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null; then
+    log_info "Adding PostgreSQL PGDG repository…"
+    install -d -m 0755 /etc/apt/keyrings
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+      | gpg --dearmor -o /etc/apt/keyrings/pgdg.gpg
+    OS_CODENAME=$(lsb_release -cs)
+    echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt ${OS_CODENAME}-pgdg main" \
+      > /etc/apt/sources.list.d/pgdg.list
+    apt-get update
+  fi
+}
+
 if command -v psql &>/dev/null; then
-    PG_VERSION_FULL=$(psql --version | awk '{print $3}') || error_exit "Could not determine PostgreSQL version."
-    if [[ $PG_VERSION_FULL != 16* ]]; then
-        log_warn "Detected PostgreSQL version $PG_VERSION_FULL. PostgreSQL 16 is required. Installing PostgreSQL 16..."
-        apt-get update && apt-get install -y postgresql-16 postgresql-contrib || error_exit "Failed to install PostgreSQL 16."
-    else
-        log_info "PostgreSQL 16 is already installed."
-    fi
+  PG_VERSION_FULL=$(psql --version | awk '{print $3}')
+  if [[ $PG_VERSION_FULL != 16* ]]; then
+    log_warn "Detected PostgreSQL $PG_VERSION_FULL. Installing PostgreSQL 16…"
+    ensure_pgdg_repo
+    apt-get install -y postgresql-16 postgresql-client-16 postgresql-contrib || error_exit "Failed to install PostgreSQL 16."
+  else
+    log_info "PostgreSQL 16 is already installed."
+  fi
 else
-    log_info "PostgreSQL not found. Installing PostgreSQL 16..."
-    apt-get update && apt-get install -y postgresql-16 postgresql-contrib || error_exit "Failed to install PostgreSQL 16."
+  log_info "PostgreSQL not found. Installing PostgreSQL 16…"
+  ensure_pgdg_repo
+  apt-get install -y postgresql-16 postgresql-client-16 postgresql-contrib || error_exit "Failed to install PostgreSQL 16."
 fi
+
 
 ###############################################
 # Step 5: Ensure TimescaleDB is Installed for PostgreSQL 16
 ###############################################
 PKG_NAME="timescaledb-2-postgresql-16"
 if dpkg -l | grep -qw "$PKG_NAME"; then
-    log_info "TimescaleDB package $PKG_NAME is already installed."
+  log_info "TimescaleDB package $PKG_NAME is already installed."
 else
-    log_info "TimescaleDB package $PKG_NAME not found. Installing TimescaleDB..."
-    if [ ! -f /etc/apt/sources.list.d/timescaledb.list ]; then
-        apt-get update && apt-get install -y lsb-release || error_exit "Failed to install lsb-release."
-        OS_CODENAME=$(lsb_release -cs)
-        log_info "Adding TimescaleDB repository for Ubuntu $OS_CODENAME..."
-        echo "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ $OS_CODENAME main" > /etc/apt/sources.list.d/timescaledb.list || error_exit "Failed to add TimescaleDB repository."
-        wget -qO- https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add - || error_exit "Failed to add TimescaleDB GPG key."
-        apt-get update || error_exit "Failed to update apt repositories."
-    fi
-    apt-get install -y "$PKG_NAME" || error_exit "TimescaleDB installation failed."
+  log_info "Installing TimescaleDB for PG16…"
+  if ! grep -qs "packagecloud.io/timescale/timescaledb" /etc/apt/sources.list.d/* 2>/dev/null; then
+    apt-get install -y lsb-release curl gnupg
+    OS_CODENAME=$(lsb_release -cs)
+    install -d -m 0755 /etc/apt/keyrings
+    curl -fsSL https://packagecloud.io/timescale/timescaledb/gpgkey \
+      | gpg --dearmor -o /etc/apt/keyrings/timescaledb.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/timescaledb.gpg] https://packagecloud.io/timescale/timescaledb/ubuntu/ ${OS_CODENAME} main" \
+      > /etc/apt/sources.list.d/timescaledb.list
+    apt-get update
+  fi
+  apt-get install -y "$PKG_NAME" timescaledb-tools || error_exit "TimescaleDB installation failed."
 fi
+
 
 ###############################################
 # Step 6: Configure TimescaleDB in PostgreSQL

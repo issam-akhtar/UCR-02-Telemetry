@@ -6,8 +6,8 @@ import { loadTelemetryProto, decodeTelemetryMessage } from '../utils/protobuf';
 // ---------- Runtime config loader (YAML → JS) ----------
 const DEFAULTS = {
   host: (typeof window !== 'undefined' && window.location.hostname) || 'localhost',
-  wsPort: 9094,   // live data WS for frontend
-  apiPort: 9092,  // REST API
+  wsPort: 50004,   // live data WS for frontend
+  apiPort: 50002,  // REST API
   wsPath: '/ws',  // WS route on your server
 };
 
