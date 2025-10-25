@@ -19,7 +19,7 @@ network:
     rest_api: 50002
     
     # Live data WebSocket port - frontend receives real-time data here
-    live_data_ws: 50003
+    live_data_ws: 50004
 
 # WebSocket URLs (constructed from network settings)
 websocket:
@@ -54,4 +54,4 @@ throttler_interval: 0  # milliseconds (0 = disabled for maximum throughput)
 apiport: "50002"  # Legacy field for compatibility
 
 # Live WebSocket port (legacy field for compatibility)
-live_ws_port: 50003
+live_ws_port: 50004

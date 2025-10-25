@@ -106,10 +106,10 @@ log_info "npm:  $(npm -v)"
 # -------- Install project deps --------
 if [[ -f package-lock.json ]]; then
   log_info "Found package-lock.json ? using 'npm ci' for a clean, reproducible install..."
-  npm ci || die "npm ci failed. Try deleting node_modules and re-running."
+  npm ci --legacy-peer-deps|| die "npm ci failed. Try deleting node_modules and re-running."
 else
   log_info "No package-lock.json ? using 'npm install'..."
-  npm install || die "npm install failed. Check error logs above."
+  npm install --legacy-peer-deps || die "npm install failed. Check error logs above."
 fi
 
 # -------- Run the dev server --------

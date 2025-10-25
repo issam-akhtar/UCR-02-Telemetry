@@ -1,0 +1,10 @@
+#<subsystem>: <summary in imperative mood>
+#summary in the form of This commit will ...  
+#git config commit.template .gitmessage
+
+
+
+#<Longer explanation wrapped at 72 characters explaining what and why,
+#not how. This section can span multiple paragraphs if needed.>
+
+Signed-off-by: Your Name <your.email@example.com>
